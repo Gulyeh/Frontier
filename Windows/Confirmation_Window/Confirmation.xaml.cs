@@ -26,6 +26,9 @@ namespace Frontier.Windows.Confirmation_Window
                 case "Logout":
                     Info_Text.Text = "Czy na pewno chcesz się wylogować?";
                     break;
+                case "Save":
+                    Info_Text.Text = "Czy na pewno chcesz zapisać?";
+                    break;
                 default:
                     Info_Text.Text = "Error";
                     break;

@@ -1,4 +1,6 @@
-﻿using Frontier.Windows.Analyze_Window;
+﻿using Frontier.Variables;
+using Frontier.ViewModels;
+using Frontier.Windows.Analyze_Window;
 using Frontier.Windows.Auth_Window;
 using Frontier.Windows.Confirmation_Window;
 using Frontier.Windows.Contactors_Window;
@@ -12,6 +14,7 @@ namespace Frontier
 
     public partial class MainWindow : Window
     {
+        private readonly Login_ViewModel LoginModel = new Login_ViewModel();
         Invoices WInvoice;
         Warehouse WWarehouse;
         Contactors WContactors;
@@ -22,18 +25,24 @@ namespace Frontier
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = LoginModel;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            WAuth = new Auth();
+            WAuth = new Auth(LoginModel);
+            Content_Frame.Content = WAuth;
+        }
+
+        public void LoadPages()
+        {
             WInvoice = new Invoices();
             WWarehouse = new Warehouse();
             WContactors = new Contactors();
             WAnalyze = new Analyze();
             WSettings = new Settings();
-            Content_Frame.Content = WAuth;
         }
+
         private void Clicked_Menu(object sender, RoutedEventArgs e)
         {
             switch (Menu_List.SelectedIndex)

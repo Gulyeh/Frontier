@@ -2,7 +2,7 @@
 
 namespace Frontier.ViewModels
 {
-    class Warehouse_ViewModel : INotifyPropertyChanged
+    public class Warehouse_ViewModel : INotifyPropertyChanged
     {
         private int id { get; set; }
         public int ID
@@ -27,8 +27,8 @@ namespace Frontier.ViewModels
                 NotifyPropertyChanged("Name");
             }
         }
-        private string group { get; set; }
-        public string Group
+        private int group { get; set; }
+        public int Group
         {
             get { return group; }
             set
@@ -51,8 +51,8 @@ namespace Frontier.ViewModels
             }
         }
 
-        private int brutto { get; set; }
-        public int Brutto
+        private double brutto { get; set; }
+        public double Brutto
         {
             get { return brutto; }
             set
@@ -75,8 +75,8 @@ namespace Frontier.ViewModels
             }
         }
 
-        private int netto { get; set; }
-        public int Netto
+        private double netto { get; set; }
+        public double Netto
         {
             get { return netto; }
             set

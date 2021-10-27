@@ -258,7 +258,7 @@
                         <DataGridTextColumn Header="NIP" IsReadOnly="True" Width="120" Binding="{Binding NIP}"/>
                         <DataGridTextColumn Header="Regon" IsReadOnly="True" Width="120" Binding="{Binding Regon}"/>
                         <DataGridTextColumn Header="Ulica" IsReadOnly="True" Width="170" Binding="{Binding Address}"/>
-                        <DataGridTextColumn Header="Miejscowość" IsReadOnly="True" Width="80" Binding="{Binding Region}"/>
+                        <DataGridTextColumn Header="Miejscowość" IsReadOnly="True" Width="80" Binding="{Binding State}"/>
                         <DataGridTextColumn Header="Kod pocztowy" IsReadOnly="True" Width="100" Binding="{Binding PostCode}"/>
                         <DataGridTextColumn Header="Kraj" IsReadOnly="True" Width="100" Binding="{Binding Country}"/>
                         <DataGridTemplateColumn Width="40">

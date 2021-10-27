@@ -53,7 +53,7 @@
                     <TextBlock Text="Nazwa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,180,0"/>
                     <Border Background="LightGray" Width="262" BorderThickness="0" CornerRadius="8" Height="24">
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Name="Text1" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
+                            <TextBox Name="Compname" Text="{Binding Name}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
                         </StackPanel>
                     </Border>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
@@ -64,17 +64,17 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text2" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
+                                <TextBox Name="compnip" Text="{Binding NIP}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text0" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="107"/>
+                                <TextBox Name="compstreet" Text="{Binding Street}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="107"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="147">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text3" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
+                                <TextBox Name="compregon" Text="{Binding REGON}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -86,59 +86,48 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,20,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text4" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                <TextBox Name="comppostcode" Text="{Binding PostCode}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="128" Margin="0,0,20,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text5" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="118"/>
+                                <TextBox Name="compstate" Text="{Binding State}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="118"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="115">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text6" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="105"/>
+                                <TextBox Name="compcountry" Text="{Binding Country}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="105"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                    <Button Content="Edytuj dane" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="114" Height="30" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,30,0,0"/>
+                    <Button Content="Edytuj dane" Click="Edit_CompanyData_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="114" Height="30" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,30,0,0"/>
                 </StackPanel>
             </Border>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="272" Width="444">
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="172" Width="376">
                 <StackPanel>
                     <TextBlock Text="Dane bazy danych" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,20,0,10"/>
-                    <TextBlock Text="Baza" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,100,0"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ComboBox Background="Transparent" FontFamily="Calibri" FontWeight="Light" BorderThickness="0" Width="174"/>
-                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
                     <TextBlock Text="Login" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,200,0"/>
                     <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
                         <Border Background="LightGray" Width="192" BorderThickness="0" CornerRadius="8" Height="24">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text7" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="183"/>
+                                <TextBox Name="LoginData" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="183"/>
                             </StackPanel>
                         </Border>
-                        <Button Content="Zmień login" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="96" Height="22" Background="#2f4050" Margin="10,0,0,0"/>
+                        <Button Content="Zmień login" Click="ChangeLogin_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="96" Height="22" Background="#2f4050" Margin="10,0,0,0"/>
                     </StackPanel>
                     <TextBlock Text="Hasło" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,200,0"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" Width="192" BorderThickness="0" CornerRadius="8" Height="24">
                             <StackPanel Orientation="Horizontal">
-                                <PasswordBox Name="Text8" FontFamily="Calibri" FontWeight="Light" HorizontalContentAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="182"/>
+                                <PasswordBox Name="PasswordData" FontFamily="Calibri" FontWeight="Light" HorizontalContentAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="182"/>
                             </StackPanel>
                         </Border>
-                        <Button Content="Zmień hasło" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="96" Height="22" Background="#2f4050" Margin="10,0,0,0"/>
+                        <Button Content="Zmień hasło" Click="ChangePassword_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="96" Height="22" Background="#2f4050" Margin="10,0,0,0"/>
                     </StackPanel>
-                    <TextBlock Text="Lokalizacja" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,270,0"/>
-                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
-                        <Border Background="LightGray" Width="256" BorderThickness="0" CornerRadius="8" Height="24">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBox Name="Text9" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="246"/>
-                            </StackPanel>
-                        </Border>
-                        <Button Content="Zmień lokalizacje" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="117" Height="22" Background="#2f4050" Margin="10,0,0,0"/>
-                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </StackPanel>

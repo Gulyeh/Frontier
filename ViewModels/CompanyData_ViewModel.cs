@@ -1,21 +1,14 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Frontier.ViewModels
 {
-    public class Contactors_ViewModel : INotifyPropertyChanged
+    public class CompanyData_ViewModel : INotifyPropertyChanged
     {
-        private int id { get; set; }
-        public int ID
-        {
-            get { return id; }
-            set
-            {
-                if (id == value) return;
-                id = value;
-                NotifyPropertyChanged("ID");
-            }
-        }
-
         private string name { get; set; }
         public string Name
         {
@@ -40,27 +33,27 @@ namespace Frontier.ViewModels
             }
         }
 
-        private string address { get; set; }
-        public string Address
+        private string street { get; set; }
+        public string Street
         {
-            get { return address; }
+            get { return street; }
             set
             {
-                if (address == value) return;
-                address = value;
+                if (street == value) return;
+                street = value;
                 NotifyPropertyChanged("Address");
             }
         }
 
         private string regon { get; set; }
-        public string Regon
+        public string REGON
         {
             get { return regon; }
             set
             {
                 if (regon == value) return;
                 regon = value;
-                NotifyPropertyChanged("Regon");
+                NotifyPropertyChanged("REGON");
             }
         }
 
