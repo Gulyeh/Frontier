@@ -27,27 +27,27 @@ namespace Frontier.ViewModels
                 NotifyPropertyChanged("Name");
             }
         }
-        private int group { get; set; }
-        public int Group
+        private string groupname { get; set; }
+        public string GroupName
         {
-            get { return group; }
+            get { return groupname; }
             set
             {
-                if (group == value) return;
-                group = value;
-                NotifyPropertyChanged("Group");
+                if (groupname == value) return;
+                groupname = value;
+                NotifyPropertyChanged("GroupName");
             }
         }
 
-        private int count { get; set; }
-        public int Count
+        private int amount { get; set; }
+        public int Amount
         {
-            get { return count; }
+            get { return amount; }
             set
             {
-                if (count == value) return;
-                count = value;
-                NotifyPropertyChanged("Count");
+                if (amount == value) return;
+                amount = value;
+                NotifyPropertyChanged("Amount");
             }
         }
 
@@ -63,8 +63,8 @@ namespace Frontier.ViewModels
             }
         }
 
-        private int vat { get; set; }
-        public int VAT
+        private string vat { get; set; }
+        public string VAT
         {
             get { return vat; }
             set
@@ -98,6 +98,7 @@ namespace Frontier.ViewModels
                 NotifyPropertyChanged("Margin");
             }
         }
+        public int GroupID { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)

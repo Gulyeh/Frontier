@@ -20,11 +20,11 @@ namespace Frontier.Database.GetQuery
         {
             optionsBuilder.UseSqlite("Data Source=./Database/"+db_name+".sqlite");
         }
-        public bool UpdateLogin(string newlogin)
+        public async Task<bool> UpdateLogin(string newlogin)
         {
             try
             {
-                var query = User.Where(x => x.idUser == 1).FirstOrDefault();
+                var query = await User.Where(x => x.idUser == 1).FirstOrDefaultAsync();
                 query.Login = Convert.ToBase64String(Encoding.ASCII.GetBytes(newlogin));
                 return true;
             }
@@ -33,11 +33,11 @@ namespace Frontier.Database.GetQuery
                 return false;
             }
         }
-        public bool UpdatePassword(string newpassword)
+        public async Task<bool> UpdatePassword(string newpassword)
         {
             try
             {
-                var query = User.Where(x => x.idUser == 1).FirstOrDefault();
+                var query = await User.Where(x => x.idUser == 1).FirstOrDefaultAsync();
                 query.Password = Convert.ToBase64String(Encoding.ASCII.GetBytes(newpassword));
                 return true;
             }

@@ -49,33 +49,39 @@ namespace Frontier.Windows.Auth_Window
             LoginModel.isLogged = false;
             Check_Selection(Database_List.SelectedIndex);
         }
-        private void Login_Clicked(object sender, RoutedEventArgs e)
+        private async void Login_Clicked(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (Login.Text != string.Empty && Password.Password != string.Empty)
+            await Task.Run(async () => {
+                await this.Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    SelectedDB = false;
-                    GetUser User = new GetUser(DatabaseList[Database_List.SelectedIndex].ID);
-                    var query = User.User.FirstOrDefault(x => x.idUser == 1);
-                    if (query.Login == Convert.ToBase64String(Encoding.ASCII.GetBytes(Login.Text)) && query.Password == Convert.ToBase64String(Encoding.ASCII.GetBytes(Password.Password)))
+                    try
                     {
-                        GlobalVariables.DatabaseName = DatabaseList[Database_List.SelectedIndex].ID;
-                        ((MainWindow)Application.Current.MainWindow).LoadPages();
-                        LoginModel.isLogged = true;
-                        ((MainWindow)Application.Current.MainWindow).Menu_List.SelectedIndex = 0;
+                        if (Login.Text != string.Empty && Password.Password != string.Empty)
+                        {
+                            SelectedDB = false;
+                            GetUser User = new GetUser(DatabaseList[Database_List.SelectedIndex].ID);
+                            var query = User.User.FirstOrDefault(x => x.idUser == 1);
+                            if (query.Login == Convert.ToBase64String(Encoding.ASCII.GetBytes(Login.Text)) && query.Password == Convert.ToBase64String(Encoding.ASCII.GetBytes(Password.Password)))
+                            {
+                                GlobalVariables.DatabaseName = DatabaseList[Database_List.SelectedIndex].ID;
+                                await ((MainWindow)Application.Current.MainWindow).LoadPages();
+                                LoginModel.isLogged = true;
+                                ((MainWindow)Application.Current.MainWindow).Menu_List.SelectedIndex = 0;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Wrong login or password");
+                            }
+                            SelectedDB = true;
+                        }
                     }
-                    else
+                    catch (Exception)
                     {
                         MessageBox.Show("Wrong login or password");
+                        SelectedDB = true;
                     }
-                    SelectedDB = true;
-                }
-            } catch (Exception)
-            {
-                MessageBox.Show("Wrong login or password");
-                SelectedDB = true;
-            }
+                }));
+            });
         }
         private void NewDB_Clicked(object sender, RoutedEventArgs e)
         {

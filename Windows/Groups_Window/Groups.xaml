@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Frontier.Windows.Groups_Window"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="Frontier" Height="330" Width="400"
+        Title="Frontier" Height="350" Width="400"
         ShowInTaskbar="False">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" x:Key="Gray">
@@ -24,6 +24,24 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="true">
                                 <Setter TargetName="Border" Property="Background" Value="#1f2731" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type Button}" x:Key="Red">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" CornerRadius="5" BorderThickness="0" Background="{TemplateBinding Background}">
+                            <ContentPresenter                              
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="Red" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -59,13 +77,13 @@
                     <TextBlock Text="Nazwa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,20,180,0"/>
                     <Border Background="LightGray" Width="262" BorderThickness="0" CornerRadius="8" Height="24">
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Name="Text1" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
+                            <TextBox Name="groupname" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
                         </StackPanel>
                     </Border>
                     <TextBlock Text="Opis" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,20,280,0"/>
                     <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="350">
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Name="Text2" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="339"/>
+                            <TextBox Name="groupdescription" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="339"/>
                         </StackPanel>
                     </Border>
                     <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Center">
@@ -73,7 +91,7 @@
                         <TextBlock Text="VAT" FontSize="10" Foreground="Black" Margin="70,0,0,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" Width="75" Margin="0,0,40,0">
+                        <ComboBox Name="groupgtu" Background="Transparent" SelectedIndex="0" BorderThickness="0" Width="75" Margin="0,0,40,0">
                             <ComboBoxItem Content="Brak"/>
                             <ComboBoxItem Content="13"/>
                             <ComboBoxItem Content="12"/>
@@ -89,7 +107,7 @@
                             <ComboBoxItem Content="2"/>
                             <ComboBoxItem Content="1"/>
                         </ComboBox>
-                        <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" Width="75">
+                        <ComboBox Name="groupvat" Background="Transparent" SelectedIndex="0" BorderThickness="0" Width="75">
                             <ComboBoxItem Content="23%"/>
                             <ComboBoxItem Content="8%"/>
                             <ComboBoxItem Content="5%"/>
@@ -98,22 +116,22 @@
                             <ComboBoxItem Content="NP"/>
                         </ComboBox>
                     </StackPanel>
-                    <Button Content="Utwórz grupę" HorizontalAlignment="Center" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="124" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="0,30,0,0"/>
+                    <Button Click="CreateGroup_Clicked" Content="Utwórz grupę" HorizontalAlignment="Center" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="124" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="0,30,0,0"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Edytuj Grupę">
                 <StackPanel Orientation="Vertical">
-                    <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" Width="175" Margin="0,15,0,0"/>
+                    <ComboBox Name="GroupList" SelectionChanged="SelectedGroup" DisplayMemberPath="Name" Background="Transparent" BorderThickness="0" Width="175" Margin="0,15,0,0"/>
                     <TextBlock Text="Nazwa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,180,0"/>
                     <Border Background="LightGray" Width="262" BorderThickness="0" CornerRadius="8" Height="24">
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Name="Text3" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
+                            <TextBox Name="editname" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
                         </StackPanel>
                     </Border>
                     <TextBlock Text="Opis" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,15,280,0"/>
                     <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="350">
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Name="Text4" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="339"/>
+                            <TextBox Name="editdescription" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="339"/>
                         </StackPanel>
                     </Border>
                     <StackPanel Orientation="Horizontal" Margin="0,15,0,0" HorizontalAlignment="Center">
@@ -121,7 +139,7 @@
                         <TextBlock Text="VAT" FontSize="10" Foreground="Black" Margin="70,0,0,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ComboBox Background="Transparent" IsEnabled="False" SelectedIndex="0" BorderThickness="0" Width="75" Margin="0,0,40,0">
+                        <ComboBox Name="editgtu" Background="Transparent" IsEnabled="False" SelectedIndex="0" BorderThickness="0" Width="75" Margin="0,0,40,0">
                             <ComboBoxItem Content="Brak"/>
                             <ComboBoxItem Content="13"/>
                             <ComboBoxItem Content="12"/>
@@ -137,7 +155,7 @@
                             <ComboBoxItem Content="2"/>
                             <ComboBoxItem Content="1"/>
                         </ComboBox>
-                        <ComboBox Background="Transparent" IsEnabled="False" SelectedIndex="0" BorderThickness="0" Width="75">
+                        <ComboBox Name="editvat" Background="Transparent" IsEnabled="False" SelectedIndex="0" BorderThickness="0" Width="75">
                             <ComboBoxItem Content="23%"/>
                             <ComboBoxItem Content="8%"/>
                             <ComboBoxItem Content="5%"/>
@@ -146,7 +164,10 @@
                             <ComboBoxItem Content="NP"/>
                         </ComboBox>
                     </StackPanel>
-                    <Button Content="Edytuj grupę" IsEnabled="False" HorizontalAlignment="Center" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="124" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="0,15,0,0"/>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,20,0,0">
+                        <Button Name="editbutton" Click="EditGroup_Clicked" Content="Edytuj grupę" IsEnabled="False" HorizontalAlignment="Center" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="124" Height="31" Background="#2f4050" Margin="0,0,0,0"/>
+                        <Button Name="deletebutton" Click="DeleteGroup_Clicked" Content="Usuń grupę" IsEnabled="False" HorizontalAlignment="Center" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="124" Height="31" Background="DarkRed" Margin="60,0,0,0"/>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
         </TabControl>

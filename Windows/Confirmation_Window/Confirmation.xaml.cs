@@ -29,11 +29,21 @@ namespace Frontier.Windows.Confirmation_Window
                 case "Save":
                     Info_Text.Text = "Czy na pewno chcesz zapisać?";
                     break;
+                case "Delete":
+                    Info_Text.Text = "Czy na pewno chcesz usunąc?";
+                    break;
                 default:
                     Info_Text.Text = "Error";
                     break;
             }
         }
-
+        private void Yes_Clicked(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = true;
+        }
+        private void No_Clicked(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = false;
+        }
     }
 }

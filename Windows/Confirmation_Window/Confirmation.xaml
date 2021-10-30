@@ -34,8 +34,8 @@
     <Grid>
         <TextBlock Name="Info_Text" FontSize="15" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,30,0,0"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="50" Margin="0,0,0,20">
-            <Button Content="Tak" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="77" Height="30" Background="#2f4050" VerticalAlignment="Center" Margin="0,0,80,0"/>
-            <Button Content="Nie" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="77" Height="30" Background="#2f4050" VerticalAlignment="Center"/>
+            <Button Content="Tak" Click="Yes_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="77" Height="30" Background="#2f4050" VerticalAlignment="Center" Margin="0,0,80,0"/>
+            <Button Content="Nie" Click="No_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Segoe UI" Width="77" Height="30" Background="#2f4050" VerticalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </Window>

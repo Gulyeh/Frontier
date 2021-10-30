@@ -17,11 +17,11 @@ namespace Frontier.Database.GetQuery
             optionsBuilder.UseSqlite("Data Source=./Database/" + GlobalVariables.DatabaseName + ".sqlite");
         }
 
-        public bool UpdateCompany(TableClasses.CompanyData data)
+        public async Task<bool> UpdateCompany(TableClasses.CompanyData data)
         {
             try
             {
-                var query = CompanyData.Where(x => x.idcompanydata == 1).FirstOrDefault();
+                var query = await CompanyData.Where(x => x.idcompanydata == 1).FirstOrDefaultAsync();
                 query.Name = data.Name;
                 query.NIP = data.NIP;
                 query.PostCode = data.PostCode;

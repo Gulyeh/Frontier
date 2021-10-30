@@ -60,6 +60,10 @@ namespace Frontier.Windows.CreateDB_Window
                 }
             }
         }
+        private void CheckSyntax_PostCode(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = CheckNIP.CheckPostCode(e.Text);
+        }
         private bool ValidateData()
         {
             if(DBName.Text != string.Empty && DBLogin.Text != string.Empty && DBPassword.Password != string.Empty && CompName.Text != string.Empty && nip.Text != string.Empty && street.Text != string.Empty && postcode.Text != string.Empty && state.Text != string.Empty && country.Text != string.Empty)
@@ -109,7 +113,7 @@ namespace Frontier.Windows.CreateDB_Window
                     query.Add("CREATE TABLE `invoice_products` (`Invoice_ID` varchar(100) NOT NULL PRIMARY KEY,`Name` varchar(45) NOT NULL,`Amount` varchar(45) NOT NULL,`Price_each` varchar(45) NOT NULL,`VAT` varchar(3) NOT NULL,`Netto` varchar(45) NOT NULL,`VAT_Price` varchar(45) NOT NULL,`Brutto` varchar(45) NOT NULL)");
                     query.Add("CREATE TABLE `invoice_sold` (`idInvoice_Sold` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Receiver` varchar(45) NOT NULL,`Invoice_ID` varchar(100) NOT NULL,`Date_Sold` varchar(45) NOT NULL,`Date_Created` varchar(45) NOT NULL,`Purchase_type` varchar(45) NOT NULL,`Day_Limit` varchar(45) DEFAULT NULL,`Currency` varchar(45) NOT NULL,`Description` varchar(45) DEFAULT NULL,`AccountNumber` varchar(100) DEFAULT NULL,`BankName` varchar(45) DEFAULT NULL)");
                     query.Add("CREATE TABLE `user` (`idUser` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Login` varchar(200) NOT NULL,`Password` varchar(200) NOT NULL)");
-                    query.Add("CREATE TABLE `warehouse` (`idwarehouse` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`group` int NOT NULL,`Name` varchar(45) NOT NULL,`Amount` varchar(10) NOT NULL,`Netto` varchar(45) NOT NULL,`VAT` varchar(2) NOT NULL,`Brutto` varchar(45) NOT NULL,`Margin` varchar(3) DEFAULT NULL)");
+                    query.Add("CREATE TABLE `warehouse` (`idwarehouse` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`group` int NOT NULL,`Name` varchar(45) NOT NULL,`Amount` varchar(10) NOT NULL,`Netto` varchar(45) NOT NULL,`Brutto` varchar(45) NOT NULL,`Margin` varchar(3) DEFAULT NULL)");
                     query.Add($"INSERT INTO `user` (Login, Password) VALUES ('{Convert.ToBase64String(Encoding.ASCII.GetBytes(DBLogin.Text))}', '{Convert.ToBase64String(Encoding.ASCII.GetBytes(DBPassword.Password))}')");
                     query.Add($"INSERT INTO `companydata` (Name, NIP, Street, REGON, PostCode, State, Country) VALUES ('{CompName.Text}', '{nip.Text}', '{street.Text}', '{regon.Text}', '{postcode.Text}', '{state.Text}', '{country.Text}')");
                     foreach(string data in query)

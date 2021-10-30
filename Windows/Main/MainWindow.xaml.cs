@@ -7,6 +7,8 @@ using Frontier.Windows.Contactors_Window;
 using Frontier.Windows.Invoices_Window;
 using Frontier.Windows.Settings_Window;
 using Frontier.Windows.Warehouse_Window;
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Frontier
@@ -34,13 +36,18 @@ namespace Frontier
             Content_Frame.Content = WAuth;
         }
 
-        public void LoadPages()
+        public async Task LoadPages()
         {
-            WInvoice = new Invoices();
-            WWarehouse = new Warehouse();
-            WContactors = new Contactors();
-            WAnalyze = new Analyze();
-            WSettings = new Settings();
+            await Task.Run(async () => {
+                await this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    WInvoice = new Invoices();
+                    WWarehouse = new Warehouse();
+                    WContactors = new Contactors();
+                    WAnalyze = new Analyze();
+                    WSettings = new Settings();
+                }));
+            });
         }
 
         private void Clicked_Menu(object sender, RoutedEventArgs e)
