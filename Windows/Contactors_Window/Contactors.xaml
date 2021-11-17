@@ -124,12 +124,12 @@
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                 <TextBlock Text="NIP" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="30,0,0,0"/>
                                 <TextBlock Text="Ulica" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="110,0,0,0"/>
-                                <TextBlock Text="Regon*" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="110,0,0,0"/>
+                                <TextBlock Name="RegonText" Text="Regon*" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="110,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="contnip" PreviewTextInput="NIP_CheckNumeric" TextChanged="ValidateNIP" MaxLength="10" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
+                                        <TextBox Name="contnip" PreviewKeyDown="CheckSpace" PreviewTextInput="NIP_CheckNumeric" TextChanged="ValidateNIP" MaxLength="10" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
@@ -139,19 +139,19 @@
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="147">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="contregon" MaxLength="9" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
+                                        <TextBox Name="contregon" PreviewKeyDown="CheckSpace" MaxLength="14" TextChanged="ValidateREGON" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                 <TextBlock Text="Kod pocztowy" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="42,0,0,0"/>
                                 <TextBlock Text="Miejscowość" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="40,0,0,0"/>
-                                <TextBlock Text="Kraj" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="90,0,0,0"/>
+                                <TextBlock Text="Kraj" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="100,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,20,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="contpostcode" PreviewTextInput="CheckSyntax_PostCode" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                        <TextBox Name="contpostcode" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckSyntax_PostCode" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="128" Margin="0,0,20,0">
@@ -184,7 +184,7 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="editnip" PreviewTextInput="NIP_CheckNumeric" TextChanged="ValidateNIP" MaxLength="10" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
+                                        <TextBox Name="editnip" PreviewKeyDown="CheckSpace" PreviewTextInput="NIP_CheckNumeric" TextChanged="ValidateNIP" MaxLength="10" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
@@ -194,19 +194,19 @@
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="147">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="editregon" MaxLength="9" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
+                                        <TextBox Name="editregon" PreviewKeyDown="CheckSpace" MaxLength="14" TextChanged="ValidateREGON" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                 <TextBlock Text="Kod pocztowy" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="42,0,0,0"/>
                                 <TextBlock Text="Miejscowość" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="40,0,0,0"/>
-                                <TextBlock Text="Kraj" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="90,0,0,0"/>
+                                <TextBlock Text="Kraj" FontFamily="Calibri" FontWeight="Light" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="100,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,20,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="editpostcode" PreviewTextInput="CheckSyntax_PostCode" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                        <TextBox Name="editpostcode" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckSyntax_PostCode" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="128" Margin="0,0,20,0">
@@ -250,8 +250,7 @@
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="50,10,50,0"
-                      ItemsSource="{Binding Data}">
+                      Margin="50,10,50,0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" IsReadOnly="True" Width="60" Binding="{Binding ID}"/>
                         <DataGridTextColumn Header="Nazwa" IsReadOnly="True" Binding="{Binding Name}"/>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Frontier.ViewModels
 {
@@ -25,6 +20,7 @@ namespace Frontier.ViewModels
         public string Description { get; set; }
         public string VAT { get; set; }
         public string GTU { get; set; }
+        public int Type { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)

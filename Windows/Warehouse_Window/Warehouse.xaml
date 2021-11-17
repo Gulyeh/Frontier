@@ -128,30 +128,30 @@
                             <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,60,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="itemcount" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                        <TextBox Name="itemcount" IsHitTestVisible="False" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="itemmargin" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                        <TextBox Name="itemmargin" PreviewKeyDown="CheckSpace" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                <TextBlock Text="Grupa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="50,0,0,0"/>
-                                <TextBlock Text="Kwota netto/szt" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="135,0,0,0"/>
+                                <TextBlock Text="Grupa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="60,0,0,0"/>
+                                <TextBlock Text="Kwota brutto/szt" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="135,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="134" Margin="0,0,20,0">
-                                    <ComboBox Name="warehousegroups" DisplayMemberPath="Name" Background="Transparent" BorderThickness="0" />
+                                    <ComboBox Name="warehousegroups" SelectionChanged="GroupChanged_Selection" MaxDropDownHeight="210" DisplayMemberPath="Name" Background="Transparent" BorderThickness="0" />
                                 </Border>
-                                <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="129" Margin="0,0,20,0">
+                                <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="129">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="itemnetto" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="120"/>
+                                        <TextBox Name="itembrutto" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckPrice" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="120"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
-                            <Button Click="AddItem_Clicked" Content="Dodaj produkt" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="124" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,20,0,0"/>
+                            <Button Click="AddItem_Clicked" Content="Dodaj pozycję" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="124" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,20,0,0"/>
                         </StackPanel>
                     </Border>
                     <Border Margin="0,0,10,0" Background="Transparent" BorderBrush="Black" BorderThickness="1" CornerRadius="12" Width="395">
@@ -169,30 +169,30 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,60,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="editcount" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                        <TextBox Name="editcount" IsHitTestVisible="False" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="editmargin" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                        <TextBox Name="editmargin" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                <TextBlock Text="Grupa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="50,0,0,0"/>
-                                <TextBlock Text="Kwota netto/szt" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="135,0,0,0"/>
+                                <TextBlock Text="Grupa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="60,0,0,0"/>
+                                <TextBlock Text="Kwota brutto/szt" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="135,0,0,0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="134" Margin="0,0,20,0">
-                                    <ComboBox DisplayMemberPath="Name" Name="editgroup" Background="Transparent" IsEnabled="False" BorderThickness="0" />
+                                    <ComboBox DisplayMemberPath="Name" SelectionChanged="GroupChanged_Selection" MaxDropDownHeight="210" Name="editgroup" Background="Transparent" IsEnabled="False" BorderThickness="0" />
                                 </Border>
-                                <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="129" Margin="0,0,20,0">
+                                <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="129">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="editnetto" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" IsEnabled="False" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="120"/>
+                                        <TextBox Name="editbrutto" IsHitTestVisible="False" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckPrice" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="120"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
-                            <Button Name="editbutton" Click="EditItem_Clicked" Content="Edytuj produkt" IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,20,0,0"/>
+                            <Button Name="editbutton" Click="EditItem_Clicked" Content="Edytuj pozycję" IsEnabled="False" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,20,0,0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -207,7 +207,7 @@
                         <ComboBoxItem Content="Nazwa" FontSize="10"/>
                         <ComboBoxItem Content="Grupa" FontSize="10"/>
                     </ComboBox>
-                    <Button Content="Usuń zaznaczone" Click="Delete_Clicked" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="134" Height="34" Background="DarkRed" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,2,50,2"/>
+                    <Button Content="Usuń rekordy" Click="Delete_Clicked" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="109" Height="34" Background="DarkRed" VerticalAlignment="Center" DockPanel.Dock="Right" Margin="0,5,50,5"/>
                     <Button Content="Grupy" Click="Groups_Clicked" HorizontalAlignment="Right" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="97" Height="32" Background="#2f4050" VerticalAlignment="Center" Margin="0,0,20,0"/>
                 </DockPanel>
                 <DataGrid Name="Warehouse_Grid"
@@ -227,11 +227,11 @@
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="50,10,50,0"
-                      ItemsSource="{Binding Data}">
+                      Margin="50,10,50,0">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" IsReadOnly="True" Width="60" Binding="{Binding ID}"/>
                         <DataGridTextColumn Header="Grupa" IsReadOnly="True" Width="150" Binding="{Binding GroupName}"/>
+                        <DataGridTextColumn Header="Typ" IsReadOnly="True" Width="100" Binding="{Binding GroupType}"/>
                         <DataGridTextColumn Header="Nazwa" IsReadOnly="True" Binding="{Binding Name}"/>
                         <DataGridTextColumn Header="Ilość" IsReadOnly="True" Width="60" Binding="{Binding Amount}"/>
                         <DataGridTextColumn Header="Kwota Netto" IsReadOnly="True" Width="100" Binding="{Binding Netto}"/>

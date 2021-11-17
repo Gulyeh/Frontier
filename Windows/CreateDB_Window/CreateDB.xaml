@@ -84,7 +84,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="nip" FontFamily="Calibri" FontWeight="Light" MaxLength="10" TextChanged="ValidateNIP" PreviewTextInput="NIP_CheckNumeric" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
+                                <TextBox Name="nip" PreviewKeyDown="CheckSpace" FontFamily="Calibri" FontWeight="Light" MaxLength="10" TextChanged="ValidateNIP" PreviewTextInput="NIP_CheckNumeric" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
@@ -94,7 +94,7 @@
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="147">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="regon" MaxLength="9" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
+                                <TextBox Name="regon" PreviewKeyDown="CheckSpace" MaxLength="14" TextChanged="ValidateREGON" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -106,7 +106,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,20,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="postcode" PreviewTextInput="CheckSyntax_PostCode" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                <TextBox Name="postcode" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckSyntax_PostCode" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="128" Margin="0,0,20,0">

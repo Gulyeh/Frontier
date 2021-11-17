@@ -1,0 +1,14 @@
+﻿<Window x:Class="Frontier.Windows.Invoices_Window.Archive_Window.PdfViewer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Frontier.Windows.Invoices_Window.Archive_Window"
+        mc:Ignorable="d"
+        ShowInTaskbar="False"
+        Title="Frontier" Height="950" Width="850"
+        Loaded="Viewer_Loaded" Closing="BeforeClosing">
+    <Grid>
+        <DocumentViewer x:Name="DocumentViewer"/>
+    </Grid>
+</Window>

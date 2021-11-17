@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Frontier.Database.TableClasses
 {
@@ -14,8 +9,9 @@ namespace Frontier.Database.TableClasses
         public string Group { get; set; }
         public string Name { get; set; }
         public int Amount { get; set; }
-        public double Netto { get; set; }
-        public double Brutto { get; set; }
+        public decimal Netto { get; set; }
+        public decimal Brutto { get; set; }
         public int Margin { get; set; }
+        public string VAT { get; set; }
     }
 }

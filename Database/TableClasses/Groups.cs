@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Frontier.Database.TableClasses
 {
@@ -15,5 +10,6 @@ namespace Frontier.Database.TableClasses
         public string Description { get; set; }
         public string GTU { get; set; }
         public string VAT { get; set; }
+        public int Type { get; set; }
     }
 }

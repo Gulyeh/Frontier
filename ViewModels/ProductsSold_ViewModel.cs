@@ -1,8 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Frontier.ViewModels
 {
-    public class Warehouse_ViewModel : INotifyPropertyChanged
+    public class ProductsSold_ViewModel : INotifyPropertyChanged
     {
         private int id { get; set; }
         public int ID
@@ -27,29 +32,6 @@ namespace Frontier.ViewModels
                 NotifyPropertyChanged("Name");
             }
         }
-        private string groupname { get; set; }
-        public string GroupName
-        {
-            get { return groupname; }
-            set
-            {
-                if (groupname == value) return;
-                groupname = value;
-                NotifyPropertyChanged("GroupName");
-            }
-        }
-        private string grouptype { get; set; }
-        public string GroupType
-        {
-            get { return grouptype; }
-            set
-            {
-                if (grouptype == value) return;
-                grouptype = value;
-                NotifyPropertyChanged("GroupType");
-            }
-        }
-
         private int amount { get; set; }
         public int Amount
         {
@@ -62,15 +44,27 @@ namespace Frontier.ViewModels
             }
         }
 
-        private decimal brutto { get; set; }
-        public decimal Brutto
+        private decimal piecenetto { get; set; }
+        public decimal PieceNetto
         {
-            get { return brutto; }
+            get { return piecenetto; }
             set
             {
-                if (brutto == value) return;
-                brutto = value;
-                NotifyPropertyChanged("Brutto");
+                if (piecenetto == value) return;
+                piecenetto = value;
+                NotifyPropertyChanged("PieceNetto");
+            }
+        }
+
+        private decimal piecebrutto { get; set; }
+        public decimal PieceBrutto
+        {
+            get { return piecebrutto; }
+            set
+            {
+                if (piecebrutto == value) return;
+                piecebrutto = value;
+                NotifyPropertyChanged("PieceBrutto");
             }
         }
 
@@ -98,18 +92,33 @@ namespace Frontier.ViewModels
             }
         }
 
-        private int margin { get; set; }
-        public int Margin
+        private decimal vatamount { get; set; }
+        public decimal VATAmount
         {
-            get { return margin; }
+            get { return vatamount; }
             set
             {
-                if (margin == value) return;
-                margin = value;
-                NotifyPropertyChanged("Margin");
+                if (vatamount == value) return;
+                vatamount = value;
+                NotifyPropertyChanged("VATAmount");
             }
         }
-        public int GroupID { get; set; }
+
+        private decimal brutto { get; set; }
+        public decimal Brutto
+        {
+            get { return brutto; }
+            set
+            {
+                if (brutto == value) return;
+                brutto = value;
+                NotifyPropertyChanged("Brutto");
+            }
+        }
+
+        public string GroupType { get; set; }
+        public int Margin { get; set; }
+        public string GTU { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)

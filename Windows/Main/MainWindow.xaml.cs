@@ -1,4 +1,5 @@
-﻿using Frontier.Variables;
+﻿using Frontier.Database.GetQuery;
+using Frontier.Variables;
 using Frontier.ViewModels;
 using Frontier.Windows.Analyze_Window;
 using Frontier.Windows.Auth_Window;
@@ -8,6 +9,7 @@ using Frontier.Windows.Invoices_Window;
 using Frontier.Windows.Settings_Window;
 using Frontier.Windows.Warehouse_Window;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -38,14 +40,15 @@ namespace Frontier
 
         public async Task LoadPages()
         {
-            await Task.Run(async () => {
+            await Task.Run(async () =>
+            {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    WInvoice = new Invoices();
                     WWarehouse = new Warehouse();
                     WContactors = new Contactors();
-                    WAnalyze = new Analyze();
                     WSettings = new Settings();
+                    WInvoice = new Invoices();
+                    WAnalyze = new Analyze();
                 }));
             });
         }
@@ -79,7 +82,20 @@ namespace Frontier
             Confirmation confirm = new Confirmation("Logout");
             confirm.Owner = this;
             confirm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            confirm.ShowDialog();
+            bool? data = confirm.ShowDialog();
+            if (data.HasValue && data.Value)
+            {
+                LoginModel.isLogged = false;
+                Menu_List.SelectedIndex = -1;
+                WAuth = new Auth(LoginModel);
+                Content_Frame.Content = WAuth;
+                Collections.ResetCollections();
+                WInvoice = null;
+                WWarehouse = null;
+                WContactors = null;
+                WAnalyze = null;
+                WSettings = null;
+            }
         }
     }
 }

@@ -4,8 +4,8 @@ using Frontier.Methods;
 using Frontier.Variables;
 using Frontier.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -23,35 +23,42 @@ namespace Frontier.Windows.Settings_Window
             this.DataContext = Collections.CompanyData;
             LoadSettings();
         }
-
-        private void LoadSettings()
+        private async void LoadSettings()
         {
-            GetCompanydata companydata = new GetCompanydata();
-            var query = companydata.CompanyData.FirstOrDefault(x => x.idcompanydata == 1);
-            Collections.CompanyData.Add(new CompanyData_ViewModel()
-            {
-                Name = query.Name,
-                NIP = query.NIP,
-                Street = query.Street,
-                REGON = query.REGON,
-                State = query.State,
-                PostCode = query.PostCode,
-                Country = query.Country
+            await Task.Run(async() => {
+                await this.Dispatcher.BeginInvoke(new Action(async() =>
+                {
+                    using (GetCompanydata companydata = new GetCompanydata())
+                    {
+                        var query = companydata.CompanyData.Where(x => x.idcompanydata == 1).FirstOrDefault();
+                        var data = new CompanyData_ViewModel()
+                        {
+                            Name = query.Name,
+                            NIP = query.NIP,
+                            Street = query.Street,
+                            REGON = query.REGON,
+                            State = query.State,
+                            PostCode = query.PostCode,
+                            Country = query.Country
+                        };
+                        Collections.CompanyData.Add(data);
+                    }
+                }));
             });
         }
         private void CheckNumeric(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = CheckNIP.CheckNumbers(e.Text);
+            e.Handled = Regex_Check.CheckNumbers(e.Text);
         }
         private void CheckSyntax_PostCode(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = CheckNIP.CheckPostCode(e.Text);
+            e.Handled = Regex_Check.CheckPostCode(e.Text);
         }
         private void ValidateNIP(object sender, TextChangedEventArgs e)
         {
             if (compnip.Text.Length == 10)
             {
-                bool validateNIP = CheckNIP.Checker(compnip.Text);
+                bool validateNIP = Checkers.CheckNIP(compnip.Text);
                 if (!validateNIP)
                 {
                     MessageBox.Show("NIP jest niepoprawny!");
@@ -59,33 +66,63 @@ namespace Frontier.Windows.Settings_Window
                 }
             }
         }
+        private void CheckSpace(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+        private void ValidateREGON(object sender, TextChangedEventArgs e)
+        {
+            if (compregon.Text.Length == 9 || compregon.Text.Length == 14)
+            {
+                int oldlength = compregon.Text.Length;
+                if (compregon.Text.Length == oldlength)
+                {
+                    bool validateREGON = Checkers.CheckREGON(compregon.Text);
+                    if (!validateREGON)
+                    {
+                        MessageBox.Show("REGON jest niepoprawny!");
+                        compregon.Text = String.Empty;
+                    }
+                }
+            }
+        }
         private async void Edit_CompanyData_Clicked(object sender, RoutedEventArgs e)
         {
             try
             {
-                using (GetCompanydata companydata = new GetCompanydata())
+                if (Compname.Text != string.Empty && compnip.Text != string.Empty && compstreet.Text != string.Empty && compstate.Text != string.Empty && comppostcode.Text != string.Empty && compcountry.Text != string.Empty)
                 {
-                    var data = new CompanyData()
+                    using (GetCompanydata companydata = new GetCompanydata())
                     {
-                        Name = Compname.Text,
-                        NIP = compnip.Text,
-                        REGON = compregon.Text,
-                        Street = compstreet.Text,
-                        PostCode = comppostcode.Text,
-                        State = compstate.Text,
-                        Country = compcountry.Text
-                    };
+                        var data = new CompanyData()
+                        {
+                            Name = Compname.Text,
+                            NIP = compnip.Text,
+                            REGON = compregon.Text,
+                            Street = compstreet.Text,
+                            PostCode = comppostcode.Text,
+                            State = compstate.Text,
+                            Country = compcountry.Text
+                        };
 
-                    bool updated = await companydata.UpdateCompany(data);
-                    if (updated)
-                    {
-                        companydata.SaveChanges();
-                        MessageBox.Show("Zaktualizowano dane pomyślnie.");
+                        bool updated = await companydata.UpdateCompany(data);
+                        if (updated)
+                        {
+                            companydata.SaveChanges();
+                            MessageBox.Show("Zaktualizowano dane pomyślnie.");
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException();
+                        }
                     }
-                    else
-                    {
-                        throw new ArgumentNullException();
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("Proszę uzupełnić wymagane dane.");
                 }
             }
             catch (Exception)
@@ -97,19 +134,26 @@ namespace Frontier.Windows.Settings_Window
         {
             try
             {
-                using (GetUser userdata = new GetUser(GlobalVariables.DatabaseName))
+                if (LoginData.Text != string.Empty)
                 {
-                    var update = await userdata.UpdateLogin(LoginData.Text);
-                    if (update)
+                    using (GetUser userdata = new GetUser(GlobalVariables.DatabaseName))
                     {
-                        userdata.SaveChanges();
-                        MessageBox.Show("Zaktualizowano login pomyślnie.");
-                        LoginData.Text = string.Empty;
+                        var update = await userdata.UpdateLogin(LoginData.Text);
+                        if (update)
+                        {
+                            userdata.SaveChanges();
+                            MessageBox.Show("Zaktualizowano login pomyślnie.");
+                            LoginData.Text = string.Empty;
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException();
+                        }
                     }
-                    else
-                    {
-                        throw new ArgumentNullException();
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("Proszę podać wymagane dane");
                 }
             }
             catch (Exception)
@@ -121,19 +165,27 @@ namespace Frontier.Windows.Settings_Window
         {
             try
             {
-                using (GetUser userdata = new GetUser(GlobalVariables.DatabaseName))
+                if (PasswordData.Password != string.Empty)
                 {
-                    var update = await userdata.UpdatePassword(PasswordData.Password);
-                    if (update)
+                    using (GetUser userdata = new GetUser(GlobalVariables.DatabaseName))
                     {
-                        userdata.SaveChanges();
-                        MessageBox.Show("Zaktualizowano hasło pomyślnie.");
-                        PasswordData.Password = string.Empty;
+                        var update = await userdata.UpdatePassword(PasswordData.Password);
+                        if (update)
+                        {
+                            userdata.SaveChanges();
+                            MessageBox.Show("Zaktualizowano hasło pomyślnie.");
+                            PasswordData.Password = string.Empty;
+                        }
+                        else
+                        {
+                            throw new ArgumentNullException();
+                        }
+
                     }
-                    else
-                    {
-                        throw new ArgumentNullException();
-                    }
+                }
+                else
+                {
+                    MessageBox.Show("Proszę uzupełnić dane");
                 }
             }
             catch (Exception)

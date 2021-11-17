@@ -1,9 +1,7 @@
 ﻿using Frontier.Variables;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Frontier.Database.GetQuery
@@ -52,6 +50,7 @@ namespace Frontier.Database.GetQuery
                 query.Description = data.Description;
                 query.VAT = data.VAT;
                 query.GTU = data.GTU;
+                query.Type = data.Type;
                 return true;
             }
             catch (Exception)

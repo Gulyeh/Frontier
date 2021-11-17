@@ -37,7 +37,7 @@
         <Border Width="369" Height="359" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="Black" CornerRadius="8">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Autoryzacja" FontFamily="Calibri" FontWeight="Light" FontSize="50" Foreground="Black" HorizontalAlignment="Center"/>
-                <ComboBox Name="Database_List" ItemsSource="{Binding DatabaseList}" DisplayMemberPath="ID" SelectedIndex="0" SelectionChanged="Select_Database" Background="Transparent" FontFamily="Calibri" FontWeight="Light" BorderThickness="0" Width="174" Margin="0,10,0,0"/>
+                <ComboBox Name="Database_List" MaxDropDownHeight="210" ItemsSource="{Binding DatabaseList}" DisplayMemberPath="ID" SelectedIndex="0" SelectionChanged="Select_Database" Background="Transparent" FontFamily="Calibri" FontWeight="Light" BorderThickness="0" Width="174" Margin="0,10,0,0"/>
                 <Button Click="NewDB_Clicked" Content="Nowa baza" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="87" Height="24" Background="#2f4050" Margin="0,10,0,0"/>
                 <TextBlock Text="Login" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,20,180,0"/>
                 <Border Background="LightGray" Width="262" BorderThickness="0" CornerRadius="8" Height="24">

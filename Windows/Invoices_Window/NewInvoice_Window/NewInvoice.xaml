@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:Frontier.Windows.Invoices_Window.NewInvoice_Window"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1080"
-      Title="Invoice">
+      Title="Invoice"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Page.Resources>
         <Style TargetType="DataGridColumnHeader">
@@ -111,45 +112,45 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="230"/>
+            <RowDefinition Height="260"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="70"/>
         </Grid.RowDefinitions>
+        
         <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            <Button Content="Nowa Faktura" Click="NewInvoice_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="60,0,0,15"/>
             <Border Background="Transparent" BorderBrush="Black" BorderThickness="1" CornerRadius="12" Height="200" Width="1000" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Stretch">
                         <TextBlock Text="Typ faktury" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="40,10,0,0" />
-                        <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="119" Margin="30,0,0,0">
+                        <ComboBox Name="InvoiceType" Background="Transparent" SelectionChanged="Change_InvoiceType" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="119" Margin="30,0,0,0">
                             <ComboBoxItem Content="Sprzedaż"/>
                             <ComboBoxItem Content="Proforma"/>
                             <ComboBoxItem Content="VAT Marża"/>
                         </ComboBox>
-                        <Button Content="Zapisz fakturę PDF" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
-                        <Button Content="Zapisz fakturę Word" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
-                        <Button Content="Drukuj fakturę" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
+                        <Button Content="Zapisz fakturę PDF" Click="SavePDF_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
+                        <Button Content="Zapisz fakturę Word" Click="SaveWord_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
+                        <Button Content="Drukuj fakturę" Click="Print_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="30,15,0,0">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Odbiorca" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+                            <TextBlock Text="Kupujący" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="20,0,0,0"/>
                             <TextBlock Text="Numer faktury" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="140,0,0,0"/>
                             <TextBlock Text="Data sprzedaży" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="110,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155"/>
+                            <ComboBox Name="ContactorsList" MaxDropDownHeight="210" DisplayMemberPath="Name" Background="Transparent" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155"/>
                             <Border Background="LightGray" Width="141" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text1" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="131"/>
+                                    <TextBox Name="InvoiceNumber" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="131"/>
                                 </StackPanel>
                             </Border>
                             <Border Background="LightGray" Width="127" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text2" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="118"/>
+                                    <TextBox Name="SellDate_Text" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="118"/>
                                 </StackPanel>
                             </Border>
-                            <Button BorderThickness="0" Background="Transparent" Margin="10,0,0,0">
-                                <Image Source="pack://application:,,,/Images/Calendar.png" Height="20"/>
-                            </Button>
+                            <DatePicker Name="Sell_Date" Margin="10,0,0,0" Width="29" SelectedDateChanged="SelectionDate_Clicked" BorderThickness="0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Płatność" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="20,0,0,0"/>
@@ -157,55 +158,54 @@
                             <TextBlock Text="Data faktury" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="90,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155">
+                            <ComboBox Name="PurchaseType" Background="Transparent" SelectionChanged="PurchaseType_Selection" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155">
                                 <ComboBoxItem Content="Gotówka"/>
                                 <ComboBoxItem Content="Przelew"/>
                             </ComboBox>
                             <Border Background="LightGray" Width="97" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text3" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="85"/>
+                                    <TextBox Name="DaysAmount" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="85"/>
                                 </StackPanel>
                             </Border>
                             <Border Background="LightGray" Width="169" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text4" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="158"/>
+                                    <TextBox Name="CreatedDate_Text" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="158" Height="24" VerticalAlignment="Bottom"/>
                                 </StackPanel>
                             </Border>
-                            <Button BorderThickness="0" Background="Transparent" Margin="10,0,0,0">
-                                <Image Source="pack://application:,,,/Images/Calendar.png" Height="20"/>
-                            </Button>
+                            <DatePicker Name="Created_Date" Margin="10,0,0,0" Width="29" SelectedDateChanged="SelectionDate_Clicked" BorderThickness="0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Waluta" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                            <TextBlock Text="Uwagi" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="100,0,0,0"/>
+                            <TextBlock Text="Uwagi" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="190,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="85">
+                            <ComboBox Name="CurrencyList" Background="Transparent" IsEnabled="False" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" Width="85">
                                 <ComboBoxItem Content="PLN"/>
                                 <ComboBoxItem Content="EUR"/>
                                 <ComboBoxItem Content="USD"/>
                                 <ComboBoxItem Content="GBP"/>
                             </ComboBox>
-                            <Border Background="LightGray" Width="396" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
+                            <Button Name="DownloadCurrency_Button" Content="Pobierz kursy" Click="DownloadCurrencies_Values" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="98" Height="24" Background="#2f4050" Margin="5,0,0,0"/>
+                            <Border Background="LightGray" Width="307" BorderThickness="0" CornerRadius="8" Height="24" Margin="20,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text5" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="385"/>
+                                    <TextBox Name="Description" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="295"/>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Margin="30,0,0,0" VerticalAlignment="Center">
                         <Border Width="250" Height="126" Background="Transparent" BorderBrush="Black" BorderThickness="1" CornerRadius="12">
-                            <StackPanel IsEnabled="False" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <TextBlock Text="Nazwa banku" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="30,0,0,0"/>
                                 <Border Background="LightGray" Width="230" BorderThickness="0" CornerRadius="8" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="9,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="Text6" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="220"/>
+                                        <TextBox Name="Bankname" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="220"/>
                                     </StackPanel>
                                 </Border>
                                 <TextBlock Text="Numer konta" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="30,10,0,0"/>
                                 <Border Background="LightGray" Width="230" BorderThickness="0" CornerRadius="8" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="9,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBox Name="Text7" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="220"/>
+                                        <TextBox Name="Accountnumber" PreviewTextInput="CheckNumeric" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="220"/>
                                     </StackPanel>
                                 </Border>
 
@@ -217,13 +217,14 @@
         </StackPanel>
         <DockPanel Height="Auto" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
-                <DataGrid Name="Invoice_Grid"
+                <DataGrid Name="Products_Grid"
                       GridLinesVisibility="None"
                       HorizontalScrollBarVisibility="Disabled"
                       RowHeaderWidth="0"
                       AlternationCount="2"
                       AutoGenerateColumns="False"
                       BorderThickness="0" 
+                      SizeChanged="ReCalculateValue"
                       CanUserReorderColumns="False" 
                       CanUserResizeColumns="False"
                       CanUserResizeRows="False"
@@ -234,29 +235,32 @@
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="30,10,30,0"
-                      ItemsSource="{Binding Data}">
+                      Margin="30,10,30,0">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Width="40"/>
-                        <DataGridTextColumn Header="Nazwa" Binding="{Binding ID}"/>
-                        <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Group}"/>
-                        <DataGridTextColumn Header="Cena jednostki" Width="100" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="VAT" Width="60" Binding="{Binding Count}"/>
-                        <DataGridTextColumn Header="Kwota netto" Width="120" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="Wartość VATu" Width="120" Binding="{Binding Brutto}"/>
-                        <DataGridTextColumn Header="Kwota brutto" Width="120" Binding="{Binding VAT}"/>
+                        <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Amount}"/>
+                        <DataGridTextColumn Header="Cena netto" Width="100" Binding="{Binding PieceNetto}"/>
+                        <DataGridTextColumn Header="VAT" Width="60" Binding="{Binding VAT}"/>
+                        <DataGridTextColumn Header="Cena brutto" Width="100" Binding="{Binding PieceBrutto}"/>
+                        <DataGridTextColumn Header="Wartość netto" Width="120" Binding="{Binding Netto}"/>
+                        <DataGridTextColumn Header="Wartość VATu" Width="120" Binding="{Binding VATAmount}"/>
+                        <DataGridTextColumn Header="Wartość brutto" Width="120" Binding="{Binding Brutto}"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </ScrollViewer>
         </DockPanel>
         <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button Content="Dodaj produkt" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="30,0,0,0"/>
-            <Button Content="Usuń zaznaczone" HorizontalAlignment="Left" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="DarkRed" Margin="10,0,0,0"/>
-            <Button Content="Zapisz fakturę" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="40,0,0,0"/>
+            <Button Content="Dodaj produkt" Click="AddProduct_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="30,0,0,0"/>
+            <Button Content="Usuń zaznaczone" Click="Delete_Clicked" HorizontalAlignment="Left" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="DarkRed" Margin="10,0,0,0"/>
+            <Button Content="Zapisz fakturę" Click="SaveInvoice_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="40,0,0,0"/>
             <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
-                <TextBlock Text="0,00" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding ProductsValue}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
-            <TextBlock Text="Wartość" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBlock Text="Wartość" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+            <Border Name="Proform_Value" DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
+                <TextBox Name="Proform_Paid" LostFocus="ResetValue" PreviewTextInput="Check_PaidValue" Text="0" FontFamily="Calibri" BorderThickness="0" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+            <TextBlock Name="Proform_Text" Text="Zapłacono" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         </DockPanel>
     </Grid>
 </Page>

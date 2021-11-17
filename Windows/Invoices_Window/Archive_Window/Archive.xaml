@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:Frontier.Windows.Invoices_Window.Archive_Window"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1080"
-      Title="Archive">
+      Title="Archive"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Page.Resources>
         <Style TargetType="DataGridColumnHeader">
@@ -119,30 +120,26 @@
             <TextBlock Text="Od" FontSize="10" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="40,0,0,0"/>
             <Border Background="LightGray" Width="169" BorderThickness="0" CornerRadius="8" Height="24" Margin="10,0,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Name="Text4" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="158"/>
+                    <TextBox Name="BeginDate" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="158"/>
                 </StackPanel>
             </Border>
-            <Button BorderThickness="0" Background="Transparent" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Image Source="pack://application:,,,/Images/Calendar.png" Height="20"/>
-            </Button>
+            <DatePicker Name="From_Date" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Width="29" SelectedDateChanged="SelectionDate_Clicked" BorderThickness="0"/>
             <TextBlock Text="Do" FontSize="10" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0"/>
             <Border Background="LightGray" Width="169" BorderThickness="0" CornerRadius="8" Height="24" Margin="10,0,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Name="Text5" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="158"/>
+                    <TextBox Name="EndDate" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="158"/>
                 </StackPanel>
             </Border>
-            <Button BorderThickness="0" Background="Transparent" Margin="10,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                <Image Source="pack://application:,,,/Images/Calendar.png" Height="20"/>
-            </Button>
-            <Button Content="Filtruj" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="78" Background="#2f4050" Margin="20,0,0,0" Height="25"/>
-            <ComboBox Background="Transparent" SelectedIndex="0" FontSize="10" BorderThickness="0" Width="107" Height="20" DockPanel.Dock="Right" Margin="0,0,30,0">
+            <DatePicker Name="Until_Date" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Width="29" SelectedDateChanged="SelectionDate_Clicked" BorderThickness="0"/>
+            <Button Click="GetInvoices" Content="Filtruj" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="78" Background="#2f4050" Margin="20,0,0,0" Height="25"/>
+            <ComboBox Name="SearchType" Background="Transparent" SelectedIndex="0" FontSize="10" BorderThickness="0" Width="107" Height="20" DockPanel.Dock="Right" Margin="0,0,30,0">
                 <ComboBoxItem Content="Numer faktury" FontSize="10"/>
                 <ComboBoxItem Content="Kontrahent" FontSize="10"/>
             </ComboBox>
             <Border Background="LightGray" HorizontalAlignment="Right" VerticalAlignment="Center" Width="218" Margin="0,0,10,0" BorderThickness="0" CornerRadius="8" Height="24">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="pack://application:,,,/Images/Search.png" Height="15" Margin="5,0,0,0"/>
-                    <TextBox Name="SearchBox" FontFamily="Calibri" FontWeight="Light" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="187"/>
+                    <TextBox Name="SearchBox" TextChanged="Search_Invoice" FontFamily="Calibri" FontWeight="Light" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="187"/>
                 </StackPanel>
             </Border>
         </DockPanel>
@@ -165,32 +162,22 @@
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="30,10,30,0"
-                      ItemsSource="{Binding Data}">
+                      Margin="30,10,30,0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Typ" IsReadOnly="True" Width="120" Binding="{Binding Type}"/>
-                        <DataGridTextColumn Header="Numer" IsReadOnly="True" Binding="{Binding ID}"/>
-                        <DataGridTextColumn Header="Kontrahent" IsReadOnly="True" Width="120" Binding="{Binding Buyer}"/>
-                        <DataGridTextColumn Header="NIP" IsReadOnly="True" Width="120" Binding="{Binding NIP}"/>
-                        <DataGridTextColumn Header="Wartość netto" IsReadOnly="True" Width="120" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="VAT" IsReadOnly="True" Width="60" Binding="{Binding VAT}"/>
-                        <DataGridTextColumn Header="Wartość brutto" IsReadOnly="True" Width="120" Binding="{Binding Brutto}"/>
-                        <DataGridTextColumn Header="Data wystawienia" IsReadOnly="True" Width="120" Binding="{Binding Created_Date}"/>
-                        <DataGridTextColumn Header="Data korekty" IsReadOnly="True" Width="100" Binding="{Binding Correction_Date}"/>
+                        <DataGridTextColumn Header="ID" IsReadOnly="True" Width="60" Binding="{Binding ID}"/>
+                        <DataGridTextColumn Header="Typ" IsReadOnly="True" Width="80" Binding="{Binding InvoiceType}"/>
+                        <DataGridTextColumn Header="Numer" IsReadOnly="True" Binding="{Binding InvoiceID}"/>
+                        <DataGridTextColumn Header="Kontrahent" IsReadOnly="True" Width="200" Binding="{Binding Contactor}"/>
+                        <DataGridTextColumn Header="NIP" IsReadOnly="True" Width="120" Binding="{Binding ContactorNIP}"/>
+                        <DataGridTextColumn Header="Wartość netto" IsReadOnly="True" Width="100" Binding="{Binding Netto}"/>
+                        <DataGridTextColumn Header="Wartość VAT" IsReadOnly="True" Width="100" Binding="{Binding VATAmount}"/>
+                        <DataGridTextColumn Header="Wartość brutto" IsReadOnly="True" Width="100" Binding="{Binding Brutto}"/>
+                        <DataGridTextColumn Header="Data wystawienia" IsReadOnly="True" Width="100" Binding="{Binding Created_Date, StringFormat='{}{0:dd.MM.yyyy}'}"/>
                         <DataGridTemplateColumn Width="40">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button BorderThickness="0" Background="Transparent">
-                                        <Image Source="pack://application:,,,/Images/printer.png" Height="20"/>
-                                    </Button>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Width="40">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button BorderThickness="0" Background="Transparent">
-                                        <Image Source="pack://application:,,,/Images/pencil.png" Height="20"/>
+                                    <Button Click="OpenPreview" BorderThickness="0" Background="Transparent">
+                                        <Image Source="pack://application:,,,/Images/Eye.png" Height="20"/>
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -201,16 +188,16 @@
         </StackPanel>
         <DockPanel Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
-                <TextBlock Text="0,00" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalPrice_Netto}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
             <TextBlock Text="Wartość Netto" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" DockPanel.Dock="Right" VerticalAlignment="Center"/>
 
             <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
-                <TextBlock Text="0,00" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding TotalPrice_Brutto}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
             <TextBlock Text="Ilość faktur" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0,0,0"/>
             <Border DockPanel.Dock="Left" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
-                <TextBlock Text="0" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding InvoicesAmount}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
             <TextBlock Text="Wartość Brutto" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         </DockPanel>

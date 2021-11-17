@@ -64,7 +64,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="compnip" Text="{Binding NIP}" PreviewTextInput="CheckNumeric" TextChanged="ValidateNIP" MaxLength="10" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
+                                <TextBox Name="compnip" PreviewKeyDown="CheckSpace" Text="{Binding NIP}" PreviewTextInput="CheckNumeric" TextChanged="ValidateNIP" MaxLength="10" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="106"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="118" Margin="0,0,10,0">
@@ -74,7 +74,7 @@
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="147">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="compregon" Text="{Binding REGON}" MaxLength="9" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
+                                <TextBox Name="compregon" PreviewKeyDown="CheckSpace" Text="{Binding REGON}" MaxLength="14" TextChanged="ValidateREGON" PreviewTextInput="CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="136"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -86,7 +86,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="79" Margin="0,0,20,0">
                             <StackPanel Orientation="Horizontal">
-                                <TextBox Name="comppostcode" Text="{Binding PostCode}" PreviewTextInput="CheckSyntax_PostCode" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
+                                <TextBox Name="comppostcode" PreviewKeyDown="CheckSpace" Text="{Binding PostCode}" PreviewTextInput="CheckSyntax_PostCode" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="69"/>
                             </StackPanel>
                         </Border>
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="128" Margin="0,0,20,0">

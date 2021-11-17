@@ -2,16 +2,17 @@
 using Frontier.Variables;
 using Frontier.ViewModels;
 using Frontier.Windows.CreateDB_Window;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Frontier.Windows.Auth_Window
 {
@@ -51,32 +52,39 @@ namespace Frontier.Windows.Auth_Window
         }
         private async void Login_Clicked(object sender, RoutedEventArgs e)
         {
-            await Task.Run(async () => {
-                await this.Dispatcher.BeginInvoke(new Action(async () =>
+            await Task.Run(async() =>
+            {
+                await Dispatcher.BeginInvoke(new Action(async() =>
                 {
                     try
                     {
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+                        await Task.Delay(500);
                         if (Login.Text != string.Empty && Password.Password != string.Empty)
                         {
                             SelectedDB = false;
-                            GetUser User = new GetUser(DatabaseList[Database_List.SelectedIndex].ID);
-                            var query = User.User.FirstOrDefault(x => x.idUser == 1);
-                            if (query.Login == Convert.ToBase64String(Encoding.ASCII.GetBytes(Login.Text)) && query.Password == Convert.ToBase64String(Encoding.ASCII.GetBytes(Password.Password)))
+                            using (GetUser User = new GetUser(DatabaseList[Database_List.SelectedIndex].ID))
                             {
-                                GlobalVariables.DatabaseName = DatabaseList[Database_List.SelectedIndex].ID;
-                                await ((MainWindow)Application.Current.MainWindow).LoadPages();
-                                LoginModel.isLogged = true;
-                                ((MainWindow)Application.Current.MainWindow).Menu_List.SelectedIndex = 0;
+                                var query = User.User.FirstOrDefault();
+                                if (query.Login == Convert.ToBase64String(Encoding.ASCII.GetBytes(Login.Text)) && query.Password == Convert.ToBase64String(Encoding.ASCII.GetBytes(Password.Password)))
+                                {
+                                    GlobalVariables.DatabaseName = DatabaseList[Database_List.SelectedIndex].ID;
+                                    await ((MainWindow)Application.Current.MainWindow).LoadPages();
+                                    LoginModel.isLogged = true;
+                                    ((MainWindow)Application.Current.MainWindow).Menu_List.SelectedIndex = 0;
+                                }
+                                else
+                                {
+                                    throw new ArgumentNullException();
+                                }
                             }
-                            else
-                            {
-                                MessageBox.Show("Wrong login or password");
-                            }
-                            SelectedDB = true;
                         }
+                        SelectedDB = true;
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                     }
                     catch (Exception)
                     {
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                         MessageBox.Show("Wrong login or password");
                         SelectedDB = true;
                     }
@@ -111,7 +119,7 @@ namespace Frontier.Windows.Auth_Window
             if (Directory.Exists(path))
             {
                 DirectoryInfo d = new DirectoryInfo(path);
-                foreach(var file in d.GetFiles("*.sqlite"))
+                foreach (var file in d.GetFiles("*.sqlite"))
                 {
                     DatabaseList.Add(new DatabaseList_ViewModel { ID = file.Name.Replace(".sqlite", "") });
                 }

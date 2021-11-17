@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Frontier.ViewModels
 {
     public class DatabaseList_ViewModel : INotifyPropertyChanged
     {
-        private string id{ get; set; }
+        private string id { get; set; }
         public string ID
         {
             get { return id; }

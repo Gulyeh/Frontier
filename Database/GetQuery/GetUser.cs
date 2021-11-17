@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +13,15 @@ namespace Frontier.Database.GetQuery
         {
             db_name = dbname;
         }
-
+        
         public DbSet<TableClasses.User> User { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=./Database/"+db_name+".sqlite");
+
+                optionsBuilder.UseSqlite("Data Source=./Database/" + db_name + ".sqlite");
         }
+
         public async Task<bool> UpdateLogin(string newlogin)
         {
             try

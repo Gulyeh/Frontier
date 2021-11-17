@@ -1,17 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace Frontier.Methods
 {
     class Calculate
     {
-        public static double GetBrutto(double vat, double netto)
+        public static decimal GetNetto(decimal vat, decimal brutto)
         {
-            var amount = netto + (netto * (vat / 100));
+            var amount = brutto / (1+(vat / 100));
             return Math.Round(amount, 2);
+        }
+        public static decimal GetMarginVAT(decimal vat, decimal BruttoBuy, decimal BruttoSell)
+        {
+            decimal amount;
+            if (BruttoSell <= BruttoBuy)
+            {
+                amount = 0;
+            }
+            else
+            {
+                decimal BruttoMargin = BruttoSell - BruttoBuy;
+                decimal NettoMargin = BruttoMargin / (1 + (vat / 100));
+                amount = BruttoMargin - NettoMargin;
+            }
+
+            return decimal.Parse(String.Format("{0:0.00}", Math.Round(amount, 2)));
         }
     }
 }

@@ -6,7 +6,6 @@ using Frontier.Windows.Confirmation_Window;
 using Frontier.Windows.Groups_Window;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,78 +20,93 @@ namespace Frontier.Windows.Warehouse_Window
     public partial class Warehouse : Page
     {
         private int ItemID { get; set; }
+        private int LastIndex { get; set; }
+        private string SelectedGroupType { get; set; }
 
         public Warehouse()
         {
             InitializeComponent();
-            Warehouse_Grid.ItemsSource = Collections.WarehouseData;
             warehousegroups.ItemsSource = Collections.GroupsData;
             editgroup.ItemsSource = Collections.GroupsData;
             LoadWarehouse();
+            Warehouse_Grid.ItemsSource = Collections.WarehouseData;
         }
-
         private async void LoadWarehouse()
         {
-            await Task.Run(async() => 
+            try
             {
-                await this.Dispatcher.BeginInvoke(new Action(() => { 
-                    using (GetGroups groups = new GetGroups())
+                await Task.Run(async () =>
+                {
+                    await this.Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        var query = groups.Groups;
-                        foreach (var data in query)
+                        using (GetGroups groups = new GetGroups())
                         {
-                            Collections.GroupsData.Add(new Groups_ViewModel
+                            var query = groups.Groups;
+                            foreach (var data in query)
                             {
-                                ID = data.idgroups,
-                                Name = data.Name,
-                                Description = data.Description,
-                                GTU = data.GTU,
-                                VAT = data.VAT
-                            });
+                                Collections.GroupsData.Add(new Groups_ViewModel
+                                {
+                                    ID = data.idgroups,
+                                    Name = data.Name,
+                                    Description = data.Description,
+                                    GTU = data.GTU,
+                                    VAT = data.VAT,
+                                    Type = data.Type
+                                });
+                            }
                         }
-                    }
 
-                    using (GetWarehouse warehouse = new GetWarehouse())
-                    {
-                        var query = warehouse.Warehouse;
-                        foreach (var data in query)
+                        using (GetWarehouse warehouse = new GetWarehouse())
                         {
-                            Collections.WarehouseData.Add(new Warehouse_ViewModel
+                            var query = warehouse.Warehouse;
+                            foreach (var data in query)
                             {
-                                ID = data.idWarehouse,
-                                GroupID = Int32.Parse(data.Group),
-                                GroupName = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Name,
-                                Name = data.Name,
-                                Amount = data.Amount,
-                                Brutto = data.Brutto,
-                                Netto = data.Netto,
-                                VAT = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().VAT,
-                                Margin = data.Margin
-                            });
+                                Collections.WarehouseData.Add(new Warehouse_ViewModel
+                                {
+                                    ID = data.idWarehouse,
+                                    GroupID = Int32.Parse(data.Group),
+                                    GroupName = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Name,
+                                    GroupType = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Type == 0 ? "Towar" : "Usługa",
+                                    Name = data.Name,
+                                    Amount = data.Amount,
+                                    Brutto = decimal.Parse(String.Format("{0:0.00}", data.Brutto)),
+                                    Netto = decimal.Parse(String.Format("{0:0.00}", data.Netto)),
+                                    VAT = data.VAT.ToString(),
+                                    Margin = data.Margin
+                                });
+                            }
                         }
-                    }
-                }));
-            });
+                    }));
+                });
+            }
+            catch (Exception)
+            {
+                Collections.GroupsData.Clear();
+                Collections.WarehouseData.Clear();
+                LoadWarehouse();
+            }
         }
+
         private async void AddItem_Clicked(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (itemname.Text != string.Empty && itemcount.Text != string.Empty && itemnetto.Text != string.Empty && warehousegroups.SelectedIndex > -1)
+                if (itemname.Text != string.Empty && itemcount.Text != string.Empty && itembrutto.Text != string.Empty && warehousegroups.SelectedIndex > -1)
                 {
                     using (GetWarehouse add_itemWarehouse = new GetWarehouse())
                     {
                         var isNumericMargin = int.TryParse(itemmargin.Text, out int margin);
-                        var isNumericVAT = double.TryParse(Collections.GroupsData[warehousegroups.SelectedIndex].VAT, out double vat);
+                        var isNumericVAT = decimal.TryParse(Collections.GroupsData[warehousegroups.SelectedIndex].VAT, out decimal vat);
 
                         var data = new Database.TableClasses.Warehouse()
                         {
                             Name = itemname.Text,
                             Group = Collections.GroupsData[warehousegroups.SelectedIndex].ID.ToString(),
                             Amount = int.Parse(itemcount.Text),
-                            Netto = double.Parse(itemnetto.Text),
+                            Brutto = Math.Round(decimal.Parse(itembrutto.Text),2),
                             Margin = isNumericMargin == true ? margin : 0,
-                            Brutto = isNumericVAT == true ? Calculate.GetBrutto(vat, double.Parse(itemnetto.Text)) : double.Parse(itemnetto.Text)
+                            Netto = isNumericVAT == true ? Calculate.GetNetto(vat, decimal.Parse(itembrutto.Text)) : Math.Round(decimal.Parse(itembrutto.Text), 2),
+                            VAT = Collections.GroupsData[warehousegroups.SelectedIndex].VAT
                         };
 
                         var update = await add_itemWarehouse.AddItem(data);
@@ -107,11 +121,12 @@ namespace Frontier.Windows.Warehouse_Window
                                 Name = itemname.Text,
                                 GroupName = Collections.GroupsData[warehousegroups.SelectedIndex].Name,
                                 GroupID = Collections.GroupsData[warehousegroups.SelectedIndex].ID,
+                                GroupType = Collections.GroupsData[warehousegroups.SelectedIndex].Type == 0 ? "Towar" : "Usługa",
                                 Amount = int.Parse(itemcount.Text),
-                                Netto = double.Parse(itemnetto.Text),
+                                Brutto = decimal.Parse(String.Format("{0:0.00}", data.Brutto)),
                                 Margin = data.Margin,
-                                VAT = Collections.GroupsData[warehousegroups.SelectedIndex].VAT,
-                                Brutto = data.Brutto
+                                VAT = data.VAT,
+                                Netto = decimal.Parse(String.Format("{0:0.00}", data.Netto))
                             };
 
                             Collections.WarehouseData.Add(new_data);
@@ -129,7 +144,7 @@ namespace Frontier.Windows.Warehouse_Window
                     MessageBox.Show("Proszę wypełnić wymagane pola");
                 }
             }
-            catch (Exception)
+            catch (Exception d)
             {
                 MessageBox.Show("Wystąpił błąd podczas dodawania danych");
             }
@@ -138,10 +153,31 @@ namespace Frontier.Windows.Warehouse_Window
         {
             try
             {
-                if (editname.Text != string.Empty && editcount.Text != string.Empty && editnetto.Text != string.Empty && editgroup.SelectedIndex > -1)
+                if (editname.Text != string.Empty && editcount.Text != string.Empty && editbrutto.Text != string.Empty && editgroup.SelectedIndex > -1)
                 {
                     var isNumericMargin = int.TryParse(editmargin.Text, out int margin);
-                    var isNumericVAT = double.TryParse(Collections.GroupsData[editgroup.SelectedIndex].VAT, out double vat);
+                    decimal NettoPrice = 0;
+                    string VAT = "";
+
+                    if(Collections.GroupsData[editgroup.SelectedIndex].Type == 1) // if jest usługa
+                    {
+                        VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
+                        var isNumericVAT = decimal.TryParse(Collections.GroupsData[editgroup.SelectedIndex].VAT, out decimal vat);
+                        NettoPrice = isNumericVAT == true ? Calculate.GetNetto(vat, decimal.Parse(editbrutto.Text)) : editbrutto.Text.Contains(',') ? Math.Round(decimal.Parse(editbrutto.Text), 2) : Math.Round(decimal.Parse(editbrutto.Text + ",00"), 2);
+                    }
+                    else // if jest towar
+                    {
+                        if(int.Parse(editcount.Text) == 0)
+                        {
+                            VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
+                            NettoPrice = 0.00m;
+                        }
+                        else
+                        {
+                            VAT = Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault().VAT;
+                            NettoPrice = Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault().Netto;
+                        }
+                    }
 
                     using (GetWarehouse edit_item = new GetWarehouse())
                     {
@@ -151,12 +187,13 @@ namespace Frontier.Windows.Warehouse_Window
                             Name = editname.Text,
                             Amount = int.Parse(editcount.Text),
                             Group = Collections.GroupsData[editgroup.SelectedIndex].ID.ToString(),
-                            Netto = double.Parse(editnetto.Text),
+                            Brutto = editbrutto.Text.Contains(',') ? Math.Round(decimal.Parse(editbrutto.Text), 2) : Math.Round(decimal.Parse(editbrutto.Text + ",00"), 2),
                             Margin = isNumericMargin == true ? margin : 0,
-                            Brutto = isNumericVAT == true ? Calculate.GetBrutto(vat, double.Parse(editnetto.Text)) : double.Parse(editnetto.Text)
+                            Netto = NettoPrice,
+                            VAT = VAT
                         };
-
                         var update = await edit_item.EditItem(data);
+
                         if (update)
                         {
                             await edit_item.SaveChangesAsync();
@@ -166,13 +203,16 @@ namespace Frontier.Windows.Warehouse_Window
                                 Name = editname.Text,
                                 GroupName = Collections.GroupsData[editgroup.SelectedIndex].Name,
                                 GroupID = Collections.GroupsData[editgroup.SelectedIndex].ID,
-                                Amount = int.Parse(editcount.Text),
-                                Netto = double.Parse(editnetto.Text),
+                                GroupType = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Type == 0 ? "Towar" : "Usługa",
+                                Amount = data.Amount,
+                                Brutto = data.Brutto,
                                 Margin = data.Margin,
-                                VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT,
-                                Brutto = data.Brutto
+                                VAT = VAT,
+                                Netto = data.Netto
                             };
+
                             Collections.WarehouseData[Collections.WarehouseData.IndexOf(Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault())] = new_data;
+                            if(Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault() != null) { Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault().Name = editname.Text; }
 
                             //Workaround for updating datagrid if user searched data
                             if (SearchBox.Text.Length > 0)
@@ -183,7 +223,7 @@ namespace Frontier.Windows.Warehouse_Window
                             }
 
                             MessageBox.Show("Pomyślnie zaktualizowano dane");
-                            Switch_EditFields(0);
+                            Switch_EditFields(0, null);
                             ResetFillData("edit");
                         }
                         else
@@ -192,10 +232,14 @@ namespace Frontier.Windows.Warehouse_Window
                         }
                     }
                 }
+                else
+                {
+                    MessageBox.Show("Proszę uzupełnić wymagane dane");
+                }
             }
-            catch (Exception)
+            catch (Exception d)
             {
-                MessageBox.Show("Wystąpił błąd podczas aktualizacji danych");
+                MessageBox.Show(d+"Wystąpił błąd podczas aktualizacji danych");
             }
         }
         private void EditRow_Clicked(object sender, RoutedEventArgs e)
@@ -212,10 +256,12 @@ namespace Frontier.Windows.Warehouse_Window
         {
             editname.Text = data.Name;
             editcount.Text = data.Amount.ToString();
-            editnetto.Text = data.Netto.ToString();
+            editbrutto.Text = data.Brutto.ToString();
             editmargin.Text = data.Margin.ToString();
-            editgroup.SelectedIndex = Collections.GroupsData.IndexOf(Collections.GroupsData.Where(x => x.ID == data.GroupID).FirstOrDefault());
-            Switch_EditFields(1);
+            SelectedGroupType = data.GroupType;
+            LastIndex = Collections.GroupsData.IndexOf(Collections.GroupsData.Where(x => x.ID == data.GroupID).FirstOrDefault());
+            editgroup.SelectedIndex = LastIndex;
+            Switch_EditFields(1, data);
         }
         private void ResetFillData(string data)
         {
@@ -225,14 +271,14 @@ namespace Frontier.Windows.Warehouse_Window
                     itemname.Text = string.Empty;
                     itemcount.Text = string.Empty;
                     itemmargin.Text = string.Empty;
-                    itemnetto.Text = string.Empty;
+                    itembrutto.Text = string.Empty;
                     warehousegroups.SelectedIndex = -1;
                     break;
                 case "edit":
                     editname.Text = string.Empty;
                     editcount.Text = string.Empty;
                     editmargin.Text = string.Empty;
-                    editnetto.Text = string.Empty;
+                    editbrutto.Text = string.Empty;
                     editgroup.SelectedIndex = -1;
                     break;
                 default:
@@ -241,7 +287,45 @@ namespace Frontier.Windows.Warehouse_Window
         }
         private void CheckNumeric(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = CheckNIP.CheckNumbers(e.Text);
+            e.Handled = Regex_Check.CheckNumbers(e.Text);
+        }
+        private void CheckSpace(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+        private void CheckPrice(object sender, TextCompositionEventArgs e)
+        {
+            if (Regex_Check.CheckNumbers(e.Text))
+            {
+                if (((TextBox)sender).Text.Length != 0)
+                {
+                    if (e.Text == ",")
+                    {
+                        if (((TextBox)sender).Text.Contains(","))
+                        {
+                            e.Handled = true;
+                        }
+                    }
+                    else
+                    {
+                        e.Handled = true;
+                    }
+                }
+                else
+                {
+                    e.Handled = true;
+                }
+            }
+            else
+            {
+                if(((TextBox)sender).Text.Length == 0 && e.Text == "0")
+                {
+                    e.Handled = true;
+                }
+            }
         }
         private void Delete_Clicked(object sender, RoutedEventArgs e)
         {
@@ -263,7 +347,10 @@ namespace Frontier.Windows.Warehouse_Window
                     List<int> ids = new List<int>();
                     foreach (Warehouse_ViewModel data in Warehouse_Grid.SelectedItems)
                     {
-                        ids.Add(data.ID);
+                        if (data.GroupType == "Usługa" || data.Amount == 0)
+                        {
+                            ids.Add(data.ID);
+                        }
                     }
 
                     using (GetWarehouse delete_item = new GetWarehouse())
@@ -297,25 +384,32 @@ namespace Frontier.Windows.Warehouse_Window
             groups.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             groups.ShowDialog();
         }
-        private void Switch_EditFields(int data)
+        private void Switch_EditFields(int data, Warehouse_ViewModel wdata)
         {
             switch (data)
             {
                 case 0:
                     editname.IsEnabled = false;
-                    editcount.IsEnabled = false;
+                    editcount.IsHitTestVisible = false;
                     editmargin.IsEnabled = false;
-                    editnetto.IsEnabled = false;
+                    editbrutto.IsHitTestVisible = false;
                     editgroup.IsEnabled = false;
                     editbutton.IsEnabled = false;
                     break;
                 case 1:
                     editname.IsEnabled = true;
-                    editcount.IsEnabled = true;
                     editmargin.IsEnabled = true;
-                    editnetto.IsEnabled = true;
-                    editgroup.IsEnabled = true;
                     editbutton.IsEnabled = true;
+                    if (wdata.GroupType == "Usługa")
+                    {
+                        editgroup.IsEnabled = false;
+                        editbrutto.IsHitTestVisible = true;
+                    }
+                    else
+                    {
+                        editgroup.IsEnabled = true;
+                        editbrutto.IsHitTestVisible = false;
+                    }
                     break;
                 default:
                     break;
@@ -323,13 +417,66 @@ namespace Frontier.Windows.Warehouse_Window
         }
         private void Find_Item(object sender, RoutedEventArgs e)
         {
-            if(SearchBox.Text.Length == 0)
+            if (SearchBox.Text.Length == 0)
             {
                 Warehouse_Grid.ItemsSource = Collections.WarehouseData;
             }
             else
             {
                 Warehouse_Grid.ItemsSource = SearchType.SelectedIndex == 0 ? Collections.WarehouseData.Where(x => x.Name.ToLower().Contains(SearchBox.Text)) : Collections.WarehouseData.Where(x => x.GroupName.ToLower().Contains(SearchBox.Text));
+            }
+        }
+        private void GroupChanged_Selection(object sender, RoutedEventArgs e)
+        {
+            if (((ComboBox)sender).Name == "warehousegroups")
+            {
+                if (warehousegroups.SelectedIndex > -1)
+                {
+                    if (Collections.GroupsData[warehousegroups.SelectedIndex].Type == 1)
+                    {
+                        itemcount.Text = "1";
+                        itembrutto.Text = "";
+                        itembrutto.IsHitTestVisible = true;
+                    }
+                    else
+                    {
+                        itemcount.Text = "0";
+                        itembrutto.Text = "0,00";
+                        itembrutto.IsHitTestVisible = false;
+                    }
+                }
+            }
+            else
+            {
+                if (editgroup.SelectedIndex > -1 && editgroup.SelectedIndex != LastIndex)
+                {
+                    if (SelectedGroupType != (Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa") && int.Parse(editcount.Text) > 0 && SelectedGroupType != "Usługa")
+                    {
+                        editgroup.SelectedIndex = LastIndex;
+                        MessageBox.Show("Nie można zmienić typu grupy gdyż towar dalej widnieje na magazynie");
+                    }
+                    else if(SelectedGroupType != (Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa"))
+                    {
+                        if(Collections.GroupsData[editgroup.SelectedIndex].Type == 0)
+                        {
+                            editcount.Text = "0";
+                            editbrutto.Text = "0,00";
+                            editbrutto.IsHitTestVisible = false;
+                        }
+                        else
+                        {
+                            editcount.Text = "1";
+                            editbrutto.Text = "";
+                            editbrutto.IsHitTestVisible = true;
+                        }
+                        SelectedGroupType = Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa";
+                        LastIndex = editgroup.SelectedIndex;
+                    }
+                    else
+                    {
+                        LastIndex = editgroup.SelectedIndex;
+                    }
+                }
             }
         }
     }

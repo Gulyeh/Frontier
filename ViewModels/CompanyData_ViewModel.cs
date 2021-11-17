@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Frontier.ViewModels
 {
@@ -41,7 +36,7 @@ namespace Frontier.ViewModels
             {
                 if (street == value) return;
                 street = value;
-                NotifyPropertyChanged("Address");
+                NotifyPropertyChanged("Street");
             }
         }
 
@@ -89,7 +84,7 @@ namespace Frontier.ViewModels
             {
                 if (country == value) return;
                 country = value;
-                NotifyPropertyChanged("Address");
+                NotifyPropertyChanged("Country");
             }
         }
 

@@ -21,7 +21,6 @@ namespace Frontier.Windows.Groups_Window
             InitializeComponent();
             GroupList.ItemsSource = Collections.GroupsData;
         }
-
         private async void CreateGroup_Clicked(object sender, RoutedEventArgs e)
         {
             try
@@ -35,7 +34,8 @@ namespace Frontier.Windows.Groups_Window
                             Name = groupname.Text,
                             Description = groupdescription.Text,
                             VAT = groupvat.Text.Replace("%", ""),
-                            GTU = groupgtu.Text
+                            GTU = groupgtu.Text,
+                            Type = type.SelectedIndex
                         };
 
                         var updated = await group.AddGroups(data);
@@ -49,7 +49,8 @@ namespace Frontier.Windows.Groups_Window
                                 Name = groupname.Text,
                                 Description = groupdescription.Text,
                                 VAT = groupvat.Text.Replace("%", ""),
-                                GTU = groupgtu.Text
+                                GTU = groupgtu.Text,
+                                Type = type.SelectedIndex
                             };
                             Collections.GroupsData.Add(vm);
                             MessageBox.Show("Pomyślnie dodano grupę");
@@ -66,9 +67,8 @@ namespace Frontier.Windows.Groups_Window
                     MessageBox.Show("Proszę podać nazwę grupy");
                 }
             }
-            catch (Exception d)
+            catch (Exception)
             {
-                MessageBox.Show(d.ToString());
                 MessageBox.Show("Wystąpił błąd podczas tworzenia grupy");
             }
         }
@@ -85,7 +85,8 @@ namespace Frontier.Windows.Groups_Window
                         Name = editname.Text,
                         Description = editdescription.Text,
                         VAT = editvat.Text.Replace("%", ""),
-                        GTU = editgtu.Text
+                        GTU = editgtu.Text,
+                        Type = Collections.GroupsData[index].Type
                     };
 
                     var updated = await edit_group.EditGroup(data);
@@ -98,7 +99,8 @@ namespace Frontier.Windows.Groups_Window
                             Name = editname.Text,
                             Description = editdescription.Text,
                             VAT = editvat.Text.Replace("%", ""),
-                            GTU = editgtu.Text
+                            GTU = editgtu.Text,
+                            Type = Collections.GroupsData[index].Type
                         };
                         Collections.GroupsData[Collections.GroupsData.IndexOf(Collections.GroupsData.Where(x => x.ID == Collections.GroupsData[index].ID).FirstOrDefault())] = newdata;
                         await CorrectData(index);
@@ -111,45 +113,55 @@ namespace Frontier.Windows.Groups_Window
                     }
                 }
             }
-            catch (Exception d)
+            catch (Exception)
             {
-                MessageBox.Show(d.ToString());
                 MessageBox.Show("Wystąpił błąd podczas edytowania grupy");
             }
         }
         private Task CorrectData(int index)
         {
-            Task.Run(async() => {
-                await this.Dispatcher.BeginInvoke(new Action(async() => 
+            try
+            {
+                Task.Run(async () =>
                 {
-                    using (GetWarehouse item = new GetWarehouse())
+                    await this.Dispatcher.BeginInvoke(new Action(async () =>
                     {
-                        var groupdata = Collections.GroupsData[index];
-                        foreach (var data in Collections.WarehouseData.Where(x => x.GroupID == groupdata.ID))
+                        using (GetWarehouse item = new GetWarehouse())
                         {
-                            var isVATNumeric = int.TryParse(groupdata.VAT, out int vat);
-                            var correction = new Database.TableClasses.Warehouse()
+                            var groupdata = Collections.GroupsData[index];
+                            foreach (var data in Collections.WarehouseData.Where(x => x.GroupID == groupdata.ID))
                             {
-                                idWarehouse = data.ID,
-                                Name = data.Name,
-                                Group = groupdata.ID.ToString(),
-                                Amount = data.Amount,
-                                Netto = data.Netto,
-                                Margin = data.Margin,
-                                Brutto = isVATNumeric == true ? Calculate.GetBrutto(vat, data.Netto) : data.Netto
-                            };
-                            var update = await item.EditItem(correction);
-                            if (update)
-                            {
-                                item.SaveChanges();
-                                Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().VAT = groupdata.VAT;
+                                if (groupdata.Type == 1)
+                                {
+                                    using (GetWarehouse edit_item = new GetWarehouse())
+                                    {
+                                        var new_data = new Database.TableClasses.Warehouse()
+                                        {
+                                            idWarehouse = data.ID,
+                                            Name = data.Name,
+                                            Amount = data.Amount,
+                                            Group = data.GroupID.ToString(),
+                                            Brutto = data.Brutto,
+                                            Margin = data.Margin,
+                                            Netto = data.Netto,
+                                            VAT = groupdata.VAT
+                                        };
+                                        var update = await edit_item.EditItem(new_data);
+                                        if (update)
+                                        {
+                                            Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Netto = decimal.TryParse(groupdata.VAT, out decimal vat) == true ? Calculate.GetNetto(vat, Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto) : Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto;
+                                            Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().VAT = groupdata.VAT;
+                                        }
+                                    }
+                                }
                                 Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().GroupName = groupdata.Name;
-                                Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto = correction.Brutto;
                             }
                         }
-                    }
-                }));
-            });
+                    }));
+                });
+            }
+            catch (Exception)
+            {}
             return Task.CompletedTask;
         }
         private void DeleteGroup_Clicked(object sender, RoutedEventArgs e)
@@ -232,6 +244,7 @@ namespace Frontier.Windows.Groups_Window
                     groupdescription.Text = string.Empty;
                     groupvat.SelectedIndex = 0;
                     groupgtu.SelectedIndex = 0;
+                    type.SelectedIndex = 0;
                     break;
                 case "edit":
                     editname.Text = string.Empty;

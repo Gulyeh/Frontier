@@ -5,8 +5,6 @@ using Frontier.ViewModels;
 using Frontier.Windows.Confirmation_Window;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,7 +25,6 @@ namespace Frontier.Windows.Contactors_Window
             Contactors_Grid.ItemsSource = Collections.ContactorsData;
             LoadContactors();
         }
-
         private async void LoadContactors()
         {
             await Task.Run(async () =>
@@ -57,17 +54,24 @@ namespace Frontier.Windows.Contactors_Window
         }
         private void NIP_CheckNumeric(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = CheckNIP.CheckNumbers(e.Text);
+            e.Handled = Regex_Check.CheckNumbers(e.Text);
         }
         private void CheckSyntax_PostCode(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = CheckNIP.CheckPostCode(e.Text);
+            e.Handled = Regex_Check.CheckPostCode(e.Text);
+        }
+        private void CheckSpace(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
         }
         private void ValidateNIP(object sender, TextChangedEventArgs e)
         {
             if (contnip.Text.Length == 10)
             {
-                bool validateNIP = CheckNIP.Checker(contnip.Text);
+                bool validateNIP = Checkers.CheckNIP(contnip.Text);
                 if (!validateNIP)
                 {
                     MessageBox.Show("NIP jest niepoprawny!");
@@ -75,11 +79,27 @@ namespace Frontier.Windows.Contactors_Window
                 }
             }
         }
+        private void ValidateREGON(object sender, TextChangedEventArgs e)
+        {
+            if (contregon.Text.Length == 9 || contregon.Text.Length == 14)
+            {
+                int oldlength = contregon.Text.Length;
+                if (contregon.Text.Length == oldlength)
+                {
+                    bool validateREGON = Checkers.CheckREGON(contregon.Text);
+                    if (!validateREGON)
+                    {
+                        MessageBox.Show("REGON jest niepoprawny!");
+                        contregon.Text = String.Empty;
+                    }
+                }
+            }
+        }
         private async void AddContactor_Clicked(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (contname.Text != string.Empty && contnip.Text != string.Empty && contstreet.Text != string.Empty && contstate.Text != string.Empty && contpostcode.Text != string.Empty && contcountry.Text != string.Empty)
+                if (contname.Text != string.Empty && contnip.Text != string.Empty && contnip.Text.Length == 10 && contstreet.Text != string.Empty && contstate.Text != string.Empty && contpostcode.Text != string.Empty && contcountry.Text != string.Empty)
                 {
                     if (!Collections.ContactorsData.Any(x => x.NIP == contnip.Text) && !Collections.ContactorsData.Any(x => x.Name == contname.Text))
                     {
@@ -277,19 +297,19 @@ namespace Frontier.Windows.Contactors_Window
         }
         private async void DeleteRows()
         {
-            await Task.Run(async () => 
-            { 
-                await this.Dispatcher.BeginInvoke(new Action(async() => 
+            await Task.Run(async () =>
+            {
+                await this.Dispatcher.BeginInvoke(new Action(async () =>
                 {
                     List<int> ids = new List<int>();
-                    foreach(Contactors_ViewModel data in Contactors_Grid.SelectedItems)
+                    foreach (Contactors_ViewModel data in Contactors_Grid.SelectedItems)
                     {
                         ids.Add(data.ID);
                     }
 
-                    using(GetContactors delete_contactor = new GetContactors()) 
-                    { 
-                        foreach(int data in ids)
+                    using (GetContactors delete_contactor = new GetContactors())
+                    {
+                        foreach (int data in ids)
                         {
                             bool updated = delete_contactor.DeleteContactor(data);
                             if (updated)

@@ -1,9 +1,7 @@
 ﻿using Frontier.Variables;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Frontier.Database.GetQuery
@@ -22,6 +20,42 @@ namespace Frontier.Database.GetQuery
             try
             {
                 await Warehouse.AddAsync(data);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> SoldWarehouse_Item(TableClasses.Warehouse data)
+        {
+            try
+            {
+                var amount = await Warehouse.Where(x => x.Name == data.Name).CountAsync();
+                var query = await Warehouse.Where(x => x.idWarehouse == data.idWarehouse).FirstOrDefaultAsync();
+
+                if(query.Amount == data.Amount)
+                {
+                    if (amount > 1)
+                    {
+                        DeleteItem(data.idWarehouse);
+                        Collections.WarehouseData.Remove(Collections.WarehouseData.Where(x => x.ID == data.idWarehouse).FirstOrDefault());
+                    }
+                    else if(amount == 1)
+                    {
+                        var item = Collections.WarehouseData.Where(x => x.ID == data.idWarehouse).FirstOrDefault();
+                        query.Amount = 0;
+                        query.Netto = 0;
+                        query.Brutto = 0;
+                        item.Amount = 0;
+                        item.Netto = 0;
+                        item.Brutto = 0;
+                    }
+                }
+                else if(query.Amount > data.Amount)
+                {
+                    query.Amount -= data.Amount;
+                }
                 return true;
             }
             catch (Exception)
