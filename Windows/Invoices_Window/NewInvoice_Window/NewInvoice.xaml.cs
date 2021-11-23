@@ -94,6 +94,15 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
             {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    if (Products_Grid.Items.Count > 0 && CurrencyData != null)
+                    {
+                        CurrencyList.IsEnabled = false;
+                    }
+                    else if(Products_Grid.Items.Count == 0 && CurrencyData != null)
+                    {
+                        CurrencyList.IsEnabled = true;
+                    }
+
                     ProductsValue = 0;
                     foreach (ProductsSold_ViewModel data in Products_Grid.Items)
                     {
@@ -165,7 +174,7 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
             {
                 if (Convert.ToDateTime(CreatedDate_Text.Text) < Sell_Date.SelectedDate.Value.Date)
                 {
-                    MessageBox.Show("Data wystawienia faktury nie może być wcześniejsza od daty sprzedaży");
+                    MessageBox.Show("Data sprzedaży nie może być późniejsza od daty wystawienia faktury");
                     return;
                 }
             }
@@ -208,7 +217,10 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
             if (CurrencyData != null)
             {
                 DownloadCurrency_Button.IsEnabled = false;
-                CurrencyList.IsEnabled = true;
+                if (Products_Grid.Items.Count == 0)
+                {
+                    CurrencyList.IsEnabled = true;
+                }
                 MessageBox.Show("Zaktualizowano dane:\nEUR - " + CurrencyData["EUR"] + "\nUSD - " + CurrencyData["USD"] + "\nGBP - " + CurrencyData["GBP"]);
             }
             else
@@ -218,13 +230,20 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
         }
         private void AddProduct_Clicked(object sender, RoutedEventArgs e)
         {
-            AddProduct products = new AddProduct(InvoiceProducts, InvoiceType.Text);
+            decimal exchangerate = 0;
+            if(CurrencyData != null)
+            {
+                exchangerate = CurrencyData[CurrencyList.Text];
+            }
+
+            AddProduct products = new AddProduct(InvoiceProducts, InvoiceType.Text, CurrencyList.Text, exchangerate);
             products.Owner = Application.Current.MainWindow;
             products.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             products.ShowDialog();
         }
         private async void DeleteRows()
         {
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
             await Task.Run(async () =>
             {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
@@ -245,11 +264,13 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                     }
                 }));
             });
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
         }
         private async void SaveInvoice()
         {
             try
             {
+                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
                 await Task.Run(async () =>
                 {
                     await Dispatcher.BeginInvoke(new Action(async () =>
@@ -293,8 +314,15 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                                     PricePaid = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
                                     Description = Description.Text,
                                     AccountNumber = Accountnumber.Text,
-                                    BankName = Bankname.Text
+                                    BankName = Bankname.Text,
+                                    ExchangeRate = "0"
                                 };
+
+                                if (CurrencyList.Text != "PLN")
+                                {
+                                    item.ExchangeRate = CurrencyData[CurrencyList.Text].ToString();
+                                }
+
                                 var updated = await invoice.AddInvoice(item);
                                 if (updated)
                                 {
@@ -302,11 +330,13 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                                     {
                                         using (GetWarehouse sold_item = new GetWarehouse())
                                         {
+                                            int LastInvoice = invoice.Invoice_Sold.OrderByDescending(x => x.idInvoice_Sold).FirstOrDefault() != null ? invoice.Invoice_Sold.OrderByDescending(x => x.idInvoice_Sold).FirstOrDefault().idInvoice_Sold + 1 : 1;
                                             foreach (ProductsSold_ViewModel product in Products_Grid.Items)
                                             {
                                                 var new_product = new Invoice_Products
                                                 {
                                                     Invoice_ID = InvoiceNumber.Text,
+                                                    Invoice = LastInvoice,
                                                     Product_ID = product.ID.ToString(),
                                                     Name = product.Name,
                                                     Amount = product.Amount.ToString(),
@@ -315,8 +345,10 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                                                     Each_Brutto = product.PieceBrutto.ToString(),
                                                     Netto = product.Netto.ToString(),
                                                     VAT_Price = product.VATAmount.ToString(),
-                                                    Brutto = product.Brutto.ToString(),
+                                                    Brutto = product.Brutto.ToString(), 
+                                                    GTU = Collections.GroupsData.FirstOrDefault(x => x.ID == Collections.WarehouseData.FirstOrDefault(Z => Z.ID == product.ID).GroupID).GTU
                                                 };
+
                                                 await query.AddProduct(new_product);
 
                                                 if (product.GroupType != "Usługa")
@@ -337,6 +369,7 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                                             await invoice.SaveChangesAsync();
                                         }
                                     }
+                                    ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                                     MessageBox.Show("Pomyślnie zapisano fakturę");
                                 }
                                 else
@@ -354,6 +387,7 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
             }
             catch (Exception)
             {
+                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                 MessageBox.Show("Wystąpił błąd podczas zapisu faktury");
             }
         }
@@ -371,6 +405,7 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                     SellDate_Text.Text = string.Empty;
                     CreatedDate_Text.Text = string.Empty;
                     Description.Text = string.Empty;
+                    DaysAmount.Text = string.Empty;
                     if (!SavedInvoice)
                     {
                         await RestoreProducts();

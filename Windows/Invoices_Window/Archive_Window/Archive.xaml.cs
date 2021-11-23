@@ -132,9 +132,11 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                 var index = Archive_Grid.Items.IndexOf(item);
                 var id = Archive_Grid.Columns[0].GetCellContent(Archive_Grid.Items[index]) as TextBlock;
                 var invoicetype = Archive_Grid.Columns[1].GetCellContent(Archive_Grid.Items[index]) as TextBlock;
+
                 InvoiceData getInvoice = await DownloadInvoice.GetData(invoicetype.Text, int.Parse(id.Text), "Archive");
                 await Generate_Invoice.CreateInvoice(getInvoice, "InvoicePreview.pdf");
                 ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+
                 PdfViewer viewer = new PdfViewer();
                 viewer.Owner = Application.Current.MainWindow;
                 viewer.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -175,7 +177,6 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                         var begindate = Convert.ToDateTime(BeginDate.Text);
                         var enddate = Convert.ToDateTime(EndDate.Text);
                         var sold = invoices.Invoice_Sold.Where(x => x.Date_Created >= begindate && x.Date_Created <= enddate);
-                        var bought = invoices.Invoice_Bought.Where(x => x.Date_Created >= begindate && x.Date_Created <= enddate);
 
                         using (GetInvoice_Products products = new GetInvoice_Products())
                         {
@@ -183,7 +184,7 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                             {
                                 foreach (var data in sold)
                                 {
-                                    var soldproduct = products.Invoice_Products.Where(x => x.Invoice_ID == data.Invoice_ID);
+                                    var soldproduct = products.Invoice_Products.Where(x => x.Invoice_ID == data.Invoice_ID && x.Invoice == data.idInvoice_Sold);
                                     decimal totalnetto = 0;
                                     decimal totalbrutto = 0;
                                     decimal totalvat = 0;
@@ -205,45 +206,15 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                                         Created_Date = data.Date_Created,
                                         Netto = totalnetto.ToString(),
                                         VATAmount = totalvat.ToString(),
-                                        Brutto = totalbrutto.ToString()
+                                        Brutto = totalbrutto.ToString(),
+                                        Currency = data.Currency
                                     };
                                     Collections.Archive_Invoices.Add(item);
-                                    TotalPrice_Brutto += totalbrutto;
-                                    TotalPrice_Netto += totalnetto;
+                                    TotalPrice_Brutto += data.Currency == "PLN" ? totalbrutto : Math.Round(totalbrutto * decimal.Parse(data.ExchangeRate), 2);
+                                    TotalPrice_Netto += data.Currency == "PLN" ? totalnetto : Math.Round(totalnetto * decimal.Parse(data.ExchangeRate), 2);
+
                                 }
-                            }
-
-                            if (bought != null)
-                            {
-                                foreach (var data in bought)
-                                {
-                                    var boughtproduct = products.Invoice_Products.Where(x => x.Invoice_ID == data.Invoice_ID);
-                                    decimal totalnetto = 0;
-                                    decimal totalbrutto = 0;
-
-                                    foreach (var product in boughtproduct)
-                                    {
-                                        totalnetto += decimal.Parse(product.Netto);
-                                        totalbrutto += decimal.Parse(product.Brutto);
-                                    }
-
-                                    var item = new ArchiveGrid_ViewModel
-                                    {
-                                        ID = data.idinvoice_bought,
-                                        InvoiceID = data.Invoice_ID,
-                                        InvoiceType = "Kupno",
-                                        Contactor = Collections.ContactorsData.FirstOrDefault(x => x.ID == int.Parse(data.Seller_ID)).Name,
-                                        ContactorNIP = Collections.ContactorsData.FirstOrDefault(x => x.ID == int.Parse(data.Seller_ID)).NIP,
-                                        Created_Date = data.Date_Created,
-                                        Netto = totalnetto.ToString(),
-                                        VATAmount = (totalbrutto - totalnetto).ToString(),
-                                        Brutto = totalbrutto.ToString()
-                                    };
-                                    Collections.Archive_Invoices.Add(item);
-                                    TotalPrice_Brutto += totalbrutto;
-                                    TotalPrice_Netto += totalnetto;
-                                }
-                            }
+                            }                    
                         }
                         Collections.Archive_Invoices.OrderByDescending(x => x.Created_Date);
                         InvoicesAmount = Collections.Archive_Invoices.Count;

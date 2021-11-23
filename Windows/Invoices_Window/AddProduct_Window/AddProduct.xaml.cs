@@ -24,11 +24,16 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
         private string oldBrutto { get; set; }
         public IEnumerable<Warehouse_ViewModel> InvoiceProducts { get; set; }
         private string _InvoiceType { get; set; }
-
-        public AddProduct(IEnumerable<Warehouse_ViewModel> InvoiceProducts, string InvoiceType)
+        private string _Currency { get; set; }
+        private decimal _ExchangeRate { get; set; }
+        public AddProduct(IEnumerable<Warehouse_ViewModel> InvoiceProducts, string InvoiceType, string Currency, decimal ExchangeRate)
         {
             InitializeComponent();
-            if(InvoiceType == "VAT Marża")
+            _InvoiceType = InvoiceType;
+            _Currency = Currency;
+            _ExchangeRate = ExchangeRate;
+
+            if (_InvoiceType == "VAT Marża")
             {
                 this.InvoiceProducts = InvoiceProducts.Where(x => x.Amount > 0 && x.GroupType != "Usługa");
             }
@@ -36,11 +41,16 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
             {
                 this.InvoiceProducts = InvoiceProducts.Where(x => x.Amount > 0);
             }
-
-            Products_Grid.ItemsSource = this.InvoiceProducts;
-            _InvoiceType = InvoiceType;
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Products_Grid.ItemsSource = this.InvoiceProducts;
+            if(_Currency != "PLN")
+            {
+                itemcurrency.Items.Add(_Currency);
+            }
+        }
         private void ProductSelection_Changed(object sender, SelectionChangedEventArgs e)
         {
             if (Products_Grid.SelectedItem != null)
@@ -93,9 +103,9 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                 {
                     if (itemvat.SelectedIndex != oldVAT && itemvat.SelectedIndex > -1 && itembrutto.Text.Length > 0 && itemnetto.Text.Length > 0)
                     {
-                        if (decimal.TryParse(((ComboBoxItem)itemvat.SelectedItem).Content.ToString().Replace("%", ""), out decimal parsed))
+                        if (decimal.TryParse(((ComboBoxItem)itemvat.SelectedItem).Content.ToString().TrimEnd('%'), out decimal vat))
                         {
-                            itemnetto.Text = Calculate.GetNetto(parsed, decimal.Parse(itembrutto.Text)).ToString();
+                            itemnetto.Text = Calculate.GetNetto(vat, decimal.Parse(itembrutto.Text)).ToString();
                         }
                         else
                         {
@@ -108,7 +118,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                 {
                     if (itembrutto.Text != oldBrutto && itembrutto.Text.Length > 0)
                     {
-                        itemnetto.Text = Calculate.GetNetto(decimal.Parse(itemvat.Text.Replace("%", "")), decimal.Parse(itembrutto.Text)).ToString();
+                        itemnetto.Text = Calculate.GetNetto(decimal.Parse(itemvat.Text.TrimEnd('%')), decimal.Parse(itembrutto.Text)).ToString();
                     }
                     else if (itembrutto.Text.Length == 0)
                     {
@@ -135,8 +145,13 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
         {
             try
             {
-                if (itemname.Text != string.Empty && int.Parse(itemcount.Text) > 0 && itembrutto.Text != string.Empty && itemnetto.Text != string.Empty && itemmargin.Text != string.Empty)
+                if (itemname.Text != string.Empty && itemcount.Text != string.Empty && itembrutto.Text != string.Empty && itemnetto.Text != string.Empty && itemmargin.Text != string.Empty)
                 {
+                    if(int.Parse(itemcount.Text) == 0)
+                    {
+                        return;
+                    }
+
                     if (_InvoiceType == "VAT Marża" && itemvat.Text != "23%" && itemvat.Text != "0%")
                     {
                         MessageBox.Show("VAT Marża nie przyjmuje takiego podatku VAT (23% lub 0%)");
@@ -158,12 +173,18 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                             decimal.Parse(itembrutto.Text) + (decimal.Parse(itembrutto.Text) * (decimal.Parse(itemmargin.Text) / 100)) :
                             decimal.Parse(itembrutto.Text), 2);
 
+                        if(_Currency != "PLN" && itemcurrency.Text == "PLN")
+                        {
+                            piecenetto = piecenetto / _ExchangeRate;
+                            piecebrutto = piecebrutto / _ExchangeRate;
+                        }
+
                         var new_data = new ProductsSold_ViewModel()
                         {
                             ID = data.ID,
                             Name = data.Name,
                             GroupType = data.GroupType,
-                            VAT = itemvat.Text.Replace("%", ""),
+                            VAT = itemvat.Text.TrimEnd('%'),
                             Amount = int.Parse(itemcount.Text),
                             PieceNetto = decimal.Parse(String.Format("{0:0.00}", piecenetto)),
                             PieceBrutto = decimal.Parse(String.Format("{0:0.00}", piecebrutto)),
@@ -210,6 +231,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
             itemmargin.IsHitTestVisible = true;
             itembrutto.IsHitTestVisible = true;
             AddProduct_Button.IsEnabled = true;
+            itemcurrency.IsHitTestVisible = true;
         }
         private void ResetFields()
         {
@@ -218,12 +240,14 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
             itemmargin.IsHitTestVisible = false;
             itembrutto.IsHitTestVisible = false;
             AddProduct_Button.IsEnabled = false;
+            itemcurrency.IsHitTestVisible = false;
             itemcount.Text = string.Empty;
             itemname.Text = string.Empty;
             itemmargin.Text = string.Empty;
             itemnetto.Text = string.Empty;
             itembrutto.Text = string.Empty;
             itemvat.SelectedIndex = -1;
+            itemcurrency.SelectedIndex = 0;
         }
     }
 }

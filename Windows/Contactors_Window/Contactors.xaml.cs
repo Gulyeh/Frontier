@@ -119,7 +119,7 @@ namespace Frontier.Windows.Contactors_Window
 
                             if (updated)
                             {
-                                contactor.SaveChanges();
+                                
                                 var newcontactor = contactor.Contactors.OrderByDescending(x => x.idContactors).First();
                                 var row = new Contactors_ViewModel()
                                 {
@@ -133,6 +133,7 @@ namespace Frontier.Windows.Contactors_Window
                                     Country = newcontactor.Country
                                 };
                                 Collections.ContactorsData.Add(row);
+                                await contactor.SaveChangesAsync();
                                 MessageBox.Show("Pomyślnie dodano nowego kontrahenta");
                                 ResetTextBoxes("new");
                             }
@@ -181,8 +182,7 @@ namespace Frontier.Windows.Contactors_Window
 
                             var updated = await edit_contactor.EditContactor(data);
                             if (updated)
-                            {
-                                edit_contactor.SaveChanges();
+                            {                                
                                 var row = Collections.ContactorsData.Where(x => x.ID == data.idContactors).FirstOrDefault();
                                 var new_model = new Contactors_ViewModel()
                                 {
@@ -204,7 +204,7 @@ namespace Frontier.Windows.Contactors_Window
                                     SearchBox.Text = string.Empty;
                                     SearchBox.Text = text;
                                 }
-
+                                await edit_contactor.SaveChangesAsync();
                                 MessageBox.Show("Pomyślnie zaktualizowano dane kontrahenta");
                                 ResetTextBoxes("edit");
                                 Switch_EditContactor(0);
@@ -292,7 +292,7 @@ namespace Frontier.Windows.Contactors_Window
             bool? data = confirm.ShowDialog();
             if (data.HasValue && data.Value)
             {
-                DeleteRows();
+                //DeleteRows();
             }
         }
         private async void DeleteRows()

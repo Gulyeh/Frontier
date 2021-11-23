@@ -1,5 +1,6 @@
 ﻿using Frontier.Variables;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,9 +48,11 @@ namespace Frontier.Database.GetQuery
                         query.Amount = 0;
                         query.Netto = 0;
                         query.Brutto = 0;
+                        query.VAT = "0";
                         item.Amount = 0;
                         item.Netto = 0;
                         item.Brutto = 0;
+                        item.VAT = "0%";
                     }
                 }
                 else if(query.Amount > data.Amount)

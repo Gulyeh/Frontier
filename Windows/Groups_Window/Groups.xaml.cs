@@ -41,7 +41,6 @@ namespace Frontier.Windows.Groups_Window
                         var updated = await group.AddGroups(data);
                         if (updated)
                         {
-                            group.SaveChanges();
                             var newgroupID = group.Groups.OrderByDescending(x => x.idgroups).First().idgroups;
                             var vm = new Groups_ViewModel()
                             {
@@ -53,6 +52,7 @@ namespace Frontier.Windows.Groups_Window
                                 Type = type.SelectedIndex
                             };
                             Collections.GroupsData.Add(vm);
+                            await group.SaveChangesAsync();
                             MessageBox.Show("Pomyślnie dodano grupę");
                             ResetFields("new");
                         }
@@ -92,7 +92,6 @@ namespace Frontier.Windows.Groups_Window
                     var updated = await edit_group.EditGroup(data);
                     if (updated)
                     {
-                        edit_group.SaveChanges();
                         var newdata = new Groups_ViewModel()
                         {
                             ID = Collections.GroupsData[index].ID,
@@ -104,6 +103,7 @@ namespace Frontier.Windows.Groups_Window
                         };
                         Collections.GroupsData[Collections.GroupsData.IndexOf(Collections.GroupsData.Where(x => x.ID == Collections.GroupsData[index].ID).FirstOrDefault())] = newdata;
                         await CorrectData(index);
+                        await edit_group.SaveChangesAsync();
                         MessageBox.Show("Pomyślnie zaktualizowano grupę");
                         ResetFields("edit");
                     }
@@ -151,6 +151,7 @@ namespace Frontier.Windows.Groups_Window
                                         {
                                             Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Netto = decimal.TryParse(groupdata.VAT, out decimal vat) == true ? Calculate.GetNetto(vat, Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto) : Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto;
                                             Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().VAT = groupdata.VAT;
+                                            await edit_item.SaveChangesAsync();
                                         }
                                     }
                                 }
@@ -160,11 +161,10 @@ namespace Frontier.Windows.Groups_Window
                     }));
                 });
             }
-            catch (Exception)
-            {}
+            catch (Exception){}
             return Task.CompletedTask;
         }
-        private void DeleteGroup_Clicked(object sender, RoutedEventArgs e)
+        private async void DeleteGroup_Clicked(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -181,8 +181,8 @@ namespace Frontier.Windows.Groups_Window
                             var updated = delete_group.DeleteGroup(Collections.GroupsData[GroupList.SelectedIndex].ID);
                             if (updated)
                             {
-                                delete_group.SaveChanges();
                                 Collections.GroupsData.Remove(Collections.GroupsData.Where(x => x.ID == Collections.GroupsData[GroupList.SelectedIndex].ID).FirstOrDefault());
+                                await delete_group.SaveChangesAsync();
                                 MessageBox.Show("Pomyślnie usuniętno grupę");
                                 ResetFields("edit");
                             }

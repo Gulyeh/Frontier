@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:Frontier.Windows.Invoices_Window.AddProduct_Window"
         mc:Ignorable="d"
         ShowInTaskbar="False"
-        Title="Frontier" Height="595" MinHeight="595" Width="680" MaxWidth="680" MinWidth="680">
+        Title="Frontier" 
+        Height="595" MinHeight="595" 
+        Width="680" MaxWidth="680" MinWidth="680"
+        Loaded="Window_Loaded">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" x:Key="Gray">
             <Setter Property="Template">
@@ -130,8 +133,9 @@
                         </Border>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                        <TextBlock Text="Cena netto" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="80,0,0,0"/>
+                        <TextBlock Text="Cena netto" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="30,0,0,0"/>
                         <TextBlock Text="Cena brutto" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="70,0,0,0"/>
+                        <TextBlock Text="Waluta" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="70,0,0,0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Border Background="LightGray" BorderThickness="0" CornerRadius="8" Height="24" Width="96" Margin="0,0,20,0">
@@ -144,21 +148,23 @@
                                 <TextBox Name="itembrutto" IsHitTestVisible="False" PreviewTextInput="CheckPrice" TextChanged="RecalculateNetto" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="95" Height="24" VerticalAlignment="Bottom"/>
                             </StackPanel>
                         </Border>
+                        <ComboBox Name="itemcurrency" SelectedIndex="0" IsHitTestVisible="False" Background="Transparent" SelectionChanged="RecalculateNetto" BorderThickness="0" Width="61" Margin="20,0,0,0">
+                            <ComboBoxItem Content="PLN"/>
+                        </ComboBox>
                     </StackPanel>
                 </StackPanel>
             </Border>
         </StackPanel>
-        <StackPanel Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30,0,0,10" Height="24" Width="320">
-            <Border Background="LightGray" VerticalAlignment="Center" BorderThickness="0" CornerRadius="8" Height="24" Margin="0,0,75,0">
+        <StackPanel Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="30,0,0,10" Height="24" Width="250">
+            <Border Background="LightGray" VerticalAlignment="Center" BorderThickness="0" CornerRadius="8" Height="24">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="pack://application:,,,/Images/Search.png" Height="15" Margin="5,0,0,0"/>
                     <TextBox Name="SearchBox" TextChanged="FindProduct" FontFamily="Calibri" FontWeight="Light" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="215"/>
                 </StackPanel>
             </Border>
         </StackPanel>
-        <StackPanel Grid.Row="1">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
-                <DataGrid Name="Products_Grid"
+        <WrapPanel Grid.Row="1">
+            <DataGrid Name="Products_Grid"
                       GridLinesVisibility="None"
                       HorizontalScrollBarVisibility="Disabled"
                       RowHeaderWidth="0"
@@ -175,19 +181,17 @@
                       Background="Transparent" 
                       ColumnWidth="*" 
                       SelectionMode="Single"
-                      HorizontalAlignment="Stretch" 
-                      VerticalAlignment="Top">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Typ" IsReadOnly="True" Width="100" Binding="{Binding GroupType}"/>
-                        <DataGridTextColumn Header="Nazwa" IsReadOnly="True" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Ilość" IsReadOnly="True" Width="60" Binding="{Binding Amount}"/>
-                        <DataGridTextColumn Header="Cena Netto" IsReadOnly="True" Width="100" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="VAT" IsReadOnly="True" Width="100" Binding="{Binding VAT}"/>
-                        <DataGridTextColumn Header="Cena brutto" IsReadOnly="True" Width="100" Binding="{Binding Brutto}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ScrollViewer>
-        </StackPanel>
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Typ" Width="100" Binding="{Binding GroupType}"/>
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Ilość" Width="60" Binding="{Binding Amount}"/>
+                    <DataGridTextColumn Header="Cena Netto" Width="100" Binding="{Binding Netto}"/>
+                    <DataGridTextColumn Header="VAT" Width="100" Binding="{Binding VAT}"/>
+                    <DataGridTextColumn Header="Cena brutto" Width="100" Binding="{Binding Brutto}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </WrapPanel>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Height="31" Width="126">
             <Button Name="AddProduct_Button" Click="AddProduct_Clicked" Content="Dodaj produkt" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Height="31" Background="#2f4050"/>
         </StackPanel>

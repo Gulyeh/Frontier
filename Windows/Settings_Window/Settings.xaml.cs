@@ -26,7 +26,7 @@ namespace Frontier.Windows.Settings_Window
         private async void LoadSettings()
         {
             await Task.Run(async() => {
-                await this.Dispatcher.BeginInvoke(new Action(async() =>
+                await this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     using (GetCompanydata companydata = new GetCompanydata())
                     {

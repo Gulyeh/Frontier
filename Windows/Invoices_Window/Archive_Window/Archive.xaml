@@ -143,12 +143,12 @@
                 </StackPanel>
             </Border>
         </DockPanel>
-        <StackPanel Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
-                <DataGrid Name="Archive_Grid"
+        <WrapPanel Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <DataGrid Name="Archive_Grid"
                       GridLinesVisibility="None"
                       HorizontalScrollBarVisibility="Disabled"
                       RowHeaderWidth="0"
+                      SelectionMode="Single"
                       AlternationCount="2"
                       AutoGenerateColumns="False"
                       BorderThickness="0" 
@@ -162,30 +162,31 @@
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="30,10,30,0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" IsReadOnly="True" Width="60" Binding="{Binding ID}"/>
-                        <DataGridTextColumn Header="Typ" IsReadOnly="True" Width="80" Binding="{Binding InvoiceType}"/>
-                        <DataGridTextColumn Header="Numer" IsReadOnly="True" Binding="{Binding InvoiceID}"/>
-                        <DataGridTextColumn Header="Kontrahent" IsReadOnly="True" Width="200" Binding="{Binding Contactor}"/>
-                        <DataGridTextColumn Header="NIP" IsReadOnly="True" Width="120" Binding="{Binding ContactorNIP}"/>
-                        <DataGridTextColumn Header="Wartość netto" IsReadOnly="True" Width="100" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="Wartość VAT" IsReadOnly="True" Width="100" Binding="{Binding VATAmount}"/>
-                        <DataGridTextColumn Header="Wartość brutto" IsReadOnly="True" Width="100" Binding="{Binding Brutto}"/>
-                        <DataGridTextColumn Header="Data wystawienia" IsReadOnly="True" Width="100" Binding="{Binding Created_Date, StringFormat='{}{0:dd.MM.yyyy}'}"/>
-                        <DataGridTemplateColumn Width="40">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Click="OpenPreview" BorderThickness="0" Background="Transparent">
-                                        <Image Source="pack://application:,,,/Images/Eye.png" Height="20"/>
-                                    </Button>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ScrollViewer>
-        </StackPanel>
+                      Margin="30,10,30,0"
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Width="60" Binding="{Binding ID}"/>
+                    <DataGridTextColumn Header="Typ" Width="80" Binding="{Binding InvoiceType}"/>
+                    <DataGridTextColumn Header="Numer" Width="150" Binding="{Binding InvoiceID}"/>
+                    <DataGridTextColumn Header="Kontrahent" Width="*" Binding="{Binding Contactor}"/>
+                    <DataGridTextColumn Header="NIP" Width="120" Binding="{Binding ContactorNIP}"/>
+                    <DataGridTextColumn Header="Wartość netto" Width="100" Binding="{Binding Netto}"/>
+                    <DataGridTextColumn Header="Wartość VAT" Width="100" Binding="{Binding VATAmount}"/>
+                    <DataGridTextColumn Header="Wartość brutto" Width="100" Binding="{Binding Brutto}"/>
+                    <DataGridTextColumn Header="Data wystawienia" Width="100" Binding="{Binding Created_Date, StringFormat='{}{0:dd.MM.yyyy}'}"/>
+                    <DataGridTextColumn Header="Waluta" Width="80" Binding="{Binding Currency}"/>
+                    <DataGridTemplateColumn Width="40">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="OpenPreview" BorderThickness="0" Background="Transparent">
+                                    <Image Source="pack://application:,,,/Images/Eye.png" Height="20"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </WrapPanel>
         <DockPanel Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
                 <TextBlock Text="{Binding TotalPrice_Netto}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>

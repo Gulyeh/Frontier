@@ -20,5 +20,6 @@ namespace Frontier.Database.TableClasses
         public string Description { get; set; }
         public string AccountNumber { get; set; }
         public string BankName { get; set; }
+        public string ExchangeRate { get; set; }
     }
 }

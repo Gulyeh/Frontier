@@ -16,6 +16,7 @@ namespace Frontier.ViewModels
         public string Netto { get; set; }
         public string VATAmount { get; set; }
         public string Brutto { get; set; }
+        public string Currency { get; set; }
         public DateTime Created_Date { get; set; }
     }
 }

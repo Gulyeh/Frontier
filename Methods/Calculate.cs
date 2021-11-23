@@ -8,7 +8,12 @@ namespace Frontier.Methods
         public static decimal GetNetto(decimal vat, decimal brutto)
         {
             var amount = brutto / (1+(vat / 100));
-            return Math.Round(amount, 2);
+            return decimal.Parse(String.Format("{0:0.00}", Math.Round(amount, 2)));
+        }
+        public static decimal GetBrutto(decimal vat, decimal netto)
+        {
+            var amount = netto * (1 + (vat / 100));
+            return decimal.Parse(String.Format("{0:0.00}", Math.Round(amount, 2)));
         }
         public static decimal GetMarginVAT(decimal vat, decimal BruttoBuy, decimal BruttoSell)
         {

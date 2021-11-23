@@ -25,12 +25,12 @@
                         <Border x:Name="Border" BorderThickness="0">
                             <SelectiveScrollingGrid>
                                 <SelectiveScrollingGrid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </SelectiveScrollingGrid.ColumnDefinitions>
                                 <SelectiveScrollingGrid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
                                 </SelectiveScrollingGrid.RowDefinitions>
                                 <DataGridCellsPresenter Grid.Column="1"
                                                         ItemsPanel="{TemplateBinding ItemsPanel}"
@@ -135,9 +135,9 @@
                             <ComboBoxItem Content="Proforma"/>
                             <ComboBoxItem Content="VAT Marża"/>
                         </ComboBox>
-                        <Button Content="Zapisz fakturę PDF" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
-                        <Button Content="Zapisz fakturę Word" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
-                        <Button Content="Drukuj fakturę" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
+                        <Button Content="Zapisz korektę PDF" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
+                        <Button Content="Zapisz korektę Word" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
+                        <Button Content="Drukuj korektę" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="25,10,0,0"/>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="30,15,0,0">
                         <StackPanel Orientation="Horizontal">

@@ -215,9 +215,8 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <DockPanel Height="Auto" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
-                <DataGrid Name="Products_Grid"
+        <WrapPanel Height="Auto" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <DataGrid Name="Products_Grid"
                       GridLinesVisibility="None"
                       HorizontalScrollBarVisibility="Disabled"
                       RowHeaderWidth="0"
@@ -235,20 +234,20 @@
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="30,10,30,0">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Amount}"/>
-                        <DataGridTextColumn Header="Cena netto" Width="100" Binding="{Binding PieceNetto}"/>
-                        <DataGridTextColumn Header="VAT" Width="60" Binding="{Binding VAT}"/>
-                        <DataGridTextColumn Header="Cena brutto" Width="100" Binding="{Binding PieceBrutto}"/>
-                        <DataGridTextColumn Header="Wartość netto" Width="120" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="Wartość VATu" Width="120" Binding="{Binding VATAmount}"/>
-                        <DataGridTextColumn Header="Wartość brutto" Width="120" Binding="{Binding Brutto}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ScrollViewer>
-        </DockPanel>
+                      Margin="30,10,30,0"
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Amount}"/>
+                    <DataGridTextColumn Header="Cena netto" Width="100" Binding="{Binding PieceNetto}"/>
+                    <DataGridTextColumn Header="VAT" Width="60" Binding="{Binding VAT}"/>
+                    <DataGridTextColumn Header="Cena brutto" Width="100" Binding="{Binding PieceBrutto}"/>
+                    <DataGridTextColumn Header="Wartość netto"  Width="120" Binding="{Binding Netto}"/>
+                    <DataGridTextColumn Header="Wartość VATu" Width="120" Binding="{Binding VATAmount}"/>
+                    <DataGridTextColumn Header="Wartość brutto" Width="120" Binding="{Binding Brutto}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </WrapPanel>
         <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Button Content="Dodaj produkt" Click="AddProduct_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="30,0,0,0"/>
             <Button Content="Usuń zaznaczone" Click="Delete_Clicked" HorizontalAlignment="Left" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="DarkRed" Margin="10,0,0,0"/>

@@ -211,33 +211,34 @@
                     <Button Content="Grupy" Click="Groups_Clicked" HorizontalAlignment="Right" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="97" Height="32" Background="#2f4050" VerticalAlignment="Center" Margin="0,0,20,0"/>
                 </DockPanel>
                 <DataGrid Name="Warehouse_Grid"
-                      GridLinesVisibility="None"
-                      HorizontalScrollBarVisibility="Disabled"
-                      RowHeaderWidth="0"
-                      AlternationCount="2"
-                      AutoGenerateColumns="False"
-                      BorderThickness="0" 
-                      CanUserReorderColumns="False" 
-                      CanUserResizeColumns="False"
-                      CanUserResizeRows="False"
-                      CanUserSortColumns="False"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      Background="Transparent" 
-                      ColumnWidth="*" 
-                      HorizontalAlignment="Stretch" 
-                      VerticalAlignment="Top" 
-                      Margin="50,10,50,0">
+                          GridLinesVisibility="None"
+                          HorizontalScrollBarVisibility="Disabled"
+                          RowHeaderWidth="0"
+                          AlternationCount="2"
+                          AutoGenerateColumns="False"
+                          BorderThickness="0" 
+                          CanUserReorderColumns="False" 
+                          CanUserResizeColumns="False"
+                          CanUserResizeRows="False"
+                          CanUserSortColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          Background="Transparent" 
+                          ColumnWidth="*" 
+                          HorizontalAlignment="Stretch" 
+                          VerticalAlignment="Top" 
+                          Margin="50,10,50,20"
+                          IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" IsReadOnly="True" Width="60" Binding="{Binding ID}"/>
-                        <DataGridTextColumn Header="Grupa" IsReadOnly="True" Width="150" Binding="{Binding GroupName}"/>
-                        <DataGridTextColumn Header="Typ" IsReadOnly="True" Width="100" Binding="{Binding GroupType}"/>
-                        <DataGridTextColumn Header="Nazwa" IsReadOnly="True" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Ilość" IsReadOnly="True" Width="60" Binding="{Binding Amount}"/>
-                        <DataGridTextColumn Header="Kwota Netto" IsReadOnly="True" Width="100" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="VAT %" IsReadOnly="True" Width="60" Binding="{Binding VAT}"/>
-                        <DataGridTextColumn Header="Kwota Brutto" IsReadOnly="True" Width="100" Binding="{Binding Brutto}"/>
-                        <DataGridTextColumn Header="Marża %" IsReadOnly="True" Width="60" Binding="{Binding Margin}"/>
+                        <DataGridTextColumn Header="ID" Width="60" Binding="{Binding ID}"/>
+                        <DataGridTextColumn Header="Grupa" Width="150" Binding="{Binding GroupName}"/>
+                        <DataGridTextColumn Header="Typ" Width="100" Binding="{Binding GroupType}"/>
+                        <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
+                        <DataGridTextColumn Header="Ilość" Width="60" Binding="{Binding Amount}"/>
+                        <DataGridTextColumn Header="Kwota Netto" Width="100" Binding="{Binding Netto}"/>
+                        <DataGridTextColumn Header="VAT %" Width="60" Binding="{Binding VAT}"/>
+                        <DataGridTextColumn Header="Kwota Brutto" Width="100" Binding="{Binding Brutto}"/>
+                        <DataGridTextColumn Header="Marża %" Width="60" Binding="{Binding Margin}"/>
                         <DataGridTemplateColumn Width="40">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

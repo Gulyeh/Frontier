@@ -281,7 +281,7 @@ namespace Frontier.Methods
                     .SetFontSize(9)
                     .SetMultipliedLeading(0.7f);
 
-                if (invoicedata.PaymentDays != null)
+                if (invoicedata.PaymentDays != null && invoicedata.PaymentDays != string.Empty)
                 {
                     j.Add("Termin płatności:").SetHorizontalAlignment(HorizontalAlignment.LEFT);
                     j.Add(new Tab());
@@ -828,7 +828,6 @@ namespace Frontier.Methods
                 g.Add("Kwota słownie:").SetHorizontalAlignment(HorizontalAlignment.LEFT);
                 g.Add(new Tab());
                 g.AddTabStops(new TabStop(200, TabAlignment.LEFT));
-                System.Windows.Forms.MessageBox.Show(invoicedata.TotalPrice);
                 g.Add(NumberToText.Convert(decimal.Parse(invoicedata.TotalPrice.Split(',')[0])) + " " + invoicedata.TotalPrice.Split(',')[1] + "/100");
                 document.Add(g);
 
@@ -863,7 +862,7 @@ namespace Frontier.Methods
                     .SetFontSize(9)
                     .SetMultipliedLeading(0.7f);
 
-                if (invoicedata.PaymentDays != null)
+                if (invoicedata.PaymentDays != null && invoicedata.PaymentDays != string.Empty)
                 {
                     j.Add("Termin płatności:").SetHorizontalAlignment(HorizontalAlignment.LEFT);
                     j.Add(new Tab());

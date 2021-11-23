@@ -129,15 +129,15 @@
                             <ComboBox Name="SellersList" DisplayMemberPath="Name" Background="Transparent" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155" Margin="25,0,0,0"/>
                             <Border Background="LightGray" Width="141" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text1" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="131"/>
+                                    <TextBox Name="InvoiceNumber" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="131"/>
                                 </StackPanel>
                             </Border>
                             <Border Background="LightGray" Width="127" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text2" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="118"/>
+                                    <TextBox Name="BoughtDate" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="118"/>
                                 </StackPanel>
                             </Border>
-                            <DatePicker Name="Buy_Date" Margin="10,0,0,0" Width="29"  BorderThickness="0"/>
+                            <DatePicker Name="Buy_Date" SelectedDateChanged="ChangeDate" Margin="10,0,0,0" Width="29"  BorderThickness="0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                             <TextBlock Text="Płatność" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="20,0,0,0"/>
@@ -145,7 +145,7 @@
                             <TextBlock Text="Data faktury" FontSize="10" Foreground="Black" Margin="190,0,0,0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <ComboBox Background="Transparent" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155">
+                            <ComboBox Name="PurchaseType" Background="Transparent" SelectedIndex="0" BorderThickness="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="155">
                                 <ComboBoxItem Content="Gotówka"/>
                                 <ComboBoxItem Content="Przelew"/>
                             </ComboBox>
@@ -158,10 +158,10 @@
                             <Button Name="DownloadCurrency_Button" Content="Pobierz kursy" Click="DownloadCurrencies_Values" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="98" Height="24" Background="#2f4050" Margin="5,0,0,0"/>
                             <Border Background="LightGray" Width="131" BorderThickness="0" CornerRadius="8" Height="24" Margin="30,0,0,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBox Name="Text4" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="122"/>
+                                    <TextBox Name="InvoiceDate" IsHitTestVisible="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="122"/>
                                 </StackPanel>
                             </Border>
-                            <DatePicker Name="Created_Date" Margin="10,0,0,0" Width="29"  BorderThickness="0"/>
+                            <DatePicker Name="Created_Date" SelectedDateChanged="ChangeDate" Margin="10,0,0,0" Width="29"  BorderThickness="0"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal"/>
                     </StackPanel>
@@ -169,9 +169,8 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <DockPanel Height="Auto" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
-                <DataGrid Name="Products_Grid"
+        <WrapPanel Height="Auto" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <DataGrid Name="Products_Grid"
                       GridLinesVisibility="None"
                       HorizontalScrollBarVisibility="Disabled"
                       RowHeaderWidth="0"
@@ -184,29 +183,29 @@
                       CanUserSortColumns="False"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
+                      SizeChanged="ReCalculateValue"
                       Background="Transparent" 
                       ColumnWidth="*" 
                       HorizontalAlignment="Stretch" 
                       VerticalAlignment="Top" 
-                      Margin="30,10,30,0">
-                    <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Width="40"/>
-                        <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
-                        <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Amount}"/>
-                        <DataGridTextColumn Header="Cena netto" Width="120" Binding="{Binding PieceNetto}"/>
-                        <DataGridTextColumn Header="VAT" Width="60" Binding="{Binding VAT}"/>
-                        <DataGridTextColumn Header="Cena brutto" Width="120" Binding="{Binding PieceBrutto}"/>
-                        <DataGridTextColumn Header="Wartość netto" Width="120" Binding="{Binding Netto}"/>
-                        <DataGridTextColumn Header="Wartość VATu" Width="120" Binding="{Binding VATAmount}"/>
-                        <DataGridTextColumn Header="Wartość brutto" Width="120" Binding="{Binding Brutto}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ScrollViewer>
-        </DockPanel>
+                      Margin="30,10,30,0"
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Amount}"/>
+                    <DataGridTextColumn Header="Cena netto" Width="120" Binding="{Binding PieceNetto}"/>
+                    <DataGridTextColumn Header="VAT" Width="60" Binding="{Binding VAT}"/>
+                    <DataGridTextColumn Header="Cena brutto" Width="120" Binding="{Binding PieceBrutto}"/>
+                    <DataGridTextColumn Header="Wartość netto" Width="120" Binding="{Binding Netto}"/>
+                    <DataGridTextColumn Header="Wartość VATu" Width="120" Binding="{Binding VATAmount}"/>
+                    <DataGridTextColumn Header="Wartość brutto" Width="120" Binding="{Binding Brutto}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </WrapPanel>
         <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button Content="Dodaj produkt" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="30,0,0,0"/>
+            <Button Click="AddProduct_Clicked" Content="Dodaj produkt" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="30,0,0,0"/>
             <Button Content="Usuń zaznaczone" Click="Delete_Clicked" HorizontalAlignment="Left" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="DarkRed" Margin="10,0,0,0"/>
-            <Button Content="Zapisz fakturę" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="40,0,0,0"/>
+            <Button Click="SaveInvoice_Clicked" Content="Zapisz fakturę" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050" Margin="40,0,0,0"/>
             <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
                 <TextBlock Text="{Binding ProductsValue}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>

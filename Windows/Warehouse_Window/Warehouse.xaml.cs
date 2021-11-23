@@ -37,7 +37,7 @@ namespace Frontier.Windows.Warehouse_Window
             {
                 await Task.Run(async () =>
                 {
-                    await this.Dispatcher.BeginInvoke(new Action(() =>
+                    await this.Dispatcher.BeginInvoke(new Action(async () =>
                     {
                         using (GetGroups groups = new GetGroups())
                         {
@@ -55,27 +55,7 @@ namespace Frontier.Windows.Warehouse_Window
                                 });
                             }
                         }
-
-                        using (GetWarehouse warehouse = new GetWarehouse())
-                        {
-                            var query = warehouse.Warehouse;
-                            foreach (var data in query)
-                            {
-                                Collections.WarehouseData.Add(new Warehouse_ViewModel
-                                {
-                                    ID = data.idWarehouse,
-                                    GroupID = Int32.Parse(data.Group),
-                                    GroupName = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Name,
-                                    GroupType = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Type == 0 ? "Towar" : "Usługa",
-                                    Name = data.Name,
-                                    Amount = data.Amount,
-                                    Brutto = decimal.Parse(String.Format("{0:0.00}", data.Brutto)),
-                                    Netto = decimal.Parse(String.Format("{0:0.00}", data.Netto)),
-                                    VAT = data.VAT.ToString(),
-                                    Margin = data.Margin
-                                });
-                            }
-                        }
+                        await Download_WarehouseItems.Download();
                     }));
                 });
             }
@@ -86,7 +66,6 @@ namespace Frontier.Windows.Warehouse_Window
                 LoadWarehouse();
             }
         }
-
         private async void AddItem_Clicked(object sender, RoutedEventArgs e)
         {
             try
@@ -106,7 +85,7 @@ namespace Frontier.Windows.Warehouse_Window
                             Brutto = Math.Round(decimal.Parse(itembrutto.Text),2),
                             Margin = isNumericMargin == true ? margin : 0,
                             Netto = isNumericVAT == true ? Calculate.GetNetto(vat, decimal.Parse(itembrutto.Text)) : Math.Round(decimal.Parse(itembrutto.Text), 2),
-                            VAT = Collections.GroupsData[warehousegroups.SelectedIndex].VAT
+                            VAT = Collections.GroupsData[warehousegroups.SelectedIndex].Type == 1 ? vat.ToString() : "0"
                         };
 
                         var update = await add_itemWarehouse.AddItem(data);
@@ -144,7 +123,7 @@ namespace Frontier.Windows.Warehouse_Window
                     MessageBox.Show("Proszę wypełnić wymagane pola");
                 }
             }
-            catch (Exception d)
+            catch (Exception)
             {
                 MessageBox.Show("Wystąpił błąd podczas dodawania danych");
             }
@@ -155,91 +134,122 @@ namespace Frontier.Windows.Warehouse_Window
             {
                 if (editname.Text != string.Empty && editcount.Text != string.Empty && editbrutto.Text != string.Empty && editgroup.SelectedIndex > -1)
                 {
-                    var isNumericMargin = int.TryParse(editmargin.Text, out int margin);
-                    decimal NettoPrice = 0;
-                    string VAT = "";
+                    ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+                    await Task.Run(async () => { 
+                        await Dispatcher.BeginInvoke(new Action(async() =>
+                        { 
+                            var isNumericMargin = int.TryParse(editmargin.Text, out int margin);
+                            decimal NettoPrice = 0;
+                            string VAT = "";
 
-                    if(Collections.GroupsData[editgroup.SelectedIndex].Type == 1) // if jest usługa
-                    {
-                        VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
-                        var isNumericVAT = decimal.TryParse(Collections.GroupsData[editgroup.SelectedIndex].VAT, out decimal vat);
-                        NettoPrice = isNumericVAT == true ? Calculate.GetNetto(vat, decimal.Parse(editbrutto.Text)) : editbrutto.Text.Contains(',') ? Math.Round(decimal.Parse(editbrutto.Text), 2) : Math.Round(decimal.Parse(editbrutto.Text + ",00"), 2);
-                    }
-                    else // if jest towar
-                    {
-                        if(int.Parse(editcount.Text) == 0)
-                        {
-                            VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
-                            NettoPrice = 0.00m;
-                        }
-                        else
-                        {
-                            VAT = Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault().VAT;
-                            NettoPrice = Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault().Netto;
-                        }
-                    }
-
-                    using (GetWarehouse edit_item = new GetWarehouse())
-                    {
-                        var data = new Database.TableClasses.Warehouse()
-                        {
-                            idWarehouse = ItemID,
-                            Name = editname.Text,
-                            Amount = int.Parse(editcount.Text),
-                            Group = Collections.GroupsData[editgroup.SelectedIndex].ID.ToString(),
-                            Brutto = editbrutto.Text.Contains(',') ? Math.Round(decimal.Parse(editbrutto.Text), 2) : Math.Round(decimal.Parse(editbrutto.Text + ",00"), 2),
-                            Margin = isNumericMargin == true ? margin : 0,
-                            Netto = NettoPrice,
-                            VAT = VAT
-                        };
-                        var update = await edit_item.EditItem(data);
-
-                        if (update)
-                        {
-                            await edit_item.SaveChangesAsync();
-                            var new_data = new Warehouse_ViewModel()
+                            if(Collections.GroupsData[editgroup.SelectedIndex].Type == 1) // if jest usługa
                             {
-                                ID = ItemID,
-                                Name = editname.Text,
-                                GroupName = Collections.GroupsData[editgroup.SelectedIndex].Name,
-                                GroupID = Collections.GroupsData[editgroup.SelectedIndex].ID,
-                                GroupType = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Type == 0 ? "Towar" : "Usługa",
-                                Amount = data.Amount,
-                                Brutto = data.Brutto,
-                                Margin = data.Margin,
-                                VAT = VAT,
-                                Netto = data.Netto
-                            };
-
-                            Collections.WarehouseData[Collections.WarehouseData.IndexOf(Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault())] = new_data;
-                            if(Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault() != null) { Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault().Name = editname.Text; }
-
-                            //Workaround for updating datagrid if user searched data
-                            if (SearchBox.Text.Length > 0)
+                                VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
+                                var isNumericVAT = decimal.TryParse(Collections.GroupsData[editgroup.SelectedIndex].VAT, out decimal vat);
+                                NettoPrice = isNumericVAT == true ? Calculate.GetNetto(vat, decimal.Parse(editbrutto.Text)) : editbrutto.Text.Contains(',') ? Math.Round(decimal.Parse(editbrutto.Text), 2) : Math.Round(decimal.Parse(editbrutto.Text + ",00"), 2);
+                            }
+                            else // if jest towar
                             {
-                                var text = SearchBox.Text;
-                                SearchBox.Text = string.Empty;
-                                SearchBox.Text = text;
+                                if(int.Parse(editcount.Text) == 0)
+                                {
+                                    VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
+                                    NettoPrice = 0.00m;
+                                }
+                                else
+                                {
+                                    VAT = Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault().VAT;
+                                    NettoPrice = Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault().Netto;
+                                }
                             }
 
-                            MessageBox.Show("Pomyślnie zaktualizowano dane");
-                            Switch_EditFields(0, null);
-                            ResetFillData("edit");
-                        }
-                        else
-                        {
-                            throw new ArgumentNullException();
-                        }
-                    }
+                            using (GetWarehouse edit_item = new GetWarehouse())
+                            {
+                                List<int> IDs = new List<int>();
+                                foreach (var productsid in Collections.WarehouseData.Where(x => x.Name == Collections.WarehouseData.FirstOrDefault(z => z.ID == ItemID).Name))
+                                {
+                                    if (productsid.ID != ItemID)
+                                    {
+                                        IDs.Add(productsid.ID);
+                                    }
+                                }
+
+                                var data = new Database.TableClasses.Warehouse()
+                                {
+                                    idWarehouse = ItemID,
+                                    Name = editname.Text,
+                                    Amount = int.Parse(editcount.Text),
+                                    Group = Collections.GroupsData[editgroup.SelectedIndex].ID.ToString(),
+                                    Brutto = editbrutto.Text.Contains(',') ? Math.Round(decimal.Parse(editbrutto.Text), 2) : Math.Round(decimal.Parse(editbrutto.Text + ",00"), 2),
+                                    Margin = isNumericMargin == true ? margin : 0,
+                                    Netto = NettoPrice,
+                                    VAT = VAT
+                                };
+                                var update = await edit_item.EditItem(data);
+
+                                if (update)
+                                {
+                                    var new_data = new Warehouse_ViewModel()
+                                    {
+                                        ID = ItemID,
+                                        Name = editname.Text,
+                                        GroupName = Collections.GroupsData[editgroup.SelectedIndex].Name,
+                                        GroupID = Collections.GroupsData[editgroup.SelectedIndex].ID,
+                                        GroupType = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Type == 0 ? "Towar" : "Usługa",
+                                        Amount = data.Amount,
+                                        Brutto = data.Brutto,
+                                        Margin = data.Margin,
+                                        VAT = VAT,
+                                        Netto = data.Netto
+                                    };
+
+                                    Collections.WarehouseData[Collections.WarehouseData.IndexOf(Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault())] = new_data;
+                                    if(Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault() != null) { Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault().Name = editname.Text; }
+
+                                    foreach(var productid in IDs)
+                                    {
+                                        var db_item = edit_item.Warehouse.Where(x => x.idWarehouse == productid).FirstOrDefault();
+                                        var wh_item = Collections.WarehouseData.Where(x => x.ID == productid).FirstOrDefault();
+                                        db_item.Group = data.Group;
+                                        db_item.Name = data.Name;
+                                        db_item.Margin = data.Margin;
+                                        wh_item.Name = data.Name;
+                                        wh_item.GroupID = Collections.GroupsData[editgroup.SelectedIndex].ID;
+                                        wh_item.GroupName = Collections.GroupsData[editgroup.SelectedIndex].Name;
+                                        wh_item.GroupType = Collections.GroupsData.Where(x => x.ID == Int32.Parse(data.Group)).FirstOrDefault().Type == 0 ? "Towar" : "Usługa";
+                                        wh_item.Margin = data.Margin;
+                                    }
+
+                                    //Workaround for updating datagrid if user searched data
+                                    if (SearchBox.Text.Length > 0)
+                                    {
+                                        var text = SearchBox.Text;
+                                        SearchBox.Text = string.Empty;
+                                        SearchBox.Text = text;
+                                    }
+
+                                    await edit_item.SaveChangesAsync();
+                                    ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                                    MessageBox.Show("Pomyślnie zaktualizowano dane");
+                                    Switch_EditFields(0, null);
+                                    ResetFillData("edit");
+                                }
+                                else
+                                {
+                                    throw new ArgumentNullException();
+                                }
+                            }
+                        }));
+                    });
                 }
                 else
                 {
                     MessageBox.Show("Proszę uzupełnić wymagane dane");
                 }
             }
-            catch (Exception d)
+            catch (Exception)
             {
-                MessageBox.Show(d+"Wystąpił błąd podczas aktualizacji danych");
+                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                MessageBox.Show("Wystąpił błąd podczas aktualizacji danych");
             }
         }
         private void EditRow_Clicked(object sender, RoutedEventArgs e)
@@ -340,6 +350,7 @@ namespace Frontier.Windows.Warehouse_Window
         }
         private async void DeleteRows()
         {
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
             await Task.Run(async () =>
             {
                 await this.Dispatcher.BeginInvoke(new Action(async () =>
@@ -376,6 +387,7 @@ namespace Frontier.Windows.Warehouse_Window
 
                 }));
             });
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
         }
         private void Groups_Clicked(object sender, RoutedEventArgs e)
         {
