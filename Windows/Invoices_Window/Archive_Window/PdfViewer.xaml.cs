@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Frontier.Methods.Invoices;
+using Frontier.Variables;
+using Spire.Pdf;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Packaging;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Xps.Packaging;
-using Frontier.Methods;
-using Frontier.Variables;
-using Spire.Pdf;
 
 namespace Frontier.Windows.Invoices_Window.Archive_Window
 {
@@ -38,7 +30,7 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
             await Task.Run(async () =>
             {
                 await Dispatcher.BeginInvoke(new Action(() =>
-                { 
+                {
                     PdfDocument Invoice = new PdfDocument("InvoicePreview.pdf");
                     Invoice.SaveToFile("InvoicePreview.xps", FileFormat.XPS);
                     Invoice.Close();

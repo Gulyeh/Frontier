@@ -1,5 +1,5 @@
 ﻿using Frontier.Database.GetQuery;
-using Frontier.Methods;
+using Frontier.Methods.Numerics;
 using Frontier.Variables;
 using Frontier.ViewModels;
 using Frontier.Windows.Confirmation_Window;
@@ -31,24 +31,28 @@ namespace Frontier.Windows.Contactors_Window
             {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    using (GetContactors Contactors = new GetContactors())
+                    try
                     {
-                        var query = Contactors.Contactors;
-                        foreach (var data in query)
+                        using (GetContactors Contactors = new GetContactors())
                         {
-                            Collections.ContactorsData.Add(new Contactors_ViewModel
+                            var query = Contactors.Contactors;
+                            foreach (var data in query)
                             {
-                                ID = data.idContactors,
-                                Address = data.Street,
-                                Country = data.Country,
-                                Name = data.Name,
-                                State = data.State,
-                                NIP = data.NIP,
-                                PostCode = data.PostCode,
-                                Regon = data.REGON
-                            });
+                                Collections.ContactorsData.Add(new Contactors_ViewModel
+                                {
+                                    ID = data.idContactors,
+                                    Address = data.Street,
+                                    Country = data.Country,
+                                    Name = data.Name,
+                                    State = data.State,
+                                    NIP = data.NIP,
+                                    PostCode = data.PostCode,
+                                    Regon = data.REGON
+                                });
+                            }
                         }
                     }
+                    catch (Exception) { Collections.ContactorsData.Clear();  LoadContactors(); }
                 }));
             });
         }
@@ -119,7 +123,7 @@ namespace Frontier.Windows.Contactors_Window
 
                             if (updated)
                             {
-                                
+
                                 var newcontactor = contactor.Contactors.OrderByDescending(x => x.idContactors).First();
                                 var row = new Contactors_ViewModel()
                                 {
@@ -182,7 +186,7 @@ namespace Frontier.Windows.Contactors_Window
 
                             var updated = await edit_contactor.EditContactor(data);
                             if (updated)
-                            {                                
+                            {
                                 var row = Collections.ContactorsData.Where(x => x.ID == data.idContactors).FirstOrDefault();
                                 var new_model = new Contactors_ViewModel()
                                 {
@@ -283,59 +287,12 @@ namespace Frontier.Windows.Contactors_Window
                 default:
                     break;
             }
-        }
-        private void Delete_Clicked(object sender, RoutedEventArgs e)
-        {
-            Confirmation confirm = new Confirmation("Contactors");
-            confirm.Owner = Application.Current.MainWindow;
-            confirm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            bool? data = confirm.ShowDialog();
-            if (data.HasValue && data.Value)
-            {
-                //DeleteRows();
-            }
-        }
-        private async void DeleteRows()
-        {
-            await Task.Run(async () =>
-            {
-                await this.Dispatcher.BeginInvoke(new Action(async () =>
-                {
-                    List<int> ids = new List<int>();
-                    foreach (Contactors_ViewModel data in Contactors_Grid.SelectedItems)
-                    {
-                        ids.Add(data.ID);
-                    }
-
-                    using (GetContactors delete_contactor = new GetContactors())
-                    {
-                        foreach (int data in ids)
-                        {
-                            bool updated = delete_contactor.DeleteContactor(data);
-                            if (updated)
-                            {
-                                await delete_contactor.SaveChangesAsync();
-                                Collections.ContactorsData.Remove(Collections.ContactorsData.Where(x => x.ID == data).FirstOrDefault());
-                            }
-                        }
-                    }
-
-                    //Workaround for updating datagrid if user searched data
-                    if (SearchBox.Text.Length > 0)
-                    {
-                        var text = SearchBox.Text;
-                        SearchBox.Text = string.Empty;
-                        SearchBox.Text = text;
-                    }
-
-                }));
-            });
-        }
+        }    
         private void Find_Contactors(object sender, TextChangedEventArgs e)
         {
             if (SearchBox.Text.Length > 0)
             {
-                Contactors_Grid.ItemsSource = Collections.ContactorsData.Where(x => x.Name.ToLower().Contains(SearchBox.Text));
+                Contactors_Grid.ItemsSource = Collections.ContactorsData.Where(x => x.Name.ToLower().Contains(SearchBox.Text.ToLower()));
             }
             else
             {

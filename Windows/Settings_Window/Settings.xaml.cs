@@ -1,9 +1,14 @@
 ﻿using Frontier.Database.GetQuery;
 using Frontier.Database.TableClasses;
-using Frontier.Methods;
+using Frontier.Methods.Invoices;
+using Frontier.Methods.Numerics;
 using Frontier.Variables;
 using Frontier.ViewModels;
+using Frontier.Windows.Confirmation_Window;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,34 +20,140 @@ namespace Frontier.Windows.Settings_Window
     /// <summary>
     /// Logika interakcji dla klasy Ustawienia.xaml
     /// </summary>
-    public partial class Settings : Page
+    public partial class Settings : Page, INotifyPropertyChanged
     {
+        private string name;
+        public string MainName
+        {
+            get { return name; }
+            set
+            {
+                if (name == value) return;
+                name = value;
+                NotifyPropertyChanged("MainName");
+            }
+        }
+        private string _NIP;
+        public string NIP
+        {
+            get { return _NIP; }
+            set
+            {
+                if (_NIP == value) return;
+                _NIP = value;
+                NotifyPropertyChanged("NIP");
+            }
+        }
+        private string street;
+        public string Street
+        {
+            get { return street; }
+            set
+            {
+                if (street == value) return;
+                street = value;
+                NotifyPropertyChanged("Street");
+            }
+        }
+        private string regon;
+        public string REGON
+        {
+            get { return regon; }
+            set
+            {
+                if (regon == value) return;
+                regon = value;
+                NotifyPropertyChanged("REGON");
+            }
+        }
+        private string state;
+        public string State
+        {
+            get { return state; }
+            set
+            {
+                if (state == value) return;
+                state = value;
+                NotifyPropertyChanged("State");
+            }
+        }
+        private string postcode;
+        public string PostCode
+        {
+            get { return postcode; }
+            set
+            {
+                if (postcode == value) return;
+                postcode = value;
+                NotifyPropertyChanged("PostCode");
+            }
+        }
+        private string country;
+        public string Country
+        {
+            get { return country; }
+            set
+            {
+                if (country == value) return;
+                country = value;
+                NotifyPropertyChanged("Country");
+            }
+        }
+        private string bdo;
+        public string BDO
+        {
+            get { return bdo; }
+            set
+            {
+                if (bdo == value) return;
+                bdo = value;
+                NotifyPropertyChanged("BDO");
+            }
+        }
+
         public Settings()
         {
             InitializeComponent();
-            this.DataContext = Collections.CompanyData;
             LoadSettings();
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         private async void LoadSettings()
         {
-            await Task.Run(async() => {
-                await this.Dispatcher.BeginInvoke(new Action(() =>
+            await Task.Run(async () =>
+            {
+                await Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    using (GetCompanydata companydata = new GetCompanydata())
+                    try
                     {
-                        var query = companydata.CompanyData.Where(x => x.idcompanydata == 1).FirstOrDefault();
-                        var data = new CompanyData_ViewModel()
+                        using (GetCompanydata companydata = new GetCompanydata())
                         {
-                            Name = query.Name,
-                            NIP = query.NIP,
-                            Street = query.Street,
-                            REGON = query.REGON,
-                            State = query.State,
-                            PostCode = query.PostCode,
-                            Country = query.Country
-                        };
-                        Collections.CompanyData.Add(data);
+                            var query = companydata.CompanyData.FirstOrDefault();
+                            Collections.CompanyData = new Dictionary<string, string>
+                            {
+                                { "Name", query.Name },
+                                { "NIP", query.NIP },
+                                { "Street", query.Street },
+                                { "REGON", query.REGON },
+                                { "State", query.State },
+                                { "PostCode", query.PostCode },
+                                { "Country", query.Country },
+                                { "BDO", query.BDO }
+                            };
+                            MainName = query.Name;
+                            NIP = query.NIP;
+                            Street = query.Street;
+                            REGON = query.REGON;
+                            State = query.State;
+                            PostCode = query.PostCode;
+                            Country = query.Country;
+                            BDO = query.BDO;
+                        }
                     }
+                    catch (Exception) { MessageBox.Show("Nie udało się załadować danych firmy.\nProszę zalogować się ponownie"); ((MainWindow)Application.Current.MainWindow).Logout(); }
                 }));
             });
         }
@@ -97,7 +208,7 @@ namespace Frontier.Windows.Settings_Window
                 {
                     using (GetCompanydata companydata = new GetCompanydata())
                     {
-                        var data = new CompanyData()
+                        bool updated = await companydata.UpdateCompany(new CompanyData()
                         {
                             Name = Compname.Text,
                             NIP = compnip.Text,
@@ -105,13 +216,13 @@ namespace Frontier.Windows.Settings_Window
                             Street = compstreet.Text,
                             PostCode = comppostcode.Text,
                             State = compstate.Text,
-                            Country = compcountry.Text
-                        };
-
-                        bool updated = await companydata.UpdateCompany(data);
+                            Country = compcountry.Text,
+                            BDO = CompBDO.Text
+                        });
                         if (updated)
                         {
-                            companydata.SaveChanges();
+                            await companydata.SaveChangesAsync();
+                            LoadSettings();
                             MessageBox.Show("Zaktualizowano dane pomyślnie.");
                         }
                         else
@@ -192,6 +303,64 @@ namespace Frontier.Windows.Settings_Window
             {
                 MessageBox.Show("Wystąpił błąd podczas aktualizacji danych.");
             }
+        }
+        private async void DeleteDB_Clicked(object sender, RoutedEventArgs e)
+        {
+            Confirmation confirm = new Confirmation("Delete");
+            confirm.Owner = Application.Current.MainWindow;
+            confirm.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            bool? data = confirm.ShowDialog();
+            if (data.HasValue && data.Value)
+            {
+                await Task.Run(async () =>
+                {
+                    await Dispatcher.BeginInvoke(new Action(async() =>
+                    {
+                        try
+                        {
+                            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+                            await PermaDelete.Delete(AppDomain.CurrentDomain.BaseDirectory + "/Database", GlobalVariables.DatabaseName + ".sqlite");
+                            ((MainWindow)Application.Current.MainWindow).Logout();
+                            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                        }
+                        catch (Exception)
+                        {
+                            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                            MessageBox.Show("Wystąpił błąd podczas usuwania bazy danych");
+                        }
+                    }));
+                });
+            }
+        }
+        private async void ExportDB_Clicked(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.SaveFileDialog exportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+
+            exportSaveFileDialog.Title = "Select Destination";
+            exportSaveFileDialog.Filter = "SQLite(*.sqlite)|*.sqlite";
+
+            if (System.Windows.Forms.DialogResult.OK == exportSaveFileDialog.ShowDialog())
+            {
+                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+                await Task.Run(async () =>
+                {
+                    await Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        try
+                        {
+                            File.Copy(AppDomain.CurrentDomain.BaseDirectory + "/Database/" + GlobalVariables.DatabaseName + ".sqlite", exportSaveFileDialog.FileName, true);
+                            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                            MessageBox.Show("Baza danych została wyeksportowana pomyślnie");
+                        }
+                        catch (Exception)
+                        {
+                            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                            MessageBox.Show("Wystąpił błąd podczas eksportowania bazy danych");
+                        }
+                    }));
+                });
+            }
+            
         }
     }
 }

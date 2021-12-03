@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Frontier.ViewModels
 {
     public class ProductsSold_ViewModel : INotifyPropertyChanged
     {
+
         private int id { get; set; }
         public int ID
         {
@@ -51,7 +48,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (piecenetto == value) return;
-                piecenetto = value;
+                piecenetto = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("PieceNetto");
             }
         }
@@ -63,7 +60,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (piecebrutto == value) return;
-                piecebrutto = value;
+                piecebrutto = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("PieceBrutto");
             }
         }
@@ -87,7 +84,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (netto == value) return;
-                netto = value;
+                netto = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("Netto");
             }
         }
@@ -99,7 +96,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (vatamount == value) return;
-                vatamount = value;
+                vatamount = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("VATAmount");
             }
         }
@@ -111,7 +108,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (brutto == value) return;
-                brutto = value;
+                brutto = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("Brutto");
             }
         }
@@ -119,6 +116,7 @@ namespace Frontier.ViewModels
         public string GroupType { get; set; }
         public int Margin { get; set; }
         public string GTU { get; set; }
+        public int ID_SoldProduct { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)

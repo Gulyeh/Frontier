@@ -43,6 +43,6 @@
             <Button Content="Korekta" Click="Adjustment_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="152" Height="39" Background="#2f4050" Margin="20,0,0,0"/>
             <Button Content="Archiwum" Click="Archive_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="152" Height="39" Background="#2f4050" Margin="20,0,0,0"/>
         </StackPanel>
-        <Frame Name="Invoice_Content" Grid.Row="1" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Frame Name="Invoice_Content" Navigating="HandleNavigating" Grid.Row="1" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Page>

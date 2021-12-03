@@ -1,9 +1,7 @@
 ﻿using Frontier.Variables;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Frontier.Database.GetQuery
@@ -36,6 +34,7 @@ namespace Frontier.Database.GetQuery
                 var query = await Invoice_Sold.Where(x => x.idInvoice_Sold == data.idInvoice_Sold).FirstOrDefaultAsync();
                 query.Receiver = data.Receiver;
                 query.Invoice_ID = data.Invoice_ID;
+                query.Invoice_Type = data.Invoice_Type;
                 query.Date_Sold = data.Date_Sold;
                 query.Date_Created = data.Date_Created;
                 query.Purchase_type = data.Purchase_type;
@@ -44,6 +43,8 @@ namespace Frontier.Database.GetQuery
                 query.Description = data.Description;
                 query.AccountNumber = data.AccountNumber;
                 query.BankName = data.BankName;
+                query.PricePaid = data.PricePaid;
+                query.ExchangeRate = data.ExchangeRate;
                 return true;
             }
             catch (Exception)

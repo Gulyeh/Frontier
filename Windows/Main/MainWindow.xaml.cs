@@ -1,5 +1,4 @@
-﻿using Frontier.Database.GetQuery;
-using Frontier.Variables;
+﻿using Frontier.Variables;
 using Frontier.ViewModels;
 using Frontier.Windows.Analyze_Window;
 using Frontier.Windows.Auth_Window;
@@ -9,9 +8,9 @@ using Frontier.Windows.Invoices_Window;
 using Frontier.Windows.Settings_Window;
 using Frontier.Windows.Warehouse_Window;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace Frontier
 {
@@ -76,7 +75,13 @@ namespace Frontier
                     break;
             }
         }
-
+        private void HandleNavigating(Object sender, NavigatingCancelEventArgs e)
+        {
+            if (e.NavigationMode == NavigationMode.Forward || e.NavigationMode == NavigationMode.Back)
+            {
+                e.Cancel = true;
+            }
+        }
         private void Logout_Clicked(object sender, RoutedEventArgs e)
         {
             Confirmation confirm = new Confirmation("Logout");
@@ -85,17 +90,22 @@ namespace Frontier
             bool? data = confirm.ShowDialog();
             if (data.HasValue && data.Value)
             {
-                LoginModel.isLogged = false;
-                Menu_List.SelectedIndex = -1;
-                WAuth = new Auth(LoginModel);
-                Content_Frame.Content = WAuth;
-                Collections.ResetCollections();
-                WInvoice = null;
-                WWarehouse = null;
-                WContactors = null;
-                WAnalyze = null;
-                WSettings = null;
+                Logout();
             }
         }
+        public void Logout()
+        {
+            LoginModel.isLogged = false;
+            Menu_List.SelectedIndex = -1;
+            WAuth = new Auth(LoginModel);
+            Content_Frame.Content = WAuth;
+            Collections.ResetCollections();
+            WInvoice = null;
+            WWarehouse = null;
+            WContactors = null;
+            WAnalyze = null;
+            WSettings = null;
+        }
+
     }
 }

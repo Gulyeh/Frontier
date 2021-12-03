@@ -1,5 +1,5 @@
 ﻿using Frontier.Database.GetQuery;
-using Frontier.Methods;
+using Frontier.Methods.Numerics;
 using Frontier.Variables;
 using Frontier.ViewModels;
 using Frontier.Windows.Confirmation_Window;
@@ -118,22 +118,22 @@ namespace Frontier.Windows.Groups_Window
                 MessageBox.Show("Wystąpił błąd podczas edytowania grupy");
             }
         }
-        private Task CorrectData(int index)
+        private async Task CorrectData(int index)
         {
-            try
+            await Task.Run(async () =>
             {
-                Task.Run(async () =>
+                await this.Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    await this.Dispatcher.BeginInvoke(new Action(async () =>
+                    try
                     {
                         using (GetWarehouse item = new GetWarehouse())
                         {
-                            var groupdata = Collections.GroupsData[index];
-                            foreach (var data in Collections.WarehouseData.Where(x => x.GroupID == groupdata.ID))
+                            using (GetWarehouse edit_item = new GetWarehouse())
                             {
-                                if (groupdata.Type == 1)
+                                var groupdata = Collections.GroupsData[index];
+                                foreach (var data in Collections.WarehouseData.Where(x => x.GroupID == groupdata.ID))
                                 {
-                                    using (GetWarehouse edit_item = new GetWarehouse())
+                                    if (groupdata.Type == 1)
                                     {
                                         var new_data = new Database.TableClasses.Warehouse()
                                         {
@@ -151,18 +151,17 @@ namespace Frontier.Windows.Groups_Window
                                         {
                                             Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Netto = decimal.TryParse(groupdata.VAT, out decimal vat) == true ? Calculate.GetNetto(vat, Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto) : Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().Brutto;
                                             Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().VAT = groupdata.VAT;
-                                            await edit_item.SaveChangesAsync();
                                         }
                                     }
+                                    Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().GroupName = groupdata.Name;
                                 }
-                                Collections.WarehouseData.Where(x => x.ID == data.ID).FirstOrDefault().GroupName = groupdata.Name;
+                                await edit_item.SaveChangesAsync();
                             }
                         }
-                    }));
-                });
-            }
-            catch (Exception){}
-            return Task.CompletedTask;
+                    }
+                    catch (Exception) { }
+                }));
+            });          
         }
         private async void DeleteGroup_Clicked(object sender, RoutedEventArgs e)
         {

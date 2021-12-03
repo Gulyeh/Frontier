@@ -1,10 +1,7 @@
 ﻿using Frontier.Variables;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Frontier.Database.GetQuery
@@ -35,8 +32,9 @@ namespace Frontier.Database.GetQuery
         {
             try
             {
-                var query = await Invoice_Products.Where(x => x.Invoice_ID == data.Invoice_ID && x.Product_ID == data.Product_ID).FirstOrDefaultAsync();
+                var query = await Invoice_Products.FirstOrDefaultAsync(x => x.id == data.id);
                 query.Invoice_ID = data.Invoice_ID;
+                query.Invoice = data.Invoice;
                 query.Product_ID = data.Product_ID;
                 query.Name = data.Name;
                 query.Amount = data.Amount;
@@ -46,6 +44,12 @@ namespace Frontier.Database.GetQuery
                 query.Netto = data.Netto;
                 query.VAT_Price = data.VAT_Price;
                 query.Brutto = data.Brutto;
+                query.GTU = data.GTU;
+                query.BoughtNetto = data.BoughtNetto;
+                query.BoughtVAT = data.BoughtVAT;
+                query.BoughtBrutto = data.BoughtBrutto;
+                query.GroupType = data.GroupType;
+
                 return true;
             }
             catch (Exception)
@@ -53,11 +57,11 @@ namespace Frontier.Database.GetQuery
                 return false;
             }
         }
-        public bool DeleteItem(string invoiceID, string productID)
+        public bool DeleteItem(int idSold)
         {
             try
             {
-                Invoice_Products.Remove(Invoice_Products.Where(x => x.Invoice_ID == invoiceID && x.Product_ID == productID).FirstOrDefault());
+                Invoice_Products.Remove(Invoice_Products.FirstOrDefault(x => x.id == idSold));
                 return true;
             }
             catch (Exception)

@@ -1,6 +1,5 @@
 ﻿using Frontier.Variables;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,14 +34,14 @@ namespace Frontier.Database.GetQuery
                 var amount = await Warehouse.Where(x => x.Name == data.Name).CountAsync();
                 var query = await Warehouse.Where(x => x.idWarehouse == data.idWarehouse).FirstOrDefaultAsync();
 
-                if(query.Amount == data.Amount)
+                if (query.Amount == data.Amount)
                 {
                     if (amount > 1)
                     {
                         DeleteItem(data.idWarehouse);
                         Collections.WarehouseData.Remove(Collections.WarehouseData.Where(x => x.ID == data.idWarehouse).FirstOrDefault());
                     }
-                    else if(amount == 1)
+                    else if (amount == 1)
                     {
                         var item = Collections.WarehouseData.Where(x => x.ID == data.idWarehouse).FirstOrDefault();
                         query.Amount = 0;
@@ -55,7 +54,7 @@ namespace Frontier.Database.GetQuery
                         item.VAT = "0%";
                     }
                 }
-                else if(query.Amount > data.Amount)
+                else if (query.Amount > data.Amount)
                 {
                     query.Amount -= data.Amount;
                 }

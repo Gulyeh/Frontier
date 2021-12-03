@@ -1,5 +1,6 @@
 ﻿using Frontier.Database.GetQuery;
 using Frontier.Methods;
+using Frontier.Methods.Numerics;
 using Frontier.Variables;
 using Frontier.ViewModels;
 using Frontier.Windows.Confirmation_Window;
@@ -7,6 +8,7 @@ using Frontier.Windows.Groups_Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,11 +35,11 @@ namespace Frontier.Windows.Warehouse_Window
         }
         private async void LoadWarehouse()
         {
-            try
+            await Task.Run(async () =>
             {
-                await Task.Run(async () =>
+                await this.Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    await this.Dispatcher.BeginInvoke(new Action(async () =>
+                    try
                     {
                         using (GetGroups groups = new GetGroups())
                         {
@@ -56,15 +58,14 @@ namespace Frontier.Windows.Warehouse_Window
                             }
                         }
                         await Download_WarehouseItems.Download();
-                    }));
-                });
-            }
-            catch (Exception)
-            {
-                Collections.GroupsData.Clear();
-                Collections.WarehouseData.Clear();
-                LoadWarehouse();
-            }
+                    }
+                    catch (Exception)
+                    {
+                        Collections.GroupsData.Clear();
+                        LoadWarehouse();
+                    }
+                }));
+            });
         }
         private async void AddItem_Clicked(object sender, RoutedEventArgs e)
         {
@@ -72,6 +73,8 @@ namespace Frontier.Windows.Warehouse_Window
             {
                 if (itemname.Text != string.Empty && itemcount.Text != string.Empty && itembrutto.Text != string.Empty && warehousegroups.SelectedIndex > -1)
                 {
+                    var checkName = Collections.WarehouseData.FirstOrDefault(x => x.Name == itemname.Text);
+                    if (checkName != null) { MessageBox.Show("Taka nazwa istnieje już w magazynie"); return; }
                     using (GetWarehouse add_itemWarehouse = new GetWarehouse())
                     {
                         var isNumericMargin = int.TryParse(itemmargin.Text, out int margin);
@@ -82,7 +85,7 @@ namespace Frontier.Windows.Warehouse_Window
                             Name = itemname.Text,
                             Group = Collections.GroupsData[warehousegroups.SelectedIndex].ID.ToString(),
                             Amount = int.Parse(itemcount.Text),
-                            Brutto = Math.Round(decimal.Parse(itembrutto.Text),2),
+                            Brutto = Math.Round(decimal.Parse(itembrutto.Text), 2),
                             Margin = isNumericMargin == true ? margin : 0,
                             Netto = isNumericVAT == true ? Calculate.GetNetto(vat, decimal.Parse(itembrutto.Text)) : Math.Round(decimal.Parse(itembrutto.Text), 2),
                             VAT = Collections.GroupsData[warehousegroups.SelectedIndex].Type == 1 ? vat.ToString() : "0"
@@ -102,10 +105,10 @@ namespace Frontier.Windows.Warehouse_Window
                                 GroupID = Collections.GroupsData[warehousegroups.SelectedIndex].ID,
                                 GroupType = Collections.GroupsData[warehousegroups.SelectedIndex].Type == 0 ? "Towar" : "Usługa",
                                 Amount = int.Parse(itemcount.Text),
-                                Brutto = decimal.Parse(String.Format("{0:0.00}", data.Brutto)),
+                                Brutto = data.Brutto,
                                 Margin = data.Margin,
                                 VAT = data.VAT,
-                                Netto = decimal.Parse(String.Format("{0:0.00}", data.Netto))
+                                Netto = data.Netto
                             };
 
                             Collections.WarehouseData.Add(new_data);
@@ -130,19 +133,28 @@ namespace Frontier.Windows.Warehouse_Window
         }
         private async void EditItem_Clicked(object sender, RoutedEventArgs e)
         {
-            try
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+            await Task.Run(async () =>
             {
-                if (editname.Text != string.Empty && editcount.Text != string.Empty && editbrutto.Text != string.Empty && editgroup.SelectedIndex > -1)
+                await Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
-                    await Task.Run(async () => { 
-                        await Dispatcher.BeginInvoke(new Action(async() =>
-                        { 
+                    try
+                    {
+                        if (editname.Text != string.Empty && editcount.Text != string.Empty && editbrutto.Text != string.Empty && editgroup.SelectedIndex > -1)
+                        {
+                            var checkName = Collections.WarehouseData.FirstOrDefault(x => x.Name == editname.Text);
+                            if (checkName != null && Collections.WarehouseData.FirstOrDefault(x => x.ID == ItemID).Name != editname.Text)
+                            {
+                                editname.Text = Collections.WarehouseData.FirstOrDefault(x => x.ID == ItemID).Name;
+                                MessageBox.Show("Taka nazwa istnieje już w magazynie");
+                                return;
+                            }
+
                             var isNumericMargin = int.TryParse(editmargin.Text, out int margin);
                             decimal NettoPrice = 0;
                             string VAT = "";
 
-                            if(Collections.GroupsData[editgroup.SelectedIndex].Type == 1) // if jest usługa
+                            if (Collections.GroupsData[editgroup.SelectedIndex].Type == 1) // if jest usługa
                             {
                                 VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
                                 var isNumericVAT = decimal.TryParse(Collections.GroupsData[editgroup.SelectedIndex].VAT, out decimal vat);
@@ -150,7 +162,7 @@ namespace Frontier.Windows.Warehouse_Window
                             }
                             else // if jest towar
                             {
-                                if(int.Parse(editcount.Text) == 0)
+                                if (int.Parse(editcount.Text) == 0)
                                 {
                                     VAT = Collections.GroupsData[editgroup.SelectedIndex].VAT;
                                     NettoPrice = 0.00m;
@@ -203,9 +215,9 @@ namespace Frontier.Windows.Warehouse_Window
                                     };
 
                                     Collections.WarehouseData[Collections.WarehouseData.IndexOf(Collections.WarehouseData.Where(x => x.ID == ItemID).FirstOrDefault())] = new_data;
-                                    if(Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault() != null) { Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault().Name = editname.Text; }
+                                    if (Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault() != null) { Collections.ProductsSold.Where(x => x.ID == ItemID).FirstOrDefault().Name = editname.Text; }
 
-                                    foreach(var productid in IDs)
+                                    foreach (var productid in IDs)
                                     {
                                         var db_item = edit_item.Warehouse.Where(x => x.idWarehouse == productid).FirstOrDefault();
                                         var wh_item = Collections.WarehouseData.Where(x => x.ID == productid).FirstOrDefault();
@@ -238,19 +250,19 @@ namespace Frontier.Windows.Warehouse_Window
                                     throw new ArgumentNullException();
                                 }
                             }
-                        }));
-                    });
-                }
-                else
-                {
-                    MessageBox.Show("Proszę uzupełnić wymagane dane");
-                }
-            }
-            catch (Exception)
-            {
-                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
-                MessageBox.Show("Wystąpił błąd podczas aktualizacji danych");
-            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Proszę uzupełnić wymagane dane");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                        MessageBox.Show("Wystąpił błąd podczas aktualizacji danych");
+                    }
+                }));
+            });
         }
         private void EditRow_Clicked(object sender, RoutedEventArgs e)
         {
@@ -301,7 +313,7 @@ namespace Frontier.Windows.Warehouse_Window
         }
         private void CheckSpace(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Space)
+            if (e.Key == Key.Space)
             {
                 e.Handled = true;
             }
@@ -331,9 +343,10 @@ namespace Frontier.Windows.Warehouse_Window
             }
             else
             {
-                if(((TextBox)sender).Text.Length == 0 && e.Text == "0")
+                if (Regex.IsMatch(((TextBox)sender).Text.Insert(((TextBox)sender).SelectionStart, e.Text), @"\,\d\d\d"))
                 {
                     e.Handled = true;
+                    MessageBox.Show("Nie można dodać wiecej niz dwie cyfry po przecinku");
                 }
             }
         }
@@ -355,36 +368,38 @@ namespace Frontier.Windows.Warehouse_Window
             {
                 await this.Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    List<int> ids = new List<int>();
-                    foreach (Warehouse_ViewModel data in Warehouse_Grid.SelectedItems)
+                    try
                     {
-                        if (data.GroupType == "Usługa" || data.Amount == 0)
+                        List<int> ids = new List<int>();
+                        foreach (Warehouse_ViewModel data in Warehouse_Grid.SelectedItems)
                         {
-                            ids.Add(data.ID);
-                        }
-                    }
-
-                    using (GetWarehouse delete_item = new GetWarehouse())
-                    {
-                        foreach (int data in ids)
-                        {
-                            bool updated = delete_item.DeleteItem(data);
-                            if (updated)
+                            if (data.GroupType == "Usługa" || data.Amount == 0)
                             {
-                                await delete_item.SaveChangesAsync();
-                                Collections.WarehouseData.Remove(Collections.WarehouseData.Where(x => x.ID == data).FirstOrDefault());
+                                ids.Add(data.ID);
                             }
                         }
-                    }
 
-                    //Workaround for updating datagrid if user searched data
-                    if (SearchBox.Text.Length > 0)
-                    {
-                        var text = SearchBox.Text;
-                        SearchBox.Text = string.Empty;
-                        SearchBox.Text = text;
-                    }
+                        using (GetWarehouse delete_item = new GetWarehouse())
+                        {
+                            foreach (int data in ids)
+                            {
+                                bool updated = delete_item.DeleteItem(data);
+                                if (updated)
+                                {
+                                    Collections.WarehouseData.Remove(Collections.WarehouseData.Where(x => x.ID == data).FirstOrDefault());
+                                }
+                            }
+                            await delete_item.SaveChangesAsync();
+                        }
 
+                        //Workaround for updating datagrid if user searched data
+                        if (SearchBox.Text.Length > 0)
+                        {
+                            var text = SearchBox.Text;
+                            SearchBox.Text = string.Empty;
+                            SearchBox.Text = text;
+                        }
+                    }catch(Exception) { await Download_WarehouseItems.Download(); MessageBox.Show("Wystąpił błąd podczas usuwania"); }
                 }));
             });
             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
@@ -435,61 +450,65 @@ namespace Frontier.Windows.Warehouse_Window
             }
             else
             {
-                Warehouse_Grid.ItemsSource = SearchType.SelectedIndex == 0 ? Collections.WarehouseData.Where(x => x.Name.ToLower().Contains(SearchBox.Text)) : Collections.WarehouseData.Where(x => x.GroupName.ToLower().Contains(SearchBox.Text));
+                Warehouse_Grid.ItemsSource = SearchType.SelectedIndex == 0 ? Collections.WarehouseData.Where(x => x.Name.ToLower().Contains(SearchBox.Text.ToLower())) : Collections.WarehouseData.Where(x => x.GroupName.ToLower().Contains(SearchBox.Text.ToLower()));
             }
         }
         private void GroupChanged_Selection(object sender, RoutedEventArgs e)
         {
-            if (((ComboBox)sender).Name == "warehousegroups")
+            try
             {
-                if (warehousegroups.SelectedIndex > -1)
+                if (((ComboBox)sender).Name == "warehousegroups")
                 {
-                    if (Collections.GroupsData[warehousegroups.SelectedIndex].Type == 1)
+                    if (warehousegroups.SelectedIndex > -1)
                     {
-                        itemcount.Text = "1";
-                        itembrutto.Text = "";
-                        itembrutto.IsHitTestVisible = true;
-                    }
-                    else
-                    {
-                        itemcount.Text = "0";
-                        itembrutto.Text = "0,00";
-                        itembrutto.IsHitTestVisible = false;
-                    }
-                }
-            }
-            else
-            {
-                if (editgroup.SelectedIndex > -1 && editgroup.SelectedIndex != LastIndex)
-                {
-                    if (SelectedGroupType != (Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa") && int.Parse(editcount.Text) > 0 && SelectedGroupType != "Usługa")
-                    {
-                        editgroup.SelectedIndex = LastIndex;
-                        MessageBox.Show("Nie można zmienić typu grupy gdyż towar dalej widnieje na magazynie");
-                    }
-                    else if(SelectedGroupType != (Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa"))
-                    {
-                        if(Collections.GroupsData[editgroup.SelectedIndex].Type == 0)
+                        if (Collections.GroupsData[warehousegroups.SelectedIndex].Type == 1)
                         {
-                            editcount.Text = "0";
-                            editbrutto.Text = "0,00";
-                            editbrutto.IsHitTestVisible = false;
+                            itemcount.Text = "1";
+                            itembrutto.Text = "";
+                            itembrutto.IsHitTestVisible = true;
                         }
                         else
                         {
-                            editcount.Text = "1";
-                            editbrutto.Text = "";
-                            editbrutto.IsHitTestVisible = true;
+                            itemcount.Text = "0";
+                            itembrutto.Text = "0,00";
+                            itembrutto.IsHitTestVisible = false;
                         }
-                        SelectedGroupType = Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa";
-                        LastIndex = editgroup.SelectedIndex;
                     }
-                    else
+                }
+                else
+                {
+                    if (editgroup.SelectedIndex > -1 && editgroup.SelectedIndex != LastIndex)
                     {
-                        LastIndex = editgroup.SelectedIndex;
+                        if (SelectedGroupType != (Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa") && int.Parse(editcount.Text) > 0 && SelectedGroupType != "Usługa")
+                        {
+                            editgroup.SelectedIndex = LastIndex;
+                            MessageBox.Show("Nie można zmienić typu grupy gdyż towar dalej widnieje na magazynie");
+                        }
+                        else if (SelectedGroupType != (Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa"))
+                        {
+                            if (Collections.GroupsData[editgroup.SelectedIndex].Type == 0)
+                            {
+                                editcount.Text = "0";
+                                editbrutto.Text = "0,00";
+                                editbrutto.IsHitTestVisible = false;
+                            }
+                            else
+                            {
+                                editcount.Text = "1";
+                                editbrutto.Text = "";
+                                editbrutto.IsHitTestVisible = true;
+                            }
+                            SelectedGroupType = Collections.GroupsData[editgroup.SelectedIndex].Type == 0 ? "Towar" : "Usługa";
+                            LastIndex = editgroup.SelectedIndex;
+                        }
+                        else
+                        {
+                            LastIndex = editgroup.SelectedIndex;
+                        }
                     }
                 }
             }
+            catch (Exception) { editgroup.SelectedIndex = LastIndex; }
         }
     }
 }

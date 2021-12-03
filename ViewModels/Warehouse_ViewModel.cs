@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace Frontier.ViewModels
 {
@@ -69,7 +70,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (brutto == value) return;
-                brutto = value;
+                brutto = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("Brutto");
             }
         }
@@ -93,7 +94,7 @@ namespace Frontier.ViewModels
             set
             {
                 if (netto == value) return;
-                netto = value;
+                netto = Math.Round(decimal.Parse(value.ToString("F2")), 2);
                 NotifyPropertyChanged("Netto");
             }
         }

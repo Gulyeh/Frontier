@@ -7,9 +7,9 @@ using Frontier.Windows.Confirmation_Window;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -53,7 +53,7 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
         private async void DownloadCurrencies_Values(object sender, RoutedEventArgs e)
         {
             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
-            CurrencyData = await Currencies.DownloadNBP();
+            CurrencyData = await CurrenciesRate.DownloadNBP();
             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
             if (CurrencyData != null)
             {
@@ -110,15 +110,15 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
             {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    List<int> ids = new List<int>();
+                    List <decimal[]> ids = new List<decimal[]>();
                     foreach (ProductsSold_ViewModel data in Products_Grid.SelectedItems)
                     {
-                        ids.Add(data.ID);
+                        ids.Add(new decimal[] { data.ID, data.PieceNetto, data.PieceBrutto });
                     }
 
-                    foreach (int data in ids)
+                    foreach (decimal[] data in ids)
                     {
-                        Collections.ProductsBought.Remove(Collections.ProductsBought.FirstOrDefault(x => x.ID == data));
+                        Collections.ProductsBought.Remove(Collections.ProductsBought.FirstOrDefault(x => x.ID == (int)data[0] && x.PieceBrutto == data[2] && x.PieceNetto == data[1]));
                     }
                 }));
             });
@@ -129,20 +129,20 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
             AddBought window = new AddBought();
             window.Owner = Application.Current.MainWindow;
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            window.ShowDialog();           
+            window.ShowDialog();
         }
         private void ChangeDate(object sender, SelectionChangedEventArgs e)
         {
             var senderName = ((DatePicker)sender).Name;
-            if(senderName == "Buy_Date" && InvoiceDate.Text != string.Empty)
+            if (senderName == "Buy_Date" && InvoiceDate.Text != string.Empty)
             {
-                if(Convert.ToDateTime(InvoiceDate.Text) < Buy_Date.SelectedDate.Value)
+                if (Convert.ToDateTime(InvoiceDate.Text) < Buy_Date.SelectedDate.Value)
                 {
                     MessageBox.Show("Data wystawienia faktury nie może być wcześniejsza od daty kupna");
                     return;
                 }
             }
-            else if(senderName == "Created_Date" && BoughtDate.Text != string.Empty)
+            else if (senderName == "Created_Date" && BoughtDate.Text != string.Empty)
             {
                 if (Convert.ToDateTime(BoughtDate.Text) > Created_Date.SelectedDate.Value)
                 {
@@ -164,7 +164,7 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
             }
         }
         private async void SaveInvoice()
-        {          
+        {
             if (SellersList.SelectedIndex > -1 && InvoiceNumber.Text != string.Empty && BoughtDate.Text != string.Empty && InvoiceDate.Text != string.Empty && Products_Grid.Items.Count > 0)
             {
                 ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
@@ -181,14 +181,18 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                     int LastInvoice = 0;
                                     try
                                     {
+                                        DateTimeFormatInfo format = new DateTimeFormatInfo();
+                                        format.ShortDatePattern = "dd.MM.yyyy";
+
                                         var data = new Invoice_Bought
                                         {
                                             Invoice_ID = InvoiceNumber.Text,
                                             Seller_ID = Collections.ContactorsData[SellersList.SelectedIndex].ID,
                                             Purchase_type = PurchaseType.Text,
-                                            Date_Created = Convert.ToDateTime(InvoiceDate.Text).ToShortDateString(),
+                                            Date_Created = Convert.ToDateTime(InvoiceDate.Text, format),
                                             Date_Bought = BoughtDate.Text,
-                                            Currency = CurrencyList.Text
+                                            Currency = CurrencyList.Text,
+                                            ExchangeRate = CurrencyList.Text != "PLN" ? CurrencyData[CurrencyList.Text] : 0
                                         };
                                         var updated = await invoice.AddInvoice(data);
                                         if (updated)
@@ -220,8 +224,8 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                                             Name = item.Name,
                                                             Group = findDefault.GroupID.ToString(),
                                                             Amount = item.Amount,
-                                                            Brutto = CurrencyList.Text != "PLN" ? decimal.Parse(String.Format("{0:0.00}", Math.Round(item.PieceBrutto * CurrencyData[CurrencyList.Text], 2))) : item.PieceBrutto,
-                                                            Netto = CurrencyList.Text != "PLN" ? decimal.Parse(String.Format("{0:0.00}", Math.Round(item.PieceNetto * CurrencyData[CurrencyList.Text], 2))) : item.PieceNetto,
+                                                            Brutto = CurrencyList.Text != "PLN" ? item.PieceBrutto * CurrencyData[CurrencyList.Text] : item.PieceBrutto,
+                                                            Netto = CurrencyList.Text != "PLN" ? item.PieceNetto * CurrencyData[CurrencyList.Text] : item.PieceNetto,
                                                             VAT = item.VAT,
                                                             Margin = findDefault.Margin
                                                         };
@@ -243,21 +247,23 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                                     Netto = item.Netto.ToString(),
                                                     VAT_Price = item.VATAmount.ToString(),
                                                     Brutto = item.Brutto.ToString(),
-                                                    GTU = item.GTU
+                                                    GTU = item.GTU,
+                                                    GroupType = item.GroupType,
+                                                    BoughtNetto = "0",
+                                                    BoughtBrutto = "0",
+                                                    BoughtVAT = "0",
                                                 };
                                                 updated = await new_item.AddProduct(new_product);
                                                 if (!updated) { throw new ArgumentNullException(); }
-
                                             }
                                             await new_item.SaveChangesAsync();
                                             await product.SaveChangesAsync();
                                             foreach (ProductsSold_ViewModel item in Products_Grid.Items)
                                             {
-                                                var LastID = product.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.VAT == item.VAT && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto).idWarehouse;
-                                                new_item.Invoice_Products.FirstOrDefault(x => x.Invoice == LastInvoice && x.Invoice_ID == data.Invoice_ID && x.Name == item.Name && x.VAT == item.VAT && x.Netto == item.PieceNetto.ToString() && x.Brutto == item.PieceBrutto.ToString()).Product_ID = LastID.ToString();
+                                                var LastID = product.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto && x.VAT == item.VAT).idWarehouse;
+                                                new_item.Invoice_Products.FirstOrDefault(x => x.Invoice == LastInvoice && x.Invoice_ID == data.Invoice_ID && x.Name == item.Name && x.Each_Netto == item.PieceNetto.ToString() && x.Each_Brutto == item.PieceBrutto.ToString() && x.VAT == item.VAT).Product_ID = LastID.ToString();
                                             }
                                             await new_item.SaveChangesAsync();
-
                                             await Download_WarehouseItems.Download();
                                             ResetValues();
                                             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
@@ -270,7 +276,11 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                     }
                                     catch (Exception)
                                     {
+                                        var items = new_item.Invoice_Products.Where(x => x.Invoice_ID == InvoiceNumber.Text && x.Invoice == LastInvoice);
+                                        foreach(var item in items) { new_item.DeleteItem(item.id); }
                                         invoice.Invoice_Bought.Remove(invoice.Invoice_Bought.FirstOrDefault(x => x.idinvoice_bought == LastInvoice));
+                                        await invoice.SaveChangesAsync();
+                                        await new_item.SaveChangesAsync();
                                         ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                                         MessageBox.Show("Wystąpił błąd podczas zapisu");
                                     }

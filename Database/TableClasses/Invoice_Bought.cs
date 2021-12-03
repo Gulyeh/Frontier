@@ -10,8 +10,9 @@ namespace Frontier.Database.TableClasses
         public string Invoice_ID { get; set; }
         public int Seller_ID { get; set; }
         public string Date_Bought { get; set; }
-        public string Date_Created { get; set; }
+        public DateTime Date_Created { get; set; }
         public string Purchase_type { get; set; }
         public string Currency { get; set; }
+        public decimal ExchangeRate { get; set; }
     }
 }

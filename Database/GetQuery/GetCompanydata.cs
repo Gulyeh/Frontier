@@ -19,7 +19,7 @@ namespace Frontier.Database.GetQuery
         {
             try
             {
-                var query = await CompanyData.Where(x => x.idcompanydata == 1).FirstOrDefaultAsync();
+                var query = await CompanyData.FirstOrDefaultAsync();
                 query.Name = data.Name;
                 query.NIP = data.NIP;
                 query.PostCode = data.PostCode;
@@ -27,6 +27,7 @@ namespace Frontier.Database.GetQuery
                 query.State = data.State;
                 query.Street = data.Street;
                 query.Country = data.Country;
+                query.BDO = data.BDO;
                 return true;
             }
             catch (Exception)

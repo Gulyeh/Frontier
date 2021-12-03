@@ -1,19 +1,15 @@
-﻿using Frontier.Database.GetQuery;
-using Frontier.Database.TableClasses;
-using Frontier.Methods;
+﻿using Frontier.Classes;
+using Frontier.Database.GetQuery;
+using Frontier.Methods.Invoices;
 using Frontier.Variables;
 using Frontier.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static Frontier.Windows.Invoices_Window.NewInvoice_Window.NewInvoice;
+
 namespace Frontier.Windows.Invoices_Window.Archive_Window
 {
     /// <summary>
@@ -25,7 +21,7 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
         public decimal TotalPrice_Netto
         {
             get { return _TotalPrice_Netto; }
-            set 
+            set
             {
                 if (_TotalPrice_Netto == value) return;
                 _TotalPrice_Netto = value;
@@ -60,7 +56,6 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
             InitializeComponent();
             LoadArchive();
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)
         {
@@ -68,13 +63,20 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
         }
         private async void LoadArchive()
         {
-            Archive_Grid.ItemsSource = Collections.Archive_Invoices;
-            var now = DateTime.Now;
-            var first = new DateTime(now.Year, now.Month, 1);
-            var last = first.AddMonths(1).AddDays(-1);
-            BeginDate.Text = first.ToShortDateString();
-            EndDate.Text = last.ToShortDateString();
-            await DownloadInvoices();
+            try
+            {
+                Archive_Grid.ItemsSource = Collections.Archive_Invoices;
+                var now = DateTime.Now;
+                var first = new DateTime(now.Year, now.Month, 1);
+                var last = first.AddMonths(1).AddDays(-1);
+                BeginDate.Text = first.ToShortDateString();
+                EndDate.Text = last.ToShortDateString();
+                await DownloadInvoices();
+            }catch (Exception)
+            {
+                Collections.Archive_Invoices.Clear();
+                MessageBox.Show("Nie można załadować archiwum");
+            }
         }
         private void SelectionDate_Clicked(object sender, SelectionChangedEventArgs e)
         {
@@ -95,19 +97,19 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                     return;
                 }
             }
-             _ = senderName == "From_Date" ? BeginDate.Text = From_Date.SelectedDate.Value.Date.ToShortDateString() : EndDate.Text = Until_Date.SelectedDate.Value.Date.ToShortDateString();
+            _ = senderName == "From_Date" ? BeginDate.Text = From_Date.SelectedDate.Value.Date.ToShortDateString() : EndDate.Text = Until_Date.SelectedDate.Value.Date.ToShortDateString();
         }
         private void Search_Invoice(object sender, RoutedEventArgs e)
         {
             try
             {
-                if(SearchBox.Text.Length == 0)
+                if (SearchBox.Text.Length == 0)
                 {
                     Archive_Grid.ItemsSource = Collections.Archive_Invoices;
                 }
                 else
                 {
-                    if(SearchType.SelectedIndex == 0)
+                    if (SearchType.SelectedIndex == 0)
                     {
                         Archive_Grid.ItemsSource = Collections.Archive_Invoices.Where(x => x.InvoiceID.ToLower().Contains(SearchBox.Text.ToLower()));
                     }
@@ -124,30 +126,36 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
         }
         private async void OpenPreview(object sender, RoutedEventArgs e)
         {
-            try
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+            await Task.Run(async () =>
             {
-                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
-                Button button = sender as Button;
-                var item = (sender as FrameworkElement).DataContext;
-                var index = Archive_Grid.Items.IndexOf(item);
-                var id = Archive_Grid.Columns[0].GetCellContent(Archive_Grid.Items[index]) as TextBlock;
-                var invoicetype = Archive_Grid.Columns[1].GetCellContent(Archive_Grid.Items[index]) as TextBlock;
+                await Dispatcher.BeginInvoke(new Action(async () =>
+                {
+                    try
+                    {
+                        Button button = sender as Button;
+                        var item = (sender as FrameworkElement).DataContext;
+                        var index = Archive_Grid.Items.IndexOf(item);
+                        var id = Archive_Grid.Columns[0].GetCellContent(Archive_Grid.Items[index]) as TextBlock;
+                        var invoicetype = Archive_Grid.Columns[1].GetCellContent(Archive_Grid.Items[index]) as TextBlock;
 
-                InvoiceData getInvoice = await DownloadInvoice.GetData(invoicetype.Text, int.Parse(id.Text), "Archive");
-                await Generate_Invoice.CreateInvoice(getInvoice, "InvoicePreview.pdf");
-                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                        InvoiceData getInvoice = await Download_Invoice.GetData(invoicetype.Text, int.Parse(id.Text));
+                        await Generate_Invoice.CreateInvoice(getInvoice, "InvoicePreview.pdf");
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
 
-                PdfViewer viewer = new PdfViewer();
-                viewer.Owner = Application.Current.MainWindow;
-                viewer.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                viewer.ShowDialog();
-            }
-            catch (Exception)
-            {
-                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
-                MessageBox.Show("Wystąpił błąd podczas operacji");
-            }
-        }   
+                        PdfViewer viewer = new PdfViewer();
+                        viewer.Owner = Application.Current.MainWindow;
+                        viewer.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                        viewer.ShowDialog();
+                    }
+                    catch (Exception)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                        MessageBox.Show("Wystąpił błąd podczas operacji");
+                    }
+                }));
+            });            
+        }
         private async void GetInvoices(object sender, RoutedEventArgs e)
         {
             try
@@ -166,12 +174,11 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
         {
             TotalPrice_Brutto = 0;
             TotalPrice_Netto = 0;
-
             await Task.Run(async () =>
             {
                 await Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    using(GetInvoices invoices = new GetInvoices())
+                    using (GetInvoices invoices = new GetInvoices())
                     {
                         Collections.Archive_Invoices.Clear();
                         var begindate = Convert.ToDateTime(BeginDate.Text);
@@ -189,7 +196,7 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                                     decimal totalbrutto = 0;
                                     decimal totalvat = 0;
 
-                                    foreach(var product in soldproduct)
+                                    foreach (var product in soldproduct)
                                     {
                                         totalnetto += decimal.Parse(product.Netto);
                                         totalbrutto += decimal.Parse(product.Brutto);
@@ -214,7 +221,7 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                                     TotalPrice_Netto += data.Currency == "PLN" ? totalnetto : Math.Round(totalnetto * decimal.Parse(data.ExchangeRate), 2);
 
                                 }
-                            }                    
+                            }
                         }
                         Collections.Archive_Invoices.OrderByDescending(x => x.Created_Date);
                         InvoicesAmount = Collections.Archive_Invoices.Count;

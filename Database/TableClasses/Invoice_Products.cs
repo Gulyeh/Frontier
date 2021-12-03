@@ -18,5 +18,9 @@ namespace Frontier.Database.TableClasses
         public string VAT_Price { get; set; }
         public string Brutto { get; set; }
         public string GTU { get; set; }
+        public string BoughtNetto { get; set; }
+        public string BoughtVAT { get; set; }
+        public string BoughtBrutto { get; set; }
+        public string GroupType { get; set; }
     }
 }

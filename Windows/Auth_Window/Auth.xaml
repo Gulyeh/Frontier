@@ -32,13 +32,48 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="CheckBox" x:Key="CircleCheckbox">
+            <Setter Property="Cursor" Value="Hand"></Setter>
+            <Setter Property="Content" Value=""></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid>
+                            <Ellipse x:Name="outerEllipse">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush>
+                                        <GradientStop Offset="1" Color="Green"/>
+                                        <GradientStop Offset="0.8" Color="Transparent"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <ContentPresenter x:Name="content" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="outerEllipse" Property="Fill">
+                                    <Setter.Value>
+                                        <RadialGradientBrush>
+                                            <GradientStop Offset="1" Color="Green"/>
+                                        </RadialGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
     <Grid>
         <Border Width="369" Height="359" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="1" BorderBrush="Black" CornerRadius="8">
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Autoryzacja" FontFamily="Calibri" FontWeight="Light" FontSize="50" Foreground="Black" HorizontalAlignment="Center"/>
-                <ComboBox Name="Database_List" MaxDropDownHeight="210" ItemsSource="{Binding DatabaseList}" DisplayMemberPath="ID" SelectedIndex="0" SelectionChanged="Select_Database" Background="Transparent" FontFamily="Calibri" FontWeight="Light" BorderThickness="0" Width="174" Margin="0,10,0,0"/>
-                <Button Click="NewDB_Clicked" Content="Nowa baza" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="87" Height="24" Background="#2f4050" Margin="0,10,0,0"/>
+                <ComboBox Name="Database_List" MaxDropDownHeight="210" ItemsSource="{Binding DatabaseList}" DisplayMemberPath="ID" SelectionChanged="Select_Database" Background="Transparent" FontFamily="Calibri" FontWeight="Light" BorderThickness="0" Width="174" Margin="0,10,0,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Button Click="NewDB_Clicked" Content="Nowa baza" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="87" Height="24" Background="#2f4050"/>
+                    <Button Click="ImportDB_Clicked" Content="Importuj" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="87" Height="24" Background="#2f4050" Margin="20,0,0,0"/>
+                </StackPanel>
                 <TextBlock Text="Login" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,20,180,0"/>
                 <Border Background="LightGray" Width="262" BorderThickness="0" CornerRadius="8" Height="24">
                     <StackPanel Orientation="Horizontal">
@@ -51,7 +86,11 @@
                         <PasswordBox Name="Password" IsEnabled="{Binding SelectedDB}" HorizontalContentAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
                     </StackPanel>
                 </Border>
-                <Button Content="Zaloguj" Click="Login_Clicked" IsEnabled="{Binding SelectedDB}"  Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="98" Height="25" Background="#2f4050" Margin="0,30,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="5,10,0,0" Height="20" HorizontalAlignment="Left">
+                    <CheckBox Name="KeepLogged" Style="{DynamicResource CircleCheckbox}" FontSize="15" Height="14" Width="14" VerticalAlignment="Top" Cursor="Hand"/>
+                    <TextBlock Text="Zapamiętaj dane logowania" FontSize="10" FontFamily="Calibri" FontWeight="Light" HorizontalAlignment="Center" Margin="5,1,0,0" VerticalAlignment="Top"/>
+                </StackPanel>
+                <Button Content="Zaloguj" Click="Login_Clicked" IsEnabled="{Binding SelectedDB}"  Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="98" Height="25" Background="#2f4050" Margin="0,20,0,0"/>
             </StackPanel>
         </Border>
     </Grid>

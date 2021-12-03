@@ -3,22 +3,45 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=DotNetProjects.DataVisualization.Toolkit"
+      xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=DotNetProjects.DataVisualization.Toolkit" 
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="1080"
-      Title="Analyze">
-
+      Title="Analyze"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Page.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="Gray">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" CornerRadius="5" BorderThickness="0" Background="{TemplateBinding Background}">
+                            <ContentPresenter                              
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#131a20" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#1f2731" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+            <StackPanel Orientation="Vertical" Margin="0,0,0,20">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="70,40,0,0">
                     <TextBlock Text="Rok" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" VerticalAlignment="Center"/>
-                    <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,20,0" Width="87" Height="34">
-                        <TextBlock Text="2021" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,10,0" Width="87" Height="34">
+                        <TextBlock Name="YearText" Text="{Binding Year}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
-                    <Button BorderThickness="0" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Left">
-                        <Image Source="pack://application:,,,/Images/Calendar.png" Height="20"/>
-                    </Button>
+                    <Button Click="DownNumber_Clicked" FontFamily="Marlett" FontSize="15" Height="18" Content="3"/>
+                    <Button Click="UpNumber_Clicked" FontFamily="Marlett" FontSize="15" Height="18" Content="4"/>
+                    <Button Click="UpdateData_Clicked" Content="Aktualizuj" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="90" Height="30" Background="#2f4050" Margin="30,0,0,0"/>
                 </StackPanel>
                 <chartingToolkit:Chart BorderThickness="0" Title="Faktury sprzedaży" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="474" Margin="40,0,40,0">
                     <chartingToolkit:ColumnSeries Name="Chart1" DependentValuePath="Value" Visibility="Visible" IndependentValuePath="Key" BorderThickness="0" ItemsSource="{Binding ValueList}"/>
@@ -32,7 +55,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="70,10,0,0">
                     <TextBlock Text="Suma faktur" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" VerticalAlignment="Center"/>
                     <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,70,0" Width="87" Height="34">
-                        <TextBlock Text="0" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding InvoicesSold}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                 </StackPanel>
                 <chartingToolkit:Chart BorderThickness="0" Title="Suma sprzedaży" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="474" Margin="40,0,40,0">
@@ -46,8 +69,8 @@
                 </chartingToolkit:Chart>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="70,10,0,0">
                     <TextBlock Text="Suma sprzedaży" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" VerticalAlignment="Center"/>
-                    <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,70,0" Width="87" Height="34">
-                        <TextBlock Text="0" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,70,0" Width="170" Height="34">
+                        <TextBlock Text="{Binding SoldValue}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                 </StackPanel>
                 <chartingToolkit:Chart BorderThickness="0" Title="Faktury kupna" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="474" Margin="40,0,40,0">
@@ -62,7 +85,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="70,10,0,0">
                     <TextBlock Text="Suma faktur" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" VerticalAlignment="Center"/>
                     <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,70,0" Width="87" Height="34">
-                        <TextBlock Text="0" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding InvoicesBought}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                 </StackPanel>
                 <chartingToolkit:Chart BorderThickness="0" Title="Suma kupna" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="474" Margin="40,0,40,0">
@@ -76,8 +99,8 @@
                 </chartingToolkit:Chart>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="70,10,0,0">
                     <TextBlock Text="Suma kupna" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" VerticalAlignment="Center"/>
-                    <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,70,0" Width="87" Height="34">
-                        <TextBlock Text="0" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Border VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,70,0" Width="170" Height="34">
+                        <TextBlock Text="{Binding BoughtValue}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                 </StackPanel>
             </StackPanel>

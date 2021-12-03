@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Title="Stwórz nową bazę" Height="279" Width="809">
+        Title="Stwórz nową bazę" Height="333" Width="809">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" x:Key="Gray">
             <Setter Property="Template">
@@ -31,7 +31,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="339"/>
@@ -41,8 +41,8 @@
             <RowDefinition/>
             <RowDefinition Height="42"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Margin="0,4,0,0">
-            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="192" Margin="19,0,10,0">
+        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="192" Width="313">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Dane bazy" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,10,0,0"/>
                     <TextBlock Text="Nazwa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
@@ -66,8 +66,8 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="194" Width="442">
-            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="192" Margin="0,0,10,0">
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="247" Width="442">
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="247" Margin="0,0,10,0">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Dane firmy" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,10,0,0"/>
                     <TextBlock Text="Nazwa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,180,0"/>
@@ -120,6 +120,12 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
+                    <TextBlock Text="BDO*" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,90,0"/>
+                    <Border Background="LightGray" Width="160" BorderThickness="0" CornerRadius="8" Height="24">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Name="BDO" MaxLength="9" PreviewKeyDown="CheckSpace" PreviewTextInput="NIP_CheckNumeric" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="149"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Border>
         </StackPanel>

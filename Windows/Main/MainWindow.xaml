@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:disable="clr-namespace:Frontier.Classes"
         xmlns:local="clr-namespace:Frontier"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
@@ -86,10 +87,10 @@
         </StackPanel>
         <DockPanel VerticalAlignment="Bottom" Margin="10,0,10,10">
             <TextBlock Grid.Column="0" Text="Wersja: 1.0.0" VerticalAlignment="Center" Foreground="White" FontSize="10" FontFamily="Segoe UI" FontWeight="Light" Margin="10,0,0,0"/>
-            <Button IsHitTestVisible="{Binding isLogged}" BorderThickness="0" Click="Logout_Clicked" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <Button Name="Logout_Button" IsHitTestVisible="{Binding isLogged}" BorderThickness="0" Click="Logout_Clicked" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Right">
                 <Image Source="pack://application:,,,/Images/Logout.png" Height="20"/>
             </Button>
         </DockPanel>
-        <Frame Name="Content_Frame" NavigationUIVisibility="Hidden" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Frame Name="Content_Frame" Navigating="HandleNavigating" NavigationUIVisibility="Hidden" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

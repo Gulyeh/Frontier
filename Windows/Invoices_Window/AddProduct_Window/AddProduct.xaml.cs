@@ -1,20 +1,13 @@
-﻿using Frontier.Methods;
+﻿using Frontier.Methods.Numerics;
 using Frontier.Variables;
 using Frontier.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Frontier.Windows.Invoices_Window.AddProduct_Window
 {
@@ -22,31 +15,34 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
     {
         private int oldVAT { get; set; }
         private string oldBrutto { get; set; }
-        public IEnumerable<Warehouse_ViewModel> InvoiceProducts { get; set; }
+        public List<Warehouse_ViewModel> InvoiceProducts { get; set; }
         private string _InvoiceType { get; set; }
         private string _Currency { get; set; }
         private decimal _ExchangeRate { get; set; }
-        public AddProduct(IEnumerable<Warehouse_ViewModel> InvoiceProducts, string InvoiceType, string Currency, decimal ExchangeRate)
+        private string _Page { get; set; }
+
+        public AddProduct(string InvoiceType, string Currency, decimal ExchangeRate, string Page)
         {
             InitializeComponent();
             _InvoiceType = InvoiceType;
             _Currency = Currency;
             _ExchangeRate = ExchangeRate;
+            _Page = Page;
 
             if (_InvoiceType == "VAT Marża")
             {
-                this.InvoiceProducts = InvoiceProducts.Where(x => x.Amount > 0 && x.GroupType != "Usługa");
+                InvoiceProducts = Collections.WarehouseData.Where(x => x.Amount > 0 && x.GroupType != "Usługa").ToList();
             }
             else
             {
-                this.InvoiceProducts = InvoiceProducts.Where(x => x.Amount > 0);
+                InvoiceProducts = Collections.WarehouseData.Where(x => x.Amount > 0).ToList();
             }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Products_Grid.ItemsSource = this.InvoiceProducts;
-            if(_Currency != "PLN")
+            if (_Currency != "PLN")
             {
                 itemcurrency.Items.Add(_Currency);
             }
@@ -90,10 +86,18 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                     e.Handled = true;
                 }
             }
+            else
+            {
+                if (Regex.IsMatch(((TextBox)sender).Text.Insert(((TextBox)sender).SelectionStart, e.Text), @"\,\d\d\d"))
+                {
+                    e.Handled = true;
+                    MessageBox.Show("Nie można dodać wiecej niz dwie cyfry po przecinku");
+                }
+            }
         }
         private void CheckNumeric(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = Regex_Check.CheckNumbers(e.Text.Replace(" ",""));
+            e.Handled = Regex_Check.CheckNumbers(e.Text.Replace(" ", ""));
         }
         private void RecalculateNetto(object sender, RoutedEventArgs e)
         {
@@ -132,7 +136,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
         }
         private void FindProduct(object sender, RoutedEventArgs e)
         {
-            if(SearchBox.Text.Length == 0)
+            if (SearchBox.Text.Length == 0)
             {
                 Products_Grid.ItemsSource = InvoiceProducts;
             }
@@ -147,7 +151,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
             {
                 if (itemname.Text != string.Empty && itemcount.Text != string.Empty && itembrutto.Text != string.Empty && itemnetto.Text != string.Empty && itemmargin.Text != string.Empty)
                 {
-                    if(int.Parse(itemcount.Text) == 0)
+                    if (int.Parse(itemcount.Text) == 0)
                     {
                         return;
                     }
@@ -159,7 +163,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                     }
 
                     Warehouse_ViewModel data = (Warehouse_ViewModel)Products_Grid.SelectedItem;
-                    if(decimal.Parse(itembrutto.Text) < Collections.WarehouseData.FirstOrDefault(x => x.ID == data.ID).Brutto && data.GroupType != "Usługa")
+                    if (decimal.Parse(itembrutto.Text) < Collections.WarehouseData.FirstOrDefault(x => x.ID == data.ID).Brutto && data.GroupType != "Usługa")
                     {
                         MessageBox.Show("UWAGA! Sprzedajesz towar za mniejszą wartość niż został zakupiony");
                     }
@@ -173,7 +177,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                             decimal.Parse(itembrutto.Text) + (decimal.Parse(itembrutto.Text) * (decimal.Parse(itemmargin.Text) / 100)) :
                             decimal.Parse(itembrutto.Text), 2);
 
-                        if(_Currency != "PLN" && itemcurrency.Text == "PLN")
+                        if (_Currency != "PLN" && itemcurrency.Text == "PLN")
                         {
                             piecenetto = piecenetto / _ExchangeRate;
                             piecebrutto = piecebrutto / _ExchangeRate;
@@ -186,27 +190,67 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                             GroupType = data.GroupType,
                             VAT = itemvat.Text.TrimEnd('%'),
                             Amount = int.Parse(itemcount.Text),
-                            PieceNetto = decimal.Parse(String.Format("{0:0.00}", piecenetto)),
-                            PieceBrutto = decimal.Parse(String.Format("{0:0.00}", piecebrutto)),
-                            Brutto = decimal.Parse(String.Format("{0:0.00}", Math.Round(int.Parse(itemcount.Text) * piecebrutto, 2))),
-                            Netto = decimal.Parse(String.Format("{0:0.00}", Math.Round(int.Parse(itemcount.Text) * piecenetto, 2))),
+                            PieceNetto = piecenetto,
+                            PieceBrutto = piecebrutto,
+                            Brutto = int.Parse(itemcount.Text) * piecebrutto,
+                            Netto = int.Parse(itemcount.Text) * piecenetto,
                             VATAmount = _InvoiceType != "VAT Marża" ?
-                            decimal.Parse(String.Format("{0:0.00}", Math.Round(int.Parse(itemcount.Text) * piecebrutto, 2) - Math.Round(int.Parse(itemcount.Text) * piecenetto, 2))) : 0,
+                            (int.Parse(itemcount.Text) * piecebrutto) - (int.Parse(itemcount.Text) * piecenetto) : 0,
                             Margin = int.Parse(itemmargin.Text),
-                            GTU = Collections.GroupsData.FirstOrDefault(x => x.ID == data.GroupID).GTU
+                            GTU = Collections.GroupsData.FirstOrDefault(x => x.ID == data.GroupID).GTU,
                         };
 
-                        if(_InvoiceType == "VAT Marża")
+                        if (_InvoiceType == "VAT Marża")
                         {
                             new_data.VATAmount = Calculate.GetMarginVAT(decimal.Parse(new_data.VAT), Collections.WarehouseData.FirstOrDefault(x => x.ID == new_data.ID).Brutto * new_data.Amount, new_data.Brutto);
                         }
 
-                        Collections.ProductsSold.Add(new_data);
+
+                        if (_Page == "NewInvoice") 
+                        {
+
+                            var query = Collections.ProductsSold.FirstOrDefault(x => x.ID == new_data.ID);
+                            if (query != null && query.VAT == new_data.VAT && query.Name == new_data.Name && query.PieceBrutto == new_data.PieceBrutto && query.PieceNetto == new_data.PieceNetto)
+                            {
+                                query.Amount += new_data.Amount;
+                                query.Brutto = query.PieceBrutto * query.Amount;
+                                query.Netto = query.PieceNetto * query.Amount;
+                                query.VATAmount = query.Brutto - query.Netto;
+                            }
+                            else
+                            {
+                                Collections.ProductsSold.Add(new_data);
+                            }
+                        }
+                        else 
+                        {
+                            var query = Collections.Products_Correction.Where(x => x.ID == new_data.ID);
+                            if (query != null)
+                            {
+                                bool found = false;
+                                foreach (var item in query)
+                                {
+                                    if (item.VAT == new_data.VAT && item.Name == new_data.Name && item.PieceBrutto == new_data.PieceBrutto && item.PieceNetto == new_data.PieceNetto)
+                                    {
+                                        item.Amount += new_data.Amount;
+                                        item.Brutto = item.PieceBrutto * item.Amount;
+                                        item.Netto = item.PieceNetto * item.Amount;
+                                        item.VATAmount = item.Brutto - item.Netto;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (found == false) { Collections.Products_Correction.Add(new_data); }
+                            }
+                        }
+
+
                         if (data.GroupType != "Usługa")
                         {
                             InvoiceProducts.FirstOrDefault(x => x.ID == data.ID).Amount -= new_data.Amount;
                         }
                         Products_Grid.ItemsSource = InvoiceProducts.Where(x => x.Amount > 0);
+                        Products_Grid.SelectedItem = null;
                         ResetFields();
                     }
                     else

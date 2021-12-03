@@ -3,10 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Frontier.Windows.Settings_Window"
+      xmlns:local="clr-namespace:Frontier.Windows.Settings_Window" 
       mc:Ignorable="d" 
       d:DesignHeight="700" d:DesignWidth="1080"
-      Title="Ustawienia">
+      Title="Ustawienia"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Page.Resources>
         <Style TargetType="{x:Type Button}" x:Key="Gray">
@@ -30,6 +31,24 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style TargetType="{x:Type Button}" x:Key="Red">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" CornerRadius="5" BorderThickness="0" Background="{TemplateBinding Background}">
+                            <ContentPresenter                              
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="Red" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -47,13 +66,13 @@
             <TextBlock Text="Frontier" FontSize="30" Foreground="Black" HorizontalAlignment="Center"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="276" Width="442">
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="315" Width="442">
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Dane firmy" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,20,0,0"/>
                     <TextBlock Text="Nazwa" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,180,0"/>
                     <Border Background="LightGray" Width="262" BorderThickness="0" CornerRadius="8" Height="24">
                         <StackPanel Orientation="Horizontal">
-                            <TextBox Name="Compname" Text="{Binding Name}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
+                            <TextBox Name="Compname" Text="{Binding MainName}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="252"/>
                         </StackPanel>
                     </Border>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
@@ -100,12 +119,18 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
+                    <TextBlock Text="BDO*" FontSize="10" Foreground="Black" HorizontalAlignment="Center" Margin="0,10,80,0"/>
+                    <Border Background="LightGray" Width="134" BorderThickness="0" CornerRadius="8" Height="24">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Name="CompBDO" MaxLength="9" PreviewKeyDown="CheckSpace" PreviewTextInput="CheckNumeric" Text="{Binding BDO}" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="124"/>
+                        </StackPanel>
+                    </Border>
                     <Button Content="Edytuj dane" Click="Edit_CompanyData_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="114" Height="30" Background="#2f4050" VerticalAlignment="Bottom" Margin="30,30,0,0"/>
                 </StackPanel>
             </Border>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="172" Width="376">
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="8" Height="226" Width="376">
                 <StackPanel>
                     <TextBlock Text="Dane bazy danych" FontSize="20" Foreground="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,20,0,10"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
@@ -127,7 +152,10 @@
                         </Border>
                         <Button Content="Zmień hasło" Click="ChangePassword_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="96" Height="22" Background="#2f4050" Margin="10,0,0,0"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Left" Margin="40,30,0,0">
+                        <Button Content="Eksportuj" Click="ExportDB_Clicked" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="89" Height="27" Background="#2f4050"/>
+                        <Button Content="Usuń" Click="DeleteDB_Clicked" Style="{StaticResource Red}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="89" Height="27" Background="DarkRed" Margin="113,0,0,0"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </StackPanel>

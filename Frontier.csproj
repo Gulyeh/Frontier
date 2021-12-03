@@ -250,12 +250,28 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=4.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.1.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=4.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.1.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=4.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.1.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=4.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.1.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=4.1.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.1.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\InvoiceData.cs" />
     <Compile Include="Database\ConnectDB.cs" />
     <Compile Include="Database\GetQuery\GetCompanydata.cs" />
     <Compile Include="Database\GetQuery\GetContactors.cs" />
@@ -274,14 +290,16 @@
     <Compile Include="Database\TableClasses\Invoice_Sold.cs" />
     <Compile Include="Database\TableClasses\User.cs" />
     <Compile Include="Database\TableClasses\Warehouse.cs" />
-    <Compile Include="Methods\Calculate.cs" />
-    <Compile Include="Methods\Checkers.cs" />
-    <Compile Include="Methods\Currencies.cs" />
-    <Compile Include="Methods\DownloadInvoice.cs" />
+    <Compile Include="Methods\Numerics\Calculate.cs" />
+    <Compile Include="Methods\Numerics\Checkers.cs" />
+    <Compile Include="Methods\CurrenciesRate.cs" />
+    <Compile Include="Methods\Invoices\Download_Invoice.cs" />
     <Compile Include="Methods\Download_WarehouseItems.cs" />
-    <Compile Include="Methods\Generate_Invoice.cs" />
-    <Compile Include="Methods\PermaDelete.cs" />
-    <Compile Include="Methods\Regex_Check.cs" />
+    <Compile Include="Methods\Invoices\Generate_Invoice.cs" />
+    <Compile Include="Methods\Invoices\PermaDelete.cs" />
+    <Compile Include="Methods\Numerics\Regex_Check.cs" />
+    <Compile Include="Methods\Invoices\Save_Invoice.cs" />
+    <Compile Include="Methods\XML\Credentials.cs" />
     <Compile Include="Variables\Collections.cs" />
     <Compile Include="Variables\GlobalVariables.cs" />
     <Compile Include="ViewModels\ArchiveGrid_ViewModel.cs" />
@@ -300,6 +318,9 @@
     </Compile>
     <Compile Include="Windows\Invoices_Window\AddProduct_Window\AddProduct.xaml.cs">
       <DependentUpon>AddProduct.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Invoices_Window\Adjustment_Window\Edit_Window\Edit.xaml.cs">
+      <DependentUpon>Edit.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Invoices_Window\Archive_Window\Archive.xaml.cs">
       <DependentUpon>Archive.xaml</DependentUpon>
@@ -341,6 +362,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Invoices_Window\AddProduct_Window\AddProduct.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Invoices_Window\Adjustment_Window\Edit_Window\Edit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
