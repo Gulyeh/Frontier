@@ -2,11 +2,10 @@
 using Frontier.Methods.Numerics;
 using Frontier.Variables;
 using Frontier.ViewModels;
-using Frontier.Windows.Confirmation_Window;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,14 +18,20 @@ namespace Frontier.Windows.Contactors_Window
     public partial class Contactors : Page
     {
         private int ContactorID { get; set; }
+        Timer timer;
+
         public Contactors()
         {
             InitializeComponent();
-            Contactors_Grid.ItemsSource = Collections.ContactorsData;
             LoadContactors();
         }
         private async void LoadContactors()
         {
+            Contactors_Grid.ItemsSource = Collections.ContactorsData;
+            timer = new Timer();
+            timer.Interval = 500;
+            timer.Elapsed += OnElapsed;
+
             await Task.Run(async () =>
             {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
@@ -52,7 +57,7 @@ namespace Frontier.Windows.Contactors_Window
                             }
                         }
                     }
-                    catch (Exception) { Collections.ContactorsData.Clear();  LoadContactors(); }
+                    catch (Exception) { Collections.ContactorsData.Clear(); LoadContactors(); }
                 }));
             });
         }
@@ -123,21 +128,21 @@ namespace Frontier.Windows.Contactors_Window
 
                             if (updated)
                             {
+                                await contactor.SaveChangesAsync();
 
-                                var newcontactor = contactor.Contactors.OrderByDescending(x => x.idContactors).First();
+                                var newcontactor = contactor.Contactors.OrderByDescending(x => x.idContactors).FirstOrDefault().idContactors;
                                 var row = new Contactors_ViewModel()
                                 {
-                                    ID = newcontactor.idContactors,
-                                    Name = newcontactor.Name,
-                                    NIP = newcontactor.NIP,
-                                    Address = newcontactor.Street,
-                                    State = newcontactor.State,
-                                    Regon = newcontactor.REGON,
-                                    PostCode = newcontactor.PostCode,
-                                    Country = newcontactor.Country
+                                    ID = newcontactor,
+                                    Name = data.Name,
+                                    NIP = data.NIP,
+                                    Address = data.Street,
+                                    State = data.State,
+                                    Regon = data.REGON,
+                                    PostCode = data.PostCode,
+                                    Country = data.Country
                                 };
                                 Collections.ContactorsData.Add(row);
-                                await contactor.SaveChangesAsync();
                                 MessageBox.Show("Pomyślnie dodano nowego kontrahenta");
                                 ResetTextBoxes("new");
                             }
@@ -287,17 +292,23 @@ namespace Frontier.Windows.Contactors_Window
                 default:
                     break;
             }
-        }    
-        private void Find_Contactors(object sender, TextChangedEventArgs e)
+        }
+        private async void Find_Contactors(object sender, TextChangedEventArgs e)
         {
-            if (SearchBox.Text.Length > 0)
+            await Task.Run(() =>
             {
-                Contactors_Grid.ItemsSource = Collections.ContactorsData.Where(x => x.Name.ToLower().Contains(SearchBox.Text.ToLower()));
-            }
-            else
-            {
-                Contactors_Grid.ItemsSource = Collections.ContactorsData;
-            }
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (SearchBox.Text.Length == 0)
+                    {
+                        Contactors_Grid.ItemsSource = Collections.ContactorsData;
+                        timer.Stop();
+                        return;
+                    }
+                    timer.Stop();
+                    timer.Start();
+                }));
+            });
         }
         private void EditRow_Clicked(object sender, RoutedEventArgs e)
         {
@@ -319,6 +330,13 @@ namespace Frontier.Windows.Contactors_Window
             editpostcode.Text = data.PostCode;
             editcountry.Text = data.Country;
             Switch_EditContactor(1);
+        }
+        private async void OnElapsed(object source, ElapsedEventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                Dispatcher.BeginInvoke(new Action(() => Contactors_Grid.ItemsSource = Collections.ContactorsData.Where(x => x.Name.ToLower().Contains(SearchBox.Text.ToLower()))));
+            });
         }
     }
 }

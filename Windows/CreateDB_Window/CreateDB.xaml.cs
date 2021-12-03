@@ -95,6 +95,7 @@ namespace Frontier.Windows.CreateDB_Window
             await Task.Run(() =>
             {
                 string path = AppDomain.CurrentDomain.BaseDirectory + "Database";
+
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -111,13 +112,13 @@ namespace Frontier.Windows.CreateDB_Window
                         Database.ConnectDB.dbConnection.Close();
                         this.Close();
                     }
-                    catch (Exception)
+                    catch (Exception d)
                     {
                         await PermaDelete.Delete(path, DBName.Text + ".sqlite");
-                        MessageBox.Show("Wystąpił błąd podczas tworzenia bazy danych");
+                        MessageBox.Show(d+"\nWystąpił błąd podczas tworzenia bazy danych");
                     }
                 }));
-            });        
+            });
         }
         private async Task CreateDBTables()
         {
@@ -125,24 +126,24 @@ namespace Frontier.Windows.CreateDB_Window
             {
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    List<string> query = new List<string>();
-                    query.Add("CREATE TABLE `companydata` (`idcompanydata` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `Name` varchar(45) NOT NULL, `NIP` varchar(45) NOT NULL, `Street` varchar(45) NOT NULL, `REGON` varchar(45) DEFAULT NULL, `PostCode` varchar(45) NOT NULL, `State` varchar(45) NOT NULL, `Country` varchar(45) NOT NULL), `BDO` varchar(45))");
-                    query.Add("CREATE TABLE `contactors` (`idContactors` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Name` varchar(45) NOT NULL,`NIP` varchar(45) NOT NULL,`REGON` varchar(45) DEFAULT NULL,`Street` varchar(45) NOT NULL,`State` varchar(45) NOT NULL,`PostCode` varchar(45) NOT NULL,`Country` varchar(45) NOT NULL)");
-                    query.Add("CREATE TABLE `groups` (`idgroups` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Name` varchar(45) NOT NULL,`Description` varchar(100) DEFAULT NULL,`GTU` varchar(5) NOT NULL,`VAT` varchar(2) NOT NULL,`Type` INTEGER NOT NULL)");
-                    query.Add("CREATE TABLE `invoice_bought` (`idinvoice_bought` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Invoice_ID` varchar(45) NOT NULL,`Seller_ID` varchar(45) NOT NULL,`Date_Bought` varchar(45) NOT NULL,`Date_Created` DATETIME NOT NULL,`Purchase_type` varchar(45) NOT NULL,`Currency` varchar(45) NOT NULL,`ExchangeRate` varchar(3))");
-                    query.Add("CREATE TABLE `invoice_products` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `Invoice` INTEGER NOT NULL, `Invoice_ID` varchar(100) NOT NULL, `Product_ID` varchar(10) NOT NULL, `Name` varchar(45) NOT NULL,`GroupType` varchar(45) NOT NULL, `Amount` varchar(45) NOT NULL,`Each_Netto` varchar(45) NOT NULL,`VAT` varchar(3) NOT NULL,`Each_Brutto` varchar(45) NOT NULL, `Netto` varchar(45) NOT NULL,`VAT_Price` varchar(45) NOT NULL,`Brutto` varchar(45) NOT NULL, `GTU` varchar(3) NOT NULL, `BoughtNetto` varchar(15) NOT NULL, `BoughtVAT` varchar(3) NOT NULL, `BoughtBrutto` varchar(15) NOT NULL)");
-                    query.Add("CREATE TABLE `invoice_sold` (`idInvoice_Sold` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Receiver` varchar(45) NOT NULL,`Invoice_ID` varchar(100) NOT NULL,`Invoice_Type` varchar(100) NOT NULL, `Date_Sold` varchar(45),`Date_Created` DATETIME NOT NULL,`Purchase_type` varchar(45) NOT NULL,`Day_Limit` varchar(45) DEFAULT NULL,`PricePaid` varchar(45),`Currency` varchar(45) NOT NULL,`Description` varchar(45) DEFAULT NULL,`AccountNumber` varchar(100) DEFAULT NULL,`BankName` varchar(45) DEFAULT NULL, `ExchangeRate` varchar(10) DEFAULT NULL)");
-                    query.Add("CREATE TABLE `user` (`idUser` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Login` varchar(200) NOT NULL,`Password` varchar(200) NOT NULL)");
-                    query.Add("CREATE TABLE `warehouse` (`idwarehouse` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`group` int NOT NULL,`Name` varchar(45) NOT NULL,`Amount` varchar(10) NOT NULL,`Netto` decimal(15,2) NOT NULL,`Brutto` decimal(15,2) NOT NULL,`Margin` varchar(3) DEFAULT NULL, `VAT` varchar(3) NOT NULL)");
-                    query.Add($"INSERT INTO `user` (Login, Password) VALUES ('{Convert.ToBase64String(Encoding.ASCII.GetBytes(DBLogin.Text))}', '{Convert.ToBase64String(Encoding.ASCII.GetBytes(DBPassword.Password))}')");
-                    query.Add($"INSERT INTO `companydata` (Name, NIP, Street, REGON, PostCode, State, Country, BDO) VALUES ('{CompName.Text}', '{nip.Text}', '{street.Text}', '{regon.Text}', '{postcode.Text}', '{state.Text}', '{country.Text}','{BDO.Text}')");
-                    foreach (string data in query)
-                    {
-                        using (SQLiteCommand command = new SQLiteCommand(data, Database.ConnectDB.dbConnection))
+                        List<string> query = new List<string>();
+                        query.Add("CREATE TABLE `companydata` (`idcompanydata` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `Name` varchar(45) NOT NULL, `NIP` varchar(45) NOT NULL, `Street` varchar(45) NOT NULL, `REGON` varchar(45) DEFAULT NULL, `PostCode` varchar(45) NOT NULL, `State` varchar(45) NOT NULL, `Country` varchar(45) NOT NULL, `BDO` varchar(45) DEFAULT NULL)");
+                        query.Add("CREATE TABLE `contactors` (`idContactors` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Name` varchar(45) NOT NULL,`NIP` varchar(45) NOT NULL,`REGON` varchar(45) DEFAULT NULL,`Street` varchar(45) NOT NULL,`State` varchar(45) NOT NULL,`PostCode` varchar(45) NOT NULL,`Country` varchar(45) NOT NULL)");
+                        query.Add("CREATE TABLE `groups` (`idgroups` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Name` varchar(45) NOT NULL,`Description` varchar(100) DEFAULT NULL,`GTU` varchar(5) NOT NULL,`VAT` varchar(2) NOT NULL,`Type` INTEGER NOT NULL)");
+                        query.Add("CREATE TABLE `invoice_bought` (`idinvoice_bought` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Invoice_ID` varchar(45) NOT NULL,`Seller_ID` varchar(45) NOT NULL,`Date_Bought` varchar(45) NOT NULL,`Date_Created` DATETIME NOT NULL,`Purchase_type` varchar(45) NOT NULL,`Currency` varchar(45) NOT NULL,`ExchangeRate` varchar(3) DEFAULT NULL)");
+                        query.Add("CREATE TABLE `invoice_products` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `Invoice` INTEGER NOT NULL, `Invoice_ID` varchar(100) NOT NULL, `Product_ID` varchar(10) NOT NULL, `Name` varchar(45) NOT NULL,`GroupType` varchar(45) NOT NULL, `Amount` varchar(45) NOT NULL,`Each_Netto` varchar(45) NOT NULL,`VAT` varchar(3) NOT NULL,`Each_Brutto` varchar(45) NOT NULL, `Netto` varchar(45) NOT NULL,`VAT_Price` varchar(45) NOT NULL,`Brutto` varchar(45) NOT NULL, `GTU` varchar(3) NOT NULL, `BoughtNetto` varchar(15) NOT NULL, `BoughtVAT` varchar(3) NOT NULL, `BoughtBrutto` varchar(15) NOT NULL)");
+                        query.Add("CREATE TABLE `invoice_sold` (`idInvoice_Sold` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Receiver` varchar(45) NOT NULL,`Invoice_ID` varchar(100) NOT NULL,`Invoice_Type` varchar(100) NOT NULL, `Date_Sold` varchar(45) DEFAULT NULL,`Date_Created` DATETIME NOT NULL,`Purchase_type` varchar(45) NOT NULL,`Day_Limit` varchar(45) DEFAULT NULL,`PricePaid` varchar(45) NOT NULL,`Currency` varchar(45) NOT NULL,`Description` varchar(45) DEFAULT NULL,`AccountNumber` varchar(100) DEFAULT NULL,`BankName` varchar(45) DEFAULT NULL, `ExchangeRate` varchar(10) DEFAULT NULL)");
+                        query.Add("CREATE TABLE `user` (`idUser` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`Login` varchar(200) NOT NULL,`Password` varchar(200) NOT NULL)");
+                        query.Add("CREATE TABLE `warehouse` (`idwarehouse` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`group` int NOT NULL,`Name` varchar(45) NOT NULL,`Amount` varchar(10) NOT NULL,`Netto` decimal(15,2) NOT NULL,`Brutto` decimal(15,2) NOT NULL,`Margin` varchar(3) DEFAULT NULL, `VAT` varchar(3) NOT NULL)");
+                        query.Add($"INSERT INTO `user` (Login, Password) VALUES ('{Convert.ToBase64String(Encoding.ASCII.GetBytes(DBLogin.Text))}', '{Convert.ToBase64String(Encoding.ASCII.GetBytes(DBPassword.Password))}')");
+                        query.Add($"INSERT INTO `companydata` (Name, NIP, Street, REGON, PostCode, State, Country, BDO) VALUES ('{CompName.Text}', '{nip.Text}', '{street.Text}', '{regon.Text}', '{postcode.Text}', '{state.Text}', '{country.Text}','{BDO.Text}')");
+                        foreach (string data in query)
                         {
-                            command.ExecuteNonQuery();
+                            using (SQLiteCommand command = new SQLiteCommand(data, Database.ConnectDB.dbConnection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
                         }
-                    }
                 }));
             });
         }

@@ -95,7 +95,8 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                     string newInvoiceID = (Invoices + 1).ToString("D6");
                     InvoiceNumber.Text = "F/" + newInvoiceID + "/" + DateTime.Now.Year.ToString();
                 }
-            }catch (Exception) { GetLastInvoice(); }
+            }
+            catch (Exception) { GetLastInvoice(); }
         }
         private void CheckNumeric(object sender, TextCompositionEventArgs e)
         {
@@ -121,7 +122,7 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
         {
             await Task.Run(async () =>
             {
-                await Dispatcher.BeginInvoke(new Action(async () => 
+                await Dispatcher.BeginInvoke(new Action(async () =>
                 {
                     if (Proform_Text != null && Proform_Value != null)
                     {
@@ -251,127 +252,128 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
         }
         private async void SaveInvoice()
         {
-                ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
-                await Task.Run(async () =>
+            ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Visible;
+            await Task.Run(async () =>
+            {
+                await Dispatcher.BeginInvoke(new Action(async () =>
                 {
-                    await Dispatcher.BeginInvoke(new Action(async () =>
+                    try
                     {
-                        try
+                        if (ContactorsList.SelectedIndex > -1 && InvoiceNumber.Text != string.Empty && (InvoiceType.SelectedIndex == 1 ? DaysAmount.Text != string.Empty : SellDate_Text.Text != string.Empty) && PurchaseType.SelectedIndex > -1 && CreatedDate_Text.Text != string.Empty && Collections.ProductsSold.Count() > 0)
                         {
-                            if (ContactorsList.SelectedIndex > -1 && InvoiceNumber.Text != string.Empty && (InvoiceType.SelectedIndex == 1 ? DaysAmount.Text != string.Empty : SellDate_Text.Text != string.Empty) && PurchaseType.SelectedIndex > -1 && CreatedDate_Text.Text != string.Empty && Collections.ProductsSold.Count() > 0)
+                            SavedInvoice = true;
+                            _InvoiceData = new InvoiceData
                             {
-                                SavedInvoice = true;
-                                _InvoiceData = new InvoiceData
+                                InvoiceType = InvoiceType.Text,
+                                InvoiceNumber = InvoiceNumber.Text,
+                                BuyerID = Collections.ContactorsData[ContactorsList.SelectedIndex].ID,
+                                Payment = PurchaseType.Text,
+                                SellDate = SellDate_Text.Text,
+                                InvoiceDate = CreatedDate_Text.Text,
+                                Description = Description.Text,
+                                PaymentDays = DaysAmount.Text,
+                                BankName = Bankname.Text,
+                                AccountNumber = Accountnumber.Text,
+                                TotalPrice = String.Format("{0:0.00}", ProductsValue),
+                                PaidPrice = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
+                                Currency = CurrencyList.Text
+                            };
+                            using (GetInvoice_Sold invoice = new GetInvoice_Sold())
+                            {
+                                DateTimeFormatInfo format = new DateTimeFormatInfo();
+                                format.ShortDatePattern = "dd.MM.yyyy";
+
+                                var item = new Invoice_Sold
                                 {
-                                    InvoiceType = InvoiceType.Text,
-                                    InvoiceNumber = InvoiceNumber.Text,
-                                    BuyerID = Collections.ContactorsData[ContactorsList.SelectedIndex].ID,
-                                    Payment = PurchaseType.Text,
-                                    SellDate = SellDate_Text.Text,
-                                    InvoiceDate = CreatedDate_Text.Text,
+                                    Receiver = Collections.ContactorsData[ContactorsList.SelectedIndex].ID.ToString(),
+                                    Invoice_ID = InvoiceNumber.Text,
+                                    Invoice_Type = InvoiceType.Text,
+                                    Date_Sold = SellDate_Text.Text,
+                                    Date_Created = Convert.ToDateTime(CreatedDate_Text.Text, format),
+                                    Purchase_type = PurchaseType.Text,
+                                    Day_Limit = DaysAmount.Text,
+                                    Currency = CurrencyList.Text,
+                                    PricePaid = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
                                     Description = Description.Text,
-                                    PaymentDays = DaysAmount.Text,
-                                    BankName = Bankname.Text,
                                     AccountNumber = Accountnumber.Text,
-                                    TotalPrice = String.Format("{0:0.00}", ProductsValue),
-                                    PaidPrice = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
-                                    Currency = CurrencyList.Text
+                                    BankName = Bankname.Text,
+                                    ExchangeRate = "0"
                                 };
-                                using (GetInvoice_Sold invoice = new GetInvoice_Sold())
+
+                                if (CurrencyList.Text != "PLN")
                                 {
-                                    DateTimeFormatInfo format = new DateTimeFormatInfo();
-                                    format.ShortDatePattern = "dd.MM.yyyy";
+                                    item.ExchangeRate = CurrencyData[CurrencyList.Text].ToString();
+                                }
 
-                                    var item = new Invoice_Sold
+                                var updated = await invoice.AddInvoice(item);
+                                if (updated)
+                                {
+                                    using (GetInvoice_Products query = new GetInvoice_Products())
                                     {
-                                        Receiver = Collections.ContactorsData[ContactorsList.SelectedIndex].ID.ToString(),
-                                        Invoice_ID = InvoiceNumber.Text,
-                                        Invoice_Type = InvoiceType.Text,
-                                        Date_Sold = SellDate_Text.Text,
-                                        Date_Created = Convert.ToDateTime(CreatedDate_Text.Text, format),
-                                        Purchase_type = PurchaseType.Text,
-                                        Day_Limit = DaysAmount.Text,
-                                        Currency = CurrencyList.Text,
-                                        PricePaid = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
-                                        Description = Description.Text,
-                                        AccountNumber = Accountnumber.Text,
-                                        BankName = Bankname.Text,
-                                        ExchangeRate = "0"
-                                    };
-
-                                    if (CurrencyList.Text != "PLN")
-                                    {
-                                        item.ExchangeRate = CurrencyData[CurrencyList.Text].ToString();
-                                    }
-
-                                    var updated = await invoice.AddInvoice(item);
-                                    if (updated)
-                                    {
-                                        using (GetInvoice_Products query = new GetInvoice_Products())
+                                        using (GetWarehouse sold_item = new GetWarehouse())
                                         {
-                                            using (GetWarehouse sold_item = new GetWarehouse())
+                                            int LastInvoice = invoice.Invoice_Sold.OrderByDescending(x => x.idInvoice_Sold).FirstOrDefault() != null ? invoice.Invoice_Sold.OrderByDescending(x => x.idInvoice_Sold).FirstOrDefault().idInvoice_Sold + 1 : 1;
+                                            foreach (ProductsSold_ViewModel product in Products_Grid.Items)
                                             {
-                                                int LastInvoice = invoice.Invoice_Sold.OrderByDescending(x => x.idInvoice_Sold).FirstOrDefault() != null ? invoice.Invoice_Sold.OrderByDescending(x => x.idInvoice_Sold).FirstOrDefault().idInvoice_Sold + 1 : 1;
-                                                foreach (ProductsSold_ViewModel product in Products_Grid.Items)
+                                                var new_product = new Invoice_Products
                                                 {
-                                                    var new_product = new Invoice_Products
-                                                    {
-                                                        Invoice_ID = InvoiceNumber.Text,
-                                                        Invoice = LastInvoice,
-                                                        Product_ID = product.ID.ToString(),
-                                                        Name = product.Name,
-                                                        Amount = product.Amount.ToString(),
-                                                        Each_Netto = product.PieceNetto.ToString(),
-                                                        VAT = product.VAT,
-                                                        Each_Brutto = product.PieceBrutto.ToString(),
-                                                        Netto = product.Netto.ToString(),
-                                                        VAT_Price = product.VATAmount.ToString(),
-                                                        Brutto = product.Brutto.ToString(),
-                                                        GroupType = product.GroupType,
-                                                        GTU = Collections.GroupsData.FirstOrDefault(x => x.ID == Collections.WarehouseData.FirstOrDefault(Z => Z.ID == product.ID).GroupID).GTU,
-                                                        BoughtNetto = product.GroupType != "Usługa" ? Collections.WarehouseData.FirstOrDefault(x => x.ID == product.ID).Netto.ToString() : "0",
-                                                        BoughtVAT = product.GroupType != "Usługa" ? Collections.WarehouseData.FirstOrDefault(x => x.ID == product.ID).VAT.ToString() : "0",
-                                                        BoughtBrutto = product.GroupType != "Usługa" ? Collections.WarehouseData.FirstOrDefault(x => x.ID == product.ID).Brutto.ToString() : "0"
-                                                    };
-                                                    await query.AddProduct(new_product);
+                                                    Invoice_ID = InvoiceNumber.Text,
+                                                    Invoice = LastInvoice,
+                                                    Product_ID = product.ID.ToString(),
+                                                    Name = product.Name,
+                                                    Amount = product.Amount.ToString(),
+                                                    Each_Netto = product.PieceNetto.ToString(),
+                                                    VAT = product.VAT,
+                                                    Each_Brutto = product.PieceBrutto.ToString(),
+                                                    Netto = product.Netto.ToString(),
+                                                    VAT_Price = product.VATAmount.ToString(),
+                                                    Brutto = product.Brutto.ToString(),
+                                                    GroupType = product.GroupType,
+                                                    GTU = Collections.GroupsData.FirstOrDefault(x => x.ID == Collections.WarehouseData.FirstOrDefault(Z => Z.ID == product.ID).GroupID).GTU,
+                                                    BoughtNetto = product.GroupType != "Usługa" ? Collections.WarehouseData.FirstOrDefault(x => x.ID == product.ID).Netto.ToString() : "0",
+                                                    BoughtVAT = product.GroupType != "Usługa" ? Collections.WarehouseData.FirstOrDefault(x => x.ID == product.ID).VAT.ToString() : "0",
+                                                    BoughtBrutto = product.GroupType != "Usługa" ? Collections.WarehouseData.FirstOrDefault(x => x.ID == product.ID).Brutto.ToString() : "0"
+                                                };
+                                                await query.AddProduct(new_product);
 
-                                                    if (product.GroupType != "Usługa")
+                                                if (product.GroupType != "Usługa")
+                                                {
+                                                    var solditem_warehouse = new Warehouse
                                                     {
-                                                        var solditem_warehouse = new Warehouse
-                                                        {
-                                                            idWarehouse = product.ID,
-                                                            Name = product.Name,
-                                                            Amount = product.Amount,
-                                                        };
-                                                        await sold_item.SoldWarehouse_Item(solditem_warehouse);
-                                                    }
+                                                        idWarehouse = product.ID,
+                                                        Name = product.Name,
+                                                        Amount = product.Amount,
+                                                    };
+                                                    await sold_item.SoldWarehouse_Item(solditem_warehouse);
                                                 }
-                                                await sold_item.SaveChangesAsync();
-                                                await query.SaveChangesAsync();
-                                                await invoice.SaveChangesAsync();
                                             }
+                                            await sold_item.SaveChangesAsync();
+                                            await query.SaveChangesAsync();
+                                            await invoice.SaveChangesAsync();
                                         }
-                                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
-                                        MessageBox.Show("Pomyślnie zapisano fakturę");
                                     }
-                                    else
-                                    {
-                                        throw new ArgumentNullException();
-                                    }
+                                    ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                                    MessageBox.Show("Pomyślnie zapisano fakturę");
+                                }
+                                else
+                                {
+                                    throw new ArgumentNullException();
                                 }
                             }
-                            else
-                            {
-                                MessageBox.Show("Proszę wypełnić wymagane dane");
-                            }
                         }
-                        catch (Exception)
+                        else
                         {
                             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
-                            MessageBox.Show("Wystąpił błąd podczas zapisu faktury");
+                            MessageBox.Show("Proszę wypełnić wymagane dane");
                         }
-                    }));
-                });
+                    }
+                    catch (Exception)
+                    {
+                        ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                        MessageBox.Show("Wystąpił błąd podczas zapisu faktury");
+                    }
+                }));
+            });
         }
         private async void NewInvoice_Clicked(object sender, RoutedEventArgs e)
         {
@@ -427,8 +429,8 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
             }
             catch (Exception)
             {
-                MessageBox.Show("Błąd podczas zapisu");
                 ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                MessageBox.Show("Błąd podczas zapisu");
             }
         }
         private async void SaveWord_Clicked(object sender, RoutedEventArgs e)
@@ -444,8 +446,8 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
             }
             catch (Exception)
             {
-                MessageBox.Show("Błąd podczas zapisu");
                 ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                MessageBox.Show("Błąd podczas zapisu");
             }
         }
         private async void Print_Clicked(object sender, RoutedEventArgs e)

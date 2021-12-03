@@ -206,7 +206,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                         }
 
 
-                        if (_Page == "NewInvoice") 
+                        if (_Page == "NewInvoice")
                         {
 
                             var query = Collections.ProductsSold.FirstOrDefault(x => x.ID == new_data.ID);
@@ -222,7 +222,7 @@ namespace Frontier.Windows.Invoices_Window.AddProduct_Window
                                 Collections.ProductsSold.Add(new_data);
                             }
                         }
-                        else 
+                        else
                         {
                             var query = Collections.Products_Correction.Where(x => x.ID == new_data.ID);
                             if (query != null)

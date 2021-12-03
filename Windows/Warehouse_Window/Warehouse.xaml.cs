@@ -10,8 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Frontier.Windows.Warehouse_Window
@@ -24,17 +26,24 @@ namespace Frontier.Windows.Warehouse_Window
         private int ItemID { get; set; }
         private int LastIndex { get; set; }
         private string SelectedGroupType { get; set; }
+        ListCollectionView collection;
+        Timer timer;
 
         public Warehouse()
         {
             InitializeComponent();
-            warehousegroups.ItemsSource = Collections.GroupsData;
-            editgroup.ItemsSource = Collections.GroupsData;
             LoadWarehouse();
-            Warehouse_Grid.ItemsSource = Collections.WarehouseData;
         }
         private async void LoadWarehouse()
         {
+            warehousegroups.ItemsSource = Collections.GroupsData;
+            editgroup.ItemsSource = Collections.GroupsData;
+            collection = new ListCollectionView(Collections.WarehouseData);
+            collection.GroupDescriptions.Add(new PropertyGroupDescription("Name"));
+            Warehouse_Grid.ItemsSource = collection;
+            timer = new Timer();
+            timer.Interval = 500;
+            timer.Elapsed += OnElapsed;
             await Task.Run(async () =>
             {
                 await this.Dispatcher.BeginInvoke(new Action(async () =>
@@ -96,7 +105,7 @@ namespace Frontier.Windows.Warehouse_Window
                         {
                             add_itemWarehouse.SaveChanges();
 
-                            var newItem = add_itemWarehouse.Warehouse.OrderByDescending(x => x.idWarehouse).First();
+                            var newItem = add_itemWarehouse.Warehouse.OrderByDescending(x => x.idWarehouse).FirstOrDefault();
                             var new_data = new Warehouse_ViewModel()
                             {
                                 ID = newItem.idWarehouse,
@@ -399,7 +408,8 @@ namespace Frontier.Windows.Warehouse_Window
                             SearchBox.Text = string.Empty;
                             SearchBox.Text = text;
                         }
-                    }catch(Exception) { await Download_WarehouseItems.Download(); MessageBox.Show("Wystąpił błąd podczas usuwania"); }
+                    }
+                    catch (Exception) { await Download_WarehouseItems.Download(); MessageBox.Show("Wystąpił błąd podczas usuwania"); }
                 }));
             });
             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
@@ -442,16 +452,29 @@ namespace Frontier.Windows.Warehouse_Window
                     break;
             }
         }
-        private void Find_Item(object sender, RoutedEventArgs e)
+        private async void Find_Item(object sender, RoutedEventArgs e)
         {
-            if (SearchBox.Text.Length == 0)
+            await Task.Run(() =>
             {
-                Warehouse_Grid.ItemsSource = Collections.WarehouseData;
-            }
-            else
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (SearchBox.Text.Length == 0)
+                    {
+                        Warehouse_Grid.ItemsSource = collection;
+                        timer.Stop();
+                        return;
+                    }
+                    timer.Stop();
+                    timer.Start();
+                }));
+            });
+        }
+        private async void OnElapsed(object source, ElapsedEventArgs e)
+        {
+            await Task.Run(() =>
             {
-                Warehouse_Grid.ItemsSource = SearchType.SelectedIndex == 0 ? Collections.WarehouseData.Where(x => x.Name.ToLower().Contains(SearchBox.Text.ToLower())) : Collections.WarehouseData.Where(x => x.GroupName.ToLower().Contains(SearchBox.Text.ToLower()));
-            }
+                Dispatcher.BeginInvoke(new Action(() => Warehouse_Grid.ItemsSource = SearchType.SelectedIndex == 0 ? Collections.WarehouseData.Where(x => x.Name.ToLower().Contains(SearchBox.Text.ToLower())) : Collections.WarehouseData.Where(x => x.GroupName.ToLower().Contains(SearchBox.Text.ToLower()))));
+            });
         }
         private void GroupChanged_Selection(object sender, RoutedEventArgs e)
         {

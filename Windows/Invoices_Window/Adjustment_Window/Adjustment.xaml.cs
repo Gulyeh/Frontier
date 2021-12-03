@@ -13,8 +13,6 @@ using Frontier.Windows.Invoices_Window.Purchase_Window;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -70,8 +68,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                         ProductsValue += data.Brutto;
                     }
 
-                    if(decimal.Parse(Proform_Paid.Text) > ProductsValue) { Proform_Paid.Text = ProductsValue.ToString(); }
-                    if(SelectedSearchType == 1) { Proform_Paid.Text = ProductsValue.ToString(); }
+                    if (decimal.Parse(Proform_Paid.Text) > ProductsValue) { Proform_Paid.Text = ProductsValue.ToString(); }
+                    if (SelectedSearchType == 1) { Proform_Paid.Text = ProductsValue.ToString(); }
                 }));
             });
         }
@@ -130,7 +128,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                 }
                                 Collections.Products_Correction.Remove(grid_item);
                             }
-                            else if(SelectedSearchType == 1)
+                            else if (SelectedSearchType == 1)
                             {
 
                                 if (whID_item == null && whName_item == null)
@@ -139,7 +137,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                     ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                                     MessageBox.Show("Brak zakupionego przedmiotu - " + stringsData[i][0] + " - w magazynie. Nie można usunąć.");
                                 }
-                                else if((whID_item?.Amount < listitem.Amount) || (whName_item?.Amount < listitem.Amount))
+                                else if ((whID_item?.Amount < listitem.Amount) || (whName_item?.Amount < listitem.Amount))
                                 {
                                     grid_item.Amount = listitem.Amount;
                                     ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
@@ -150,7 +148,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                     Collections.Products_Correction.Remove(grid_item);
                                 }
                             }
-                        }                
+                        }
                         i++;
                     }
                 }));
@@ -370,7 +368,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                     }));
                 });
             }
-        }      
+        }
         private void FillData(object sold)
         {
             if (sold != null)
@@ -438,7 +436,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
             if (ListItem != null)
             {
                 ListItem.PieceBrutto = Product.PieceBrutto;
-                ListItem.PieceNetto = Product.PieceNetto; 
+                ListItem.PieceNetto = Product.PieceNetto;
                 ListItem.VAT = Product.VAT;
                 ListItem.Netto = Product.Netto;
                 ListItem.Brutto = Product.Brutto;
@@ -491,7 +489,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
             ContactorsList.SelectedIndex = -1;
             CurrencyList.SelectedIndex = 0;
             ExchangeRate = 0;
-            InvoiceID = 0;           
+            InvoiceID = 0;
             IsSaved = false;
             Collections.Products_Correction.Clear();
             SourceList.Clear();
@@ -560,7 +558,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
         {
             try
             {
-                if(SelectedSearchType == 1)
+                if (SelectedSearchType == 1)
                 {
                     MessageBox.Show("Brak możlwości zapisu faktury kupna");
                     return;
@@ -575,8 +573,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
             }
             catch (Exception)
             {
-                MessageBox.Show("Błąd podczas zapisu");
                 ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                MessageBox.Show("Błąd podczas zapisu");
             }
         }
         private async void SaveWord_Clicked(object sender, RoutedEventArgs e)
@@ -597,8 +595,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
             }
             catch (Exception)
             {
-                MessageBox.Show("Błąd podczas zapisu");
                 ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
+                MessageBox.Show("Błąd podczas zapisu");
             }
         }
         private async void Print_Clicked(object sender, RoutedEventArgs e)
@@ -689,11 +687,11 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
         }
         private async Task SaveBought_Correction()
         {
-            using(GetInvoice_Bought invoice = new GetInvoice_Bought())
+            using (GetInvoice_Bought invoice = new GetInvoice_Bought())
             {
-                using(GetInvoice_Products product = new GetInvoice_Products())
+                using (GetInvoice_Products product = new GetInvoice_Products())
                 {
-                    using(GetWarehouse warehouseitem = new GetWarehouse())
+                    using (GetWarehouse warehouseitem = new GetWarehouse())
                     {
                         DateTimeFormatInfo format = new DateTimeFormatInfo();
                         format.ShortDatePattern = "dd.MM.yyyy";
@@ -735,7 +733,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                 };
                                 var findProduct = product.Invoice_Products.FirstOrDefault(x => x.id == item.ID_SoldProduct);
                                 var query = SourceList.FirstOrDefault(x => x.ID == item.ID && x.Name == item.Name && x.PieceNetto == item.PieceNetto && x.PieceBrutto == item.PieceBrutto);
-                                if(query == null)
+                                if (query == null)
                                 {
                                     var WH_Item = Collections.WarehouseData.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto);
                                     if (WH_Item?.Amount == 0)
@@ -745,7 +743,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                         WH_Item.Netto = item.Netto;
                                         WH_Item.VAT = item.VAT;
                                     }
-                                    else if(WH_Item?.Amount > 0)
+                                    else if (WH_Item?.Amount > 0)
                                     {
                                         WH_Item.Amount += item.Amount;
                                     }
@@ -846,7 +844,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                     {
                                         if (findID != null)
                                         {
-                                            if(findProduct.Each_Brutto != item.PieceBrutto.ToString() || findProduct.Each_Netto != item.PieceNetto.ToString() || findProduct.VAT != item.VAT)
+                                            if (findProduct.Each_Brutto != item.PieceBrutto.ToString() || findProduct.Each_Netto != item.PieceNetto.ToString() || findProduct.VAT != item.VAT)
                                             {
                                                 findID.Amount -= query.Amount;
                                                 var newProduct = warehouseitem.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto && x.VAT == item.VAT);
@@ -912,7 +910,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                                 var newProduct = warehouseitem.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto && x.VAT == item.VAT);
                                                 if (newProduct != null)
                                                 {
-                                                    if(findID.Amount == item.Amount)
+                                                    if (findID.Amount == item.Amount)
                                                     {
                                                         warehouseitem.DeleteItem(item.ID);
                                                     }
@@ -967,9 +965,9 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                         var query = SourceList.FirstOrDefault(x => x.ID_SoldProduct == item.ID_SoldProduct);
                                         var findItemID = warehouseitem.Warehouse.FirstOrDefault(x => x.idWarehouse == item.ID && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto);
                                         var findItemName = warehouseitem.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto);
-                                        if(findItemID != null)
+                                        if (findItemID != null)
                                         {
-                                            if(findItemID.Amount == query.Amount)
+                                            if (findItemID.Amount == query.Amount)
                                             {
                                                 var countItems = warehouseitem.Warehouse.Where(x => x.Name == item.Name);
                                                 if (countItems.Count() > 1)
@@ -989,7 +987,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                                 findItemID.Amount -= query.Amount;
                                             }
 
-                                        }else if(findItemName != null)
+                                        }
+                                        else if (findItemName != null)
                                         {
                                             if (findItemName.Amount == query.Amount)
                                             {
@@ -1022,7 +1021,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
 
                             //Fill ids to newly added items
                             foreach (ProductsSold_ViewModel item in Products_Grid.Items)
-                            { 
+                            {
                                 if (SourceList.FirstOrDefault(x => x.ID == item.ID && x.Name == item.Name && x.PieceBrutto == item.PieceBrutto && x.PieceNetto == item.PieceNetto && x.VAT == item.VAT) == null)
                                 {
                                     var LastID = warehouseitem.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto && x.VAT == item.VAT).idWarehouse;
@@ -1072,7 +1071,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                             ExchangeRate = ExchangeRate.ToString()
                         };
                         var updated = await invoice.EditInvoice(Corrected_Invoice);
-                        if(updated == true)
+                        if (updated == true)
                         {
                             foreach (ProductsSold_ViewModel item in Products_Grid.Items)
                             {
@@ -1122,19 +1121,19 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                         }
                                         else if (query.Amount < item.Amount)
                                         {
-                                           await warehouseitem.SoldWarehouse_Item(new Warehouse
-                                                {
-                                                    idWarehouse = item.ID,
-                                                    Name = item.Name,
-                                                    Amount = item.Amount - query.Amount
-                                                });
+                                            await warehouseitem.SoldWarehouse_Item(new Warehouse
+                                            {
+                                                idWarehouse = item.ID,
+                                                Name = item.Name,
+                                                Amount = item.Amount - query.Amount
+                                            });
                                         }
                                     }
-                                }                            
+                                }
                             }
                             foreach (ProductsSold_ViewModel item in SourceList)
                             {
-                                if(Collections.Products_Correction.FirstOrDefault(x => x.ID_SoldProduct == item.ID_SoldProduct) == null)
+                                if (Collections.Products_Correction.FirstOrDefault(x => x.ID_SoldProduct == item.ID_SoldProduct) == null)
                                 {
                                     if (item.GroupType != "Usługa")
                                     {
@@ -1161,7 +1160,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                     }
                 }
             }
-        }        
+        }
         private async Task RestoreToWarehouse(ProductsSold_ViewModel item, ProductsSold_ViewModel query, GetWarehouse warehouseitem, Invoice_Products findBoughtPrice)
         {
             var id_exists = Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID);
@@ -1179,14 +1178,14 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                 {
                     if (Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID && x.Brutto == decimal.Parse(findBoughtPrice.BoughtBrutto) && x.Netto == decimal.Parse(findBoughtPrice.BoughtNetto)) != null)
                     {
-                        if(query.Amount == item.Amount)
+                        if (query.Amount == item.Amount)
                         {
                             warehouseitem.Warehouse.FirstOrDefault(x => x.idWarehouse == item.ID).Amount += item.Amount;
                         }
                         else
                         {
                             warehouseitem.Warehouse.FirstOrDefault(x => x.idWarehouse == item.ID).Amount += query.Amount - item.Amount;
-                        }                    
+                        }
                     }
                     else
                     {
@@ -1274,6 +1273,6 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                 PaidPrice = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
                 Currency = CurrencyList.Text
             };
-        }           
+        }
     }
 }

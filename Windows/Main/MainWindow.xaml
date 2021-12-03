@@ -71,13 +71,19 @@
                 <ListViewItem>
                     <DockPanel>
                         <Image Source="pack://application:,,,/Images/Chart.png" Height="18" Margin="20,0,0,0" Width="20"/>
-                        <TextBlock VerticalAlignment="Center" Text="Analiza" Foreground="White" FontSize="18" FontFamily="Calibri" FontWeight="Light" Margin="8,0,0,0" Width="143"/>
+                        <TextBlock VerticalAlignment="Center" Text="Analiza" Foreground="White" FontSize="18" FontFamily="Calibri" FontWeight="Light" Margin="12,0,0,0" Width="143"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem>
+                    <DockPanel>
+                        <Image Source="pack://application:,,,/Images/Note.png" Height="20" Margin="20,0,0,0"/>
+                        <TextBlock VerticalAlignment="Center" Text="Remanent" Foreground="White" FontSize="18" FontFamily="Calibri" FontWeight="Light" Margin="16,0,0,0" Width="143"/>
                     </DockPanel>
                 </ListViewItem>
                 <ListViewItem>
                     <DockPanel>
                         <Image Source="pack://application:,,,/Images/Settings.png" Height="20" Margin="20,0,0,0"/>
-                        <TextBlock VerticalAlignment="Center" Text="Ustawienia" Foreground="White" FontSize="18" FontFamily="Calibri" FontWeight="Light" Margin="8,0,0,0" Width="143"/>
+                        <TextBlock VerticalAlignment="Center" Text="Ustawienia" Foreground="White" FontSize="18" FontFamily="Calibri" FontWeight="Light" Margin="10,0,0,0" Width="143"/>
                     </DockPanel>
                 </ListViewItem>
             </ListView>

@@ -72,7 +72,8 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                 BeginDate.Text = first.ToShortDateString();
                 EndDate.Text = last.ToShortDateString();
                 await DownloadInvoices();
-            }catch (Exception)
+            }
+            catch (Exception)
             {
                 Collections.Archive_Invoices.Clear();
                 MessageBox.Show("Nie można załadować archiwum");
@@ -154,7 +155,7 @@ namespace Frontier.Windows.Invoices_Window.Archive_Window
                         MessageBox.Show("Wystąpił błąd podczas operacji");
                     }
                 }));
-            });            
+            });
         }
         private async void GetInvoices(object sender, RoutedEventArgs e)
         {

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace Frontier.Methods.XML
@@ -15,7 +14,7 @@ namespace Frontier.Methods.XML
     {
         public static async Task CheckXML()
         {
-            if(!File.Exists(Directory.GetCurrentDirectory() + @"\Config.xml"))
+            if (!File.Exists(Directory.GetCurrentDirectory() + @"\Config.xml"))
             {
                 try
                 {
@@ -31,7 +30,7 @@ namespace Frontier.Methods.XML
                 }
             }
         }
-        public static Dictionary<string,string> ReadXML(string DBName)
+        public static Dictionary<string, string> ReadXML(string DBName)
         {
             try
             {
@@ -55,7 +54,7 @@ namespace Frontier.Methods.XML
                 if (lastDB != string.Empty)
                 {
                     var findCredentials = doc.Root.Descendants("Credentials").Where(x => x.Attribute("Database").Value == lastDB).FirstOrDefault();
-                    if(findCredentials != null)
+                    if (findCredentials != null)
                     {
                         if (findCredentials.Attribute("KeepLogged").Value == "True")
                         {
@@ -100,7 +99,7 @@ namespace Frontier.Methods.XML
                 }
                 else
                 {
-                    if(data != null)
+                    if (data != null)
                     {
                         data.Remove();
                     }
@@ -109,7 +108,7 @@ namespace Frontier.Methods.XML
                 lastdb.SetValue(credits["Database"]);
                 doc.Save(Directory.GetCurrentDirectory() + @"\Config.xml");
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 MessageBox.Show("Nie udało się zapisać danych logowania");
             }

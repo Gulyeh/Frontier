@@ -110,7 +110,7 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
             {
                 await this.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    List <decimal[]> ids = new List<decimal[]>();
+                    List<decimal[]> ids = new List<decimal[]>();
                     foreach (ProductsSold_ViewModel data in Products_Grid.SelectedItems)
                     {
                         ids.Add(new decimal[] { data.ID, data.PieceNetto, data.PieceBrutto });
@@ -198,7 +198,7 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                         if (updated)
                                         {
                                             await invoice.SaveChangesAsync();
-                                            LastInvoice = invoice.Invoice_Bought.OrderByDescending(x => x.idinvoice_bought).FirstOrDefault() != null ? invoice.Invoice_Bought.OrderByDescending(x => x.idinvoice_bought).FirstOrDefault().idinvoice_bought : 1;
+                                            LastInvoice = invoice.Invoice_Bought.OrderByDescending(x => x.idinvoice_bought).FirstOrDefault().idinvoice_bought;
                                             foreach (ProductsSold_ViewModel item in Products_Grid.Items)
                                             {
                                                 var exists = product.Warehouse.FirstOrDefault(x => x.Name == item.Name && x.Netto == item.PieceNetto && x.Brutto == item.PieceBrutto);
@@ -213,8 +213,8 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                                     if (exists != null)
                                                     {
                                                         exists.Amount = item.Amount;
-                                                        exists.Brutto = item.Brutto;
-                                                        exists.Netto = item.Netto;
+                                                        exists.Brutto = item.PieceBrutto;
+                                                        exists.Netto = item.PieceNetto;
                                                         exists.VAT = item.VAT;
                                                     }
                                                     else
@@ -277,7 +277,7 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                                     catch (Exception)
                                     {
                                         var items = new_item.Invoice_Products.Where(x => x.Invoice_ID == InvoiceNumber.Text && x.Invoice == LastInvoice);
-                                        foreach(var item in items) { new_item.DeleteItem(item.id); }
+                                        foreach (var item in items) { new_item.DeleteItem(item.id); }
                                         invoice.Invoice_Bought.Remove(invoice.Invoice_Bought.FirstOrDefault(x => x.idinvoice_bought == LastInvoice));
                                         await invoice.SaveChangesAsync();
                                         await new_item.SaveChangesAsync();

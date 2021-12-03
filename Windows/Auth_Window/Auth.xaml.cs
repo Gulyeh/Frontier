@@ -145,7 +145,7 @@ namespace Frontier.Windows.Auth_Window
                 DirectoryInfo d = new DirectoryInfo(path);
                 foreach (var file in d.GetFiles("*.sqlite"))
                 {
-                    if(DatabaseList.FirstOrDefault(x => x.ID == file.Name.Replace(".sqlite", "")) == null)
+                    if (DatabaseList.FirstOrDefault(x => x.ID == file.Name.Replace(".sqlite", "")) == null)
                     {
                         DatabaseList.Add(new DatabaseList_ViewModel { ID = file.Name.Replace(".sqlite", "") });
                     }

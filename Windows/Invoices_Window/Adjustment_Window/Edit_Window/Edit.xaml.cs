@@ -2,19 +2,11 @@
 using Frontier.Variables;
 using Frontier.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Frontier.Windows.Invoices_Window.Adjustment_Window.Edit_Window
 {
@@ -135,8 +127,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window.Edit_Window
             {
                 var whID_item = Collections.WarehouseData.FirstOrDefault(x => x.ID == _Product.ID && x.Brutto == _Product.PieceBrutto && x.Netto == _Product.PieceNetto);
                 var whName_item = Collections.WarehouseData.FirstOrDefault(x => x.Name == _Product.Name && x.Brutto == _Product.PieceBrutto && x.Netto == _Product.PieceNetto);
-                
-                if (_SelectedSearchType == 1 && whID_item == null && whName_item == null) 
+
+                if (_SelectedSearchType == 1 && whID_item == null && whName_item == null)
                 { MessageBox.Show("Produkt nie istnieje w magazynie"); return; }
 
                 if (_SelectedSearchType == 1 && (whID_item?.Amount < _Product.Amount - int.Parse(itemcount.Text) || whName_item?.Amount < _Product.Amount - int.Parse(itemcount.Text)))

@@ -19,7 +19,7 @@ namespace Frontier.Windows.Analyze_Window
         private ObservableCollection<KeyValuePair<string, decimal>> SoldValue_Data;
         private ObservableCollection<KeyValuePair<string, int>> InvoiceBought_Data;
         private ObservableCollection<KeyValuePair<string, decimal>> BoughtValue_Data;
-        private List<string> MonthsNames = new List<string>() { "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
+        private List<string> MonthsNames = new List<string>() { "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień" };
         private int year;
         public int Year
         {
@@ -142,7 +142,7 @@ namespace Frontier.Windows.Analyze_Window
                 {
                     try
                     {
-                        using(GetInvoice_Sold soldInvoices = new GetInvoice_Sold())
+                        using (GetInvoice_Sold soldInvoices = new GetInvoice_Sold())
                         {
                             using (GetInvoice_Bought boughtInvoices = new GetInvoice_Bought())
                             {
@@ -155,7 +155,7 @@ namespace Frontier.Windows.Analyze_Window
                                     InvoicesSold = sold.Count();
                                     InvoicesBought = bought.Count();
 
-                                    for (int i = 1; i<13; i++)
+                                    for (int i = 1; i < 13; i++)
                                     {
                                         decimal tempSold = 0;
                                         decimal tempBought = 0;
@@ -167,7 +167,7 @@ namespace Frontier.Windows.Analyze_Window
                                         foreach (var invoice in soldMonth)
                                         {
                                             var invoiceProduct = products.Invoice_Products.Where(x => x.Invoice_ID == invoice.Invoice_ID);
-                                            foreach(var product in invoiceProduct)
+                                            foreach (var product in invoiceProduct)
                                             {
                                                 SoldValue += invoice.Currency == "PLN" ? decimal.Parse(product.Brutto) : decimal.Parse(product.Brutto) * decimal.Parse(invoice.ExchangeRate);
                                                 tempSold += invoice.Currency == "PLN" ? decimal.Parse(product.Brutto) : Math.Round(decimal.Parse((decimal.Parse(product.Brutto) * decimal.Parse(invoice.ExchangeRate)).ToString("F2")), 2);

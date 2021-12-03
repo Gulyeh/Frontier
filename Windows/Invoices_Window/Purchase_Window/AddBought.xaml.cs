@@ -115,7 +115,7 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
                 {
                     itembrutto.Text = itemnetto.Text;
                 }
-            }       
+            }
         }
         private void ToggleChecked(object sender, RoutedEventArgs e)
         {
@@ -206,6 +206,6 @@ namespace Frontier.Windows.Invoices_Window.Purchase_Window
             {
                 MessageBox.Show("Proszę wypełnić wymagane pola");
             }
-        }      
+        }
     }
 }

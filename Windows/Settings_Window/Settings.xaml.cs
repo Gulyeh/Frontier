@@ -3,7 +3,6 @@ using Frontier.Database.TableClasses;
 using Frontier.Methods.Invoices;
 using Frontier.Methods.Numerics;
 using Frontier.Variables;
-using Frontier.ViewModels;
 using Frontier.Windows.Confirmation_Window;
 using System;
 using System.Collections.Generic;
@@ -314,7 +313,7 @@ namespace Frontier.Windows.Settings_Window
             {
                 await Task.Run(async () =>
                 {
-                    await Dispatcher.BeginInvoke(new Action(async() =>
+                    await Dispatcher.BeginInvoke(new Action(async () =>
                     {
                         try
                         {
@@ -360,7 +359,7 @@ namespace Frontier.Windows.Settings_Window
                     }));
                 });
             }
-            
+
         }
     }
 }

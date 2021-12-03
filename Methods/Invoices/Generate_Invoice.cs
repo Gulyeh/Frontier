@@ -21,7 +21,7 @@ namespace Frontier.Methods.Invoices
         public static async Task CreateInvoice(InvoiceData invoicedata, string Destination)
         {
             var buyer = Collections.ContactorsData.FirstOrDefault(x => x.ID == invoicedata.BuyerID);
-            string FONT = AppDomain.CurrentDomain.BaseDirectory + "//Font/Calibri.ttf";
+            string FONT = AppDomain.CurrentDomain.BaseDirectory + "Font\\Calibri.ttf";
             PdfFont font = PdfFontFactory.CreateFont(FONT, PdfEncodings.IDENTITY_H, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
             PdfWriter writer = new PdfWriter(Destination);
             PdfDocument pdf = new PdfDocument(writer);
@@ -209,7 +209,7 @@ namespace Frontier.Methods.Invoices
                 {
                     Collection = Collections.ArchiveInvoices_Products;
                 }
-                else if(GlobalVariables.InvoicePage == "NewInvoice")
+                else if (GlobalVariables.InvoicePage == "NewInvoice")
                 {
                     Collection = Collections.ProductsSold.ToList();
                 }

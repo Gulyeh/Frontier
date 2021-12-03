@@ -1,0 +1,144 @@
+﻿<Page x:Class="Frontier.Windows.Remanent_Window.Remanent"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Frontier.Windows.Remanent_Window"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="1080"
+      Loaded="LoadData"
+      DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    
+    <Page.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="Gray">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="Border" CornerRadius="5" BorderThickness="0" Background="{TemplateBinding Background}">
+                            <ContentPresenter                              
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#131a20" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="#1f2731" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Background" Value="WhiteSmoke"/>
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridRow">
+                        <Border x:Name="Border" BorderThickness="0">
+                            <SelectiveScrollingGrid>
+                                <SelectiveScrollingGrid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </SelectiveScrollingGrid.ColumnDefinitions>
+                                <SelectiveScrollingGrid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </SelectiveScrollingGrid.RowDefinitions>
+                                <DataGridCellsPresenter Grid.Column="1"
+                                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <DataGridDetailsPresenter Grid.Column="1"
+                                                  Grid.Row="1"
+                                                  SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                                  Visibility="{TemplateBinding DetailsVisibility}" />
+                                <DataGridRowHeader Grid.RowSpan="2"
+                                           SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"
+                                           Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                            </SelectiveScrollingGrid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                <Setter TargetName="Border" Property="Background" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter TargetName="Border" Property="Background" Value="LightGray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Margin="50,0,0,0" Height="32" Width="128">
+            <Button Content="Generuj raport" Click="GenerateReport_Clicked" HorizontalAlignment="Left" Style="{StaticResource Gray}" Foreground="White" FontSize="15" FontFamily="Calibri" FontWeight="Light" Width="128" Height="31" Background="#2f4050"/>
+        </StackPanel>
+        <TextBox Grid.Row="1" FontSize="30" BorderThickness="0" FontFamily="Calibri" FontWeight="Light" Text="Stan magazynu" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Height="38" Width="184"/>
+        <ScrollViewer Grid.Row="2" VerticalAlignment="Top" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" SnapsToDevicePixels="True">
+            <DataGrid Name="Warehouse_Grid"
+                          GridLinesVisibility="None"
+                          HorizontalScrollBarVisibility="Disabled"
+                          RowHeaderWidth="0"
+                          AlternationCount="2"
+                          AutoGenerateColumns="False"
+                          BorderThickness="0" 
+                          CanUserReorderColumns="False" 
+                          CanUserResizeColumns="False"
+                          CanUserResizeRows="False"
+                          CanUserSortColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          Background="Transparent" 
+                          ColumnWidth="*" 
+                          HorizontalAlignment="Stretch" 
+                          VerticalAlignment="Top" 
+                          Margin="50,10,50,10"
+                          IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nazwa" Width="*" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Ilość" Width="100" Binding="{Binding Amount}"/>
+                    <DataGridTextColumn Header="Wartość Netto" Width="200" Binding="{Binding Netto}"/>
+                    <DataGridTextColumn Header="Wartość Brutto" Width="200" Binding="{Binding Brutto}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Text="Suma Netto" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+            <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
+                <TextBox Name="Netto" FontFamily="Calibri" BorderThickness="0" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+            <TextBlock Text="Suma Brutto" FontFamily="Calibri" FontWeight="Light" FontSize="15" Foreground="Black" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+            <Border DockPanel.Dock="Right" VerticalAlignment="Center" Background="Gray" CornerRadius="5" Margin="10,0,50,0" Width="127" Height="48">
+                <TextBox Name="Brutto" FontFamily="Calibri" BorderThickness="0" FontWeight="Light" TextAlignment="Center" FontSize="18" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Border>
+        </StackPanel>
+    </Grid>
+</Page>

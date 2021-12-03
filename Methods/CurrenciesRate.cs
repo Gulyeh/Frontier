@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Frontier.Methods
 {
@@ -16,7 +17,7 @@ namespace Frontier.Methods
             {
                 try
                 {
-                    string url = "https://api.nbp.pl/api/exchangerates/tables/a?format=json";
+                    string url = "http://api.nbp.pl/api/exchangerates/tables/a?format=json";
                     WebClient webClient = new WebClient { };
                     string response = webClient.DownloadString(url);
                     if (response != null)
@@ -33,7 +34,7 @@ namespace Frontier.Methods
                     }
                 }
                 catch (Exception) { CurrencyData = null; }
-            });         
+            });
             return CurrencyData;
         }
     }

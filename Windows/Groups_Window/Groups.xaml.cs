@@ -41,7 +41,9 @@ namespace Frontier.Windows.Groups_Window
                         var updated = await group.AddGroups(data);
                         if (updated)
                         {
-                            var newgroupID = group.Groups.OrderByDescending(x => x.idgroups).First().idgroups;
+                            await group.SaveChangesAsync();
+
+                            var newgroupID = group.Groups.OrderByDescending(x => x.idgroups).FirstOrDefault().idgroups;
                             var vm = new Groups_ViewModel()
                             {
                                 ID = newgroupID,
@@ -52,7 +54,7 @@ namespace Frontier.Windows.Groups_Window
                                 Type = type.SelectedIndex
                             };
                             Collections.GroupsData.Add(vm);
-                            await group.SaveChangesAsync();
+
                             MessageBox.Show("Pomyślnie dodano grupę");
                             ResetFields("new");
                         }
@@ -67,7 +69,7 @@ namespace Frontier.Windows.Groups_Window
                     MessageBox.Show("Proszę podać nazwę grupy");
                 }
             }
-            catch (Exception)
+            catch (Exception )
             {
                 MessageBox.Show("Wystąpił błąd podczas tworzenia grupy");
             }
@@ -161,7 +163,7 @@ namespace Frontier.Windows.Groups_Window
                     }
                     catch (Exception) { }
                 }));
-            });          
+            });
         }
         private async void DeleteGroup_Clicked(object sender, RoutedEventArgs e)
         {
