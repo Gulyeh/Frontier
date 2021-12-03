@@ -4,8 +4,8 @@ using Frontier.Windows.Analyze_Window;
 using Frontier.Windows.Auth_Window;
 using Frontier.Windows.Confirmation_Window;
 using Frontier.Windows.Contactors_Window;
+using Frontier.Windows.Inventory_Window;
 using Frontier.Windows.Invoices_Window;
-using Frontier.Windows.Remanent_Window;
 using Frontier.Windows.Settings_Window;
 using Frontier.Windows.Warehouse_Window;
 using System;
@@ -25,7 +25,7 @@ namespace Frontier
         Analyze WAnalyze;
         Settings WSettings;
         Auth WAuth;
-        Remanent WRemanent;
+        Inventory WInventory;
 
         public MainWindow()
         {
@@ -50,7 +50,7 @@ namespace Frontier
                     WSettings = new Settings();
                     WInvoice = new Invoices();
                     WAnalyze = new Analyze();
-                    WRemanent = new Remanent();
+                    WInventory = new Inventory();
                 }));
             });
         }
@@ -72,7 +72,7 @@ namespace Frontier
                     Content_Frame.Content = WAnalyze;
                     break;
                 case 4:
-                    Content_Frame.Content = WRemanent;
+                    Content_Frame.Content = WInventory;
                     break;
                 case 5:
                     Content_Frame.Content = WSettings;

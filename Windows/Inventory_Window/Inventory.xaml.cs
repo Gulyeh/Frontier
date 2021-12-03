@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Frontier.Windows.Remanent_Window
+namespace Frontier.Windows.Inventory_Window
 {
     /// <summary>
     /// Logika interakcji dla klasy Remanent.xaml
     /// </summary>
-    public partial class Remanent : Page
+    public partial class Inventory : Page
     {
-        public class RemanentData
+        public class InventoryData
         {
             public string Name { get; set; }
             public int Amount { get; set; }
@@ -65,14 +65,14 @@ namespace Frontier.Windows.Remanent_Window
             }
         }
 
-        ObservableCollection<RemanentData> RemanentItems;
+        ObservableCollection<InventoryData> InventoryItems;
 
 
-        public Remanent()
+        public Inventory()
         {
             InitializeComponent();
-            RemanentItems = new ObservableCollection<RemanentData>();
-            Warehouse_Grid.ItemsSource = RemanentItems;
+            InventoryItems = new ObservableCollection<InventoryData>();
+            Warehouse_Grid.ItemsSource = InventoryItems;
         }
         private async void LoadData(object sender, RoutedEventArgs e)
         {
@@ -84,7 +84,7 @@ namespace Frontier.Windows.Remanent_Window
                     SumBrutto = 0;
                     foreach (var item in Collections.WarehouseData.Where(x => x.GroupType != "Usługa"))
                     {
-                        var data = RemanentItems.FirstOrDefault(x => x.Name == item.Name);
+                        var data = InventoryItems.FirstOrDefault(x => x.Name == item.Name);
                         if (data != null)
                         {
                             data.Amount += item.Amount;
@@ -93,7 +93,7 @@ namespace Frontier.Windows.Remanent_Window
                         }
                         else
                         {
-                            RemanentItems.Add(new RemanentData
+                            InventoryItems.Add(new InventoryData
                             {
                                 Name = item.Name,
                                 Amount = item.Amount,
@@ -172,7 +172,7 @@ namespace Frontier.Windows.Remanent_Window
                     table.AddHeaderCell("Wartość brutto");
 
                     int i = 1;
-                    foreach (RemanentData data in Warehouse_Grid.Items)
+                    foreach (InventoryData data in Warehouse_Grid.Items)
                     {
                         table.AddCell(i.ToString() + ".");
                         table.AddCell(data.Name);

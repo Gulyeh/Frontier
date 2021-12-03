@@ -361,8 +361,8 @@
     <Compile Include="Windows\Confirmation_Window\Confirmation.xaml.cs">
       <DependentUpon>Confirmation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\Remanent_Window\Remanent.xaml.cs">
-      <DependentUpon>Remanent.xaml</DependentUpon>
+    <Compile Include="Windows\Inventory_Window\Inventory.xaml.cs">
+      <DependentUpon>Inventory.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Settings_Window\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
@@ -423,7 +423,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\Remanent_Window\Remanent.xaml">
+    <Page Include="Windows\Inventory_Window\Inventory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
