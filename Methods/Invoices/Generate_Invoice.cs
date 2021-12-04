@@ -349,6 +349,17 @@ namespace Frontier.Methods.Invoices
                 document.Add(empty);
                 document.Add(empty);
 
+
+                if (invoicedata.Signature != null && invoicedata.Signature != string.Empty)
+                {
+                    Paragraph w = new Paragraph()
+                        .SetFontSize(10);
+                    w.Add(new Tab());
+                    w.AddTabStops(new TabStop(94, TabAlignment.CENTER));
+                    w.Add(invoicedata.Signature);
+                    document.Add(w);
+                }
+
                 Paragraph n = new Paragraph()
                         .SetMultipliedLeading(0.5f);
                 LineSeparator ls1 = new LineSeparator(new SolidLine()).SetWidth(150);
@@ -363,10 +374,10 @@ namespace Frontier.Methods.Invoices
                 Paragraph o = new Paragraph()
                     .SetFontSize(6);
                 o.Add(new Tab());
-                o.AddTabStops(new TabStop(45, TabAlignment.LEFT));
+                o.AddTabStops(new TabStop(47, TabAlignment.LEFT));
                 o.Add("Osoba upoważniona do wystawienia");
                 o.Add(new Tab());
-                o.AddTabStops(new TabStop(385, TabAlignment.LEFT));
+                o.AddTabStops(new TabStop(387, TabAlignment.LEFT));
                 o.Add("Osoba upoważniona do odbioru");
                 document.Add(o);
                 document.Close();
@@ -676,6 +687,16 @@ namespace Frontier.Methods.Invoices
                 document.Add(empty);
                 document.Add(empty);
 
+                if (invoicedata.Signature != null && invoicedata.Signature != string.Empty)
+                {
+                    Paragraph w = new Paragraph()
+                        .SetFontSize(10);
+                    w.Add(new Tab());
+                    w.AddTabStops(new TabStop(94, TabAlignment.CENTER));
+                    w.Add(invoicedata.Signature);
+                    document.Add(w);
+                }
+
                 Paragraph n = new Paragraph()
                         .SetMultipliedLeading(0.5f);
                 LineSeparator ls1 = new LineSeparator(new SolidLine()).SetWidth(150);
@@ -690,10 +711,10 @@ namespace Frontier.Methods.Invoices
                 Paragraph o = new Paragraph()
                     .SetFontSize(6);
                 o.Add(new Tab());
-                o.AddTabStops(new TabStop(45, TabAlignment.LEFT));
+                o.AddTabStops(new TabStop(47, TabAlignment.LEFT));
                 o.Add("Osoba upoważniona do wystawienia");
                 o.Add(new Tab());
-                o.AddTabStops(new TabStop(385, TabAlignment.LEFT));
+                o.AddTabStops(new TabStop(387, TabAlignment.LEFT));
                 o.Add("Osoba upoważniona do odbioru");
                 document.Add(o);
                 document.Close();
@@ -996,6 +1017,16 @@ namespace Frontier.Methods.Invoices
                 document.Add(empty);
                 document.Add(empty);
 
+                if (invoicedata.Signature != null && invoicedata.Signature != string.Empty)
+                {
+                    Paragraph w = new Paragraph()
+                        .SetFontSize(10);
+                    w.Add(new Tab());
+                    w.AddTabStops(new TabStop(94, TabAlignment.CENTER));
+                    w.Add(invoicedata.Signature);
+                    document.Add(w);
+                }
+
                 Paragraph n = new Paragraph()
                         .SetMultipliedLeading(0.5f);
                 LineSeparator ls1 = new LineSeparator(new SolidLine()).SetWidth(150);
@@ -1010,10 +1041,10 @@ namespace Frontier.Methods.Invoices
                 Paragraph o = new Paragraph()
                     .SetFontSize(6);
                 o.Add(new Tab());
-                o.AddTabStops(new TabStop(45, TabAlignment.LEFT));
+                o.AddTabStops(new TabStop(47, TabAlignment.LEFT));
                 o.Add("Osoba upoważniona do wystawienia");
                 o.Add(new Tab());
-                o.AddTabStops(new TabStop(385, TabAlignment.LEFT));
+                o.AddTabStops(new TabStop(387, TabAlignment.LEFT));
                 o.Add("Osoba upoważniona do odbioru");
                 document.Add(o);
                 document.Close();

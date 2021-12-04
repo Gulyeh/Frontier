@@ -458,6 +458,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                 InvoiceNumber.IsEnabled = false;
                 Days_Amount.IsEnabled = true;
                 Proform_Paid.IsHitTestVisible = true;
+                Signature.IsEnabled = true;
             }
             else
             {
@@ -465,6 +466,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                 Proform_Paid.IsHitTestVisible = false;
                 InvoiceNumber.IsEnabled = true;
                 Days_Amount.IsEnabled = false;
+                Signature.IsEnabled = false;
             }
         }
         private void ResetInputs()
@@ -476,6 +478,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
             Description.IsEnabled = false;
             Created_Date.IsEnabled = false;
             CurrencyList.IsEnabled = false;
+            Signature.IsEnabled = false;
             Sell_Date.IsEnabled = false;
             AddProduct_Button.IsEnabled = false;
             Proform_Paid.IsHitTestVisible = false;
@@ -484,6 +487,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
             Description.Text = string.Empty;
             SellDate.Text = string.Empty;
             CreatedDate.Text = string.Empty;
+            Signature.Text = string.Empty;
             Proform_Paid.Text = "0";
             PurchaseType.SelectedIndex = 0;
             ContactorsList.SelectedIndex = -1;
@@ -676,10 +680,10 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
                             MessageBox.Show("Pomyślnie zapisano korekte faktury");
                         }
-                        catch (Exception)
+                        catch (Exception d)
                         {
                             ((MainWindow)Application.Current.MainWindow).Loading.Visibility = Visibility.Hidden;
-                            MessageBox.Show("Wystąpił błąd podczas zapisywania");
+                            MessageBox.Show(d+"Wystąpił błąd podczas zapisywania");
                         }
                     }));
                 });
@@ -1068,7 +1072,7 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                             AccountNumber = BankAccount.Text,
                             BankName = BankName.Text,
                             PricePaid = Proform_Paid.Text,
-                            ExchangeRate = ExchangeRate.ToString()
+                            ExchangeRate = ExchangeRate.ToString(),
                         };
                         var updated = await invoice.EditInvoice(Corrected_Invoice);
                         if (updated == true)
@@ -1093,7 +1097,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                                     GTU = item.GTU,
                                     BoughtBrutto = findBoughtPrice != null ? findBoughtPrice.BoughtBrutto : Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID).Brutto.ToString(),
                                     BoughtNetto = findBoughtPrice != null ? findBoughtPrice.BoughtNetto : Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID).Netto.ToString(),
-                                    BoughtVAT = findBoughtPrice != null ? findBoughtPrice.BoughtVAT : Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID).VAT
+                                    BoughtVAT = findBoughtPrice != null ? findBoughtPrice.BoughtVAT : Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID).VAT,
+                                    GroupType = item.GroupType
                                 };
                                 var query = SourceList.FirstOrDefault(x => x.ID == item.ID && x.Name == item.Name && x.PieceNetto == item.PieceNetto && x.PieceBrutto == item.PieceBrutto);
                                 var wh_item = Collections.WarehouseData.FirstOrDefault(x => x.ID == item.ID);
@@ -1271,7 +1276,8 @@ namespace Frontier.Windows.Invoices_Window.Adjustment_Window
                 AccountNumber = BankAccount.Text,
                 TotalPrice = ProductsValue.ToString(),
                 PaidPrice = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
-                Currency = CurrencyList.Text
+                Currency = CurrencyList.Text,
+                Signature = Signature.Text
             };
         }
     }

@@ -276,7 +276,8 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                                 AccountNumber = Accountnumber.Text,
                                 TotalPrice = String.Format("{0:0.00}", ProductsValue),
                                 PaidPrice = String.Format("{0:0.00}", decimal.Parse(Proform_Paid.Text)),
-                                Currency = CurrencyList.Text
+                                Currency = CurrencyList.Text,
+                                Signature = Signature.Text
                             };
                             using (GetInvoice_Sold invoice = new GetInvoice_Sold())
                             {
@@ -390,10 +391,12 @@ namespace Frontier.Windows.Invoices_Window.NewInvoice_Window
                     CreatedDate_Text.Text = string.Empty;
                     Description.Text = string.Empty;
                     DaysAmount.Text = string.Empty;
+                    Signature.Text = string.Empty;
                     if (!SavedInvoice)
                     {
                         await RestoreProducts();
                     }
+                    SavedInvoice = false;
                     Collections.ProductsSold.Clear();
                     GetLastInvoice();
                 }));

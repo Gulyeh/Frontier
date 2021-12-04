@@ -92,7 +92,7 @@
             </StackPanel.Effect>
         </StackPanel>
         <DockPanel VerticalAlignment="Bottom" Margin="10,0,10,10">
-            <TextBlock Grid.Column="0" Text="Wersja: 1.0.0" VerticalAlignment="Center" Foreground="White" FontSize="10" FontFamily="Segoe UI" FontWeight="Light" Margin="10,0,0,0"/>
+            <TextBlock Grid.Column="0" Text="Wersja: 1.1" VerticalAlignment="Center" Foreground="White" FontSize="10" FontFamily="Segoe UI" FontWeight="Light" Margin="10,0,0,0"/>
             <Button Name="Logout_Button" IsHitTestVisible="{Binding isLogged}" BorderThickness="0" Click="Logout_Clicked" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Right">
                 <Image Source="pack://application:,,,/Images/Logout.png" Height="20"/>
             </Button>

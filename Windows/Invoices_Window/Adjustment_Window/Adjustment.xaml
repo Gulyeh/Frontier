@@ -202,8 +202,8 @@
                             </Border>
                         </StackPanel>
                     </StackPanel>
-                    <StackPanel Margin="30,0,0,0" VerticalAlignment="Center">
-                        <Border Width="250" Height="126" Background="Transparent" BorderBrush="Black" BorderThickness="1" CornerRadius="12">
+                    <StackPanel Margin="30,5,0,0" VerticalAlignment="Top">
+                        <Border Width="250" Height="111" Background="Transparent" BorderBrush="Black" BorderThickness="1" CornerRadius="12">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <TextBlock Text="Nazwa banku" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="30,0,0,0"/>
                                 <Border Background="LightGray" Width="230" BorderThickness="0" CornerRadius="8" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="9,0">
@@ -217,7 +217,12 @@
                                         <TextBox Name="BankAccount" PreviewTextInput="CheckNumeric" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="220"/>
                                     </StackPanel>
                                 </Border>
-
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="Podpis*" FontSize="10" Foreground="Black" HorizontalAlignment="Left" Margin="30,14,0,0"/>
+                        <Border Background="LightGray" Width="230" BorderThickness="0" CornerRadius="8" Height="24" HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Name="Signature" IsEnabled="False" FontFamily="Calibri" FontWeight="Light" TextAlignment="Center" FontSize="15" BorderThickness="0" Background="Transparent" Margin="5,0,-18,0" Width="220"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

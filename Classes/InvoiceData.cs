@@ -15,5 +15,6 @@
         public string TotalPrice { get; set; }
         public string PaidPrice { get; set; }
         public string Currency { get; set; }
+        public string Signature { get;set; }
     }
 }
