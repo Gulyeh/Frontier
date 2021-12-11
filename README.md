@@ -29,8 +29,8 @@ Exchange rates are being downloaded from NBP API with json formatting
 * Statistics
 
 ## UI
-<img src="https://i.imgur.com/24jIrNX.png" width="300"/> <img src="https://i.imgur.com/I56htvv.png" width="300"/>
-<img src="https://i.imgur.com/Yr1VVwk.png" width="300"/> <img src="https://i.imgur.com/7CYs73S.png" width="300"/>
-<img src="https://i.imgur.com/bma9lzM.png" width="300"/> <img src="https://i.imgur.com/BpOmqsI.png" width="300"/>
-<img src="https://i.imgur.com/ntIunbu.png" width="300"/> <img src="https://i.imgur.com/oA5xkxT.png" width="300"/>
-<img src="https://i.imgur.com/W0abYjy.png" width="300"/> <img src="https://i.imgur.com/WakJIds.png" width="300"/>
+<img src="https://i.imgur.com/24jIrNX.png" width="400"/> <img src="https://i.imgur.com/I56htvv.png" width="400"/>
+<img src="https://i.imgur.com/Yr1VVwk.png" width="400"/> <img src="https://i.imgur.com/7CYs73S.png" width="400"/>
+<img src="https://i.imgur.com/bma9lzM.png" width="400"/> <img src="https://i.imgur.com/BpOmqsI.png" width="400"/>
+<img src="https://i.imgur.com/ntIunbu.png" width="400"/> <img src="https://i.imgur.com/oA5xkxT.png" width="400"/>
+<img src="https://i.imgur.com/W0abYjy.png" width="400"/> <img src="https://i.imgur.com/WakJIds.png" width="400"/>
