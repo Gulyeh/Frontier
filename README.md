@@ -27,6 +27,7 @@ Exchange rates are being downloaded from NBP API with json formatting
 * Digital signature
 * Supports inventory
 * Statistics
+* Logout/Switch database
 
 ## UI
 <img src="https://i.imgur.com/24jIrNX.png" width="400"/> <img src="https://i.imgur.com/I56htvv.png" width="400"/>
